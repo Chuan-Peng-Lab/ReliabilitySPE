@@ -1,0 +1,11 @@
+The folder includes the following datasheets:
+
+##simulated_data.csv
+This is the pilot data.
+
+## simulated_data_fitting_DDM.csv
+This is the pre-processed pilot data, which is used to fit into the drift diffusion model (DDM). 
+
+## test_retest_pilot_ddm_results.csv
+This is the result where parameters were decomposed from DDM for each individual in the pilot data. 
+
