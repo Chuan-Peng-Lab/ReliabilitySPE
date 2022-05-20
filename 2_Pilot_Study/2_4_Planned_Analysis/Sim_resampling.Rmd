@@ -191,8 +191,8 @@ for (i in c(1:2448)){
 k #we can see that the trial numbers are correct 
 w
 
-# check how many non-response trials we have 
-sum(simdata$ACC == -1)
+# check how many non&wrong-response trials we have 
+sum(simdata$ACC == -1 |simdata$ACC == 2)
 ```
 
 # save simulated data to local file

@@ -1,0 +1,314 @@
+---
+title: "Test_retest_pilot_data_proposed_analysis"
+author: "Helenliu"
+date: "18/05/2022"
+output: html_document
+---
+
+This  script is a realization of the analysis plan in stage 1 registration. We ran the pilot data through our proposed statistical analysis to see whether our proposed analysis code is appropriate for the secondary data structure. As the pilot data is simulated randomly, the results here does not have any reference significance.
+
+```{r used pacakge}
+#import used package
+library(tidyverse)
+library(Rmisc)
+library(psych)
+library(here)
+library(lme4)
+library(lmerTest)
+```
+
+## set work directory
+
+```{r, setup, include=FALSE}
+cur_dir <-  here::here()
+knitr::opts_knit$set(root.dir = 'cur_dir')
+```
+
+## import reference data
+
+```{r}
+#getwd()
+df2 <-  read.csv('../2_3_PilotData/simulated_data.csv',header = T, sep=",", stringsAsFactors = FALSE) # import pilot data
+head(df2)
+```
+
+## preprocess pilot data 
+
+```{r}
+df2.clean <- df2 %>% 
+  #dplyr::filter(!Subject %in% excldSub_M) %>%       # we will have a invalid subjects exclude list
+  #dplyr::filter(Subject != "6031")%>% # one participant who have invalid 5th session
+  #dplyr::filter(Subject != "6009") %>% #  one participant who has confusing information
+  #dplyr::filter(Emotion == "control") %>%  # in the secondary data we only need the control condition
+  dplyr::filter(ACC != -1 & ACC != 2) %>%         #exclude no response/wrong response
+  dplyr::filter(Trialtype == "exp") %>% #filter practice trials
+  dplyr::filter(!(RT <= 0.2 & RT >= 1.5 )) %>%     #only need 1500ms >RT >200ms
+  dplyr::rename(RT_sec = RT) %>%
+  dplyr::mutate(RT_ms = RT_sec*1000) %>%
+  dplyr::mutate(Match = Matchness) %>%
+  dplyr::select(Subject,Session,Match,Identity,RT_ms,RT_sec,ACC) %>%
+  dplyr::mutate_at(vars(Subject, Session,Match,Identity), as.factor)%>% 
+  dplyr::group_by(Subject,Session,Match,Identity)
+df2.clean
+```
+
+## pre-process data for DDM
+
+```{r}
+data_fitting_DDM <- df2.clean %>%
+  dplyr::group_by(Subject, Session, Match, Identity) %>% 
+  dplyr::select("Subject", "Session", "Match", "Identity", "RT_ms", "ACC")
+count(unique(data_fitting_DDM$Subject))
+#unique(data_fitting_DDM$ACC) #check 
+
+###save clean data to a local file
+path_out = "../2_3_PilotData/"
+fileName = paste(path_out, 'simulate_data_fitting_DDM.csv', sep = '')
+write_csv(data_fitting_DDM, fileName, col_names = TRUE, append = FALSE)
+```
+
+## calculate mean rt1(distinguish between match & nonmatch)
+$\mathrm{Mean RT_1}=$ \frac{\sum R T}{n \text { (trials) }}
+
+```{r}
+df2.rt1 <- df2.clean %>%
+  dplyr::filter(ACC == "1") %>%
+  dplyr::group_by(Subject, Session, Match, Identity) %>%
+  dplyr::summarise(mean_rt = mean(RT_ms),
+                   n = n()) %>%
+  dplyr::select(-"n") %>%
+  dplyr::ungroup()
+df2.rt1
+```
+
+## calculate rt1 based SPE (only considering match condition)
+
+```{r calculate rt1 based SPE}
+df2.rt1.SPE <- df2.rt1 %>%
+  dplyr::filter(Match == "Match") %>% # select match
+  dplyr::group_by(Subject, Session) %>%
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = mean_rt) %>%
+  dplyr::summarise(rt_1_SPE = Self - (Stranger + Friend) / 2) #mean rt of self-match - mean rt of other-match
+df2.rt1.SPE
+
+df2.rt1.SPE.ICC <-   df2.rt1.SPE %>%
+  tidyr::spread(key = Session, value = rt_1_SPE) #wide-format data
+
+df2.rt1.SPE.ICC <- df2.rt1.SPE.ICC[, -1]
+psych::ICC(df2.rt1.SPE.ICC, lmer = FALSE) #calculate ICC
+```
+## calculate mean rt2 ( not distinguish match & nonmatch)
+
+```{r calculate rt2}
+df2.rt2 <- df2.clean %>%
+  dplyr::filter(ACC == "1") %>%
+  dplyr::group_by(Subject, Session,Identity) %>%
+  dplyr::summarise(mean_rt = mean(RT_ms),
+                   n = n()) %>%
+  dplyr::select(-"n") %>%
+  dplyr::ungroup()
+df2.rt2
+```
+
+## calculate rt2 based SPE ( not distinguish match & nonmatch)
+
+```{r calculate rt2 based SPE}
+df2.rt2.SPE <- df2.rt2 %>%
+  dplyr::group_by(Subject, Session) %>%
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = mean_rt) %>%
+  dplyr::summarise(rt_2_SPE = Self - (Stranger + Friend) / 2)  %>% #mean rt of self - mean rt of other
+  tidyr::spread(key = Session, value = rt_2_SPE) #wide format according to session
+
+df2.rt2.SPE.ICC <- df2.rt2.SPE[, -1]
+psych::ICC(df2.rt2.SPE.ICC, lmer = FALSE)
+```
+
+## calculate acc
+$\mathrm{Accuracy}=$ $\frac{n(\text { correct response })}{n(\text { total respose })}$
+
+```{r calculate acc}
+df2.acc <- df2.clean %>%
+  dplyr::group_by(Subject,Session,Match,Identity)%>% 
+  dplyr::summarise(acc = mean(ACC),
+                   mean_rt = mean(RT_ms),
+                   n = n())%>% 
+  dplyr::ungroup() %>% 
+  dplyr::select(-"mean_rt", -"n")
+df2.acc
+```
+
+## calculate acc-based SPE
+
+```{r calculate acc-based SPE}
+df2.acc.SPE <- df2.acc %>% 
+  dplyr::filter(Match == "Match") %>% # select match 
+  dplyr::group_by(Subject,Session) %>%
+  tidyr::pivot_wider(names_from = Identity, 
+                                   values_from = acc) %>%
+  dplyr::summarise(acc_SPE = Self - (Stranger + Friend)/2) %>%  #mean ACC of self-match - mean ACC of other-match
+  tidyr::spread(key = Session,value = acc_SPE) #wide format according to session
+
+df2.acc.SPE.ICC <- df2.acc.SPE[,-1]
+psych::ICC(df2.acc.SPE.ICC,lmer=FALSE)
+```
+
+## calculate Dprime
+$\mathrm{Dprime}=$ z-score (ACC (match) - z-score (1 - ACC (non-match))
+
+```{r calculate dprime}
+#calculate d-prime
+df2.dprime <- df2.clean %>% 
+  dplyr::group_by(Subject,Session,Identity) %>% 
+dplyr::summarise(
+  hit = length(ACC[Match == "Match" & ACC == 1]),
+    fa = length(ACC[Match == "Nonmatch" & ACC == 0]),
+    miss = length(ACC[Match == "Match" & ACC == 0]),
+    cr = length(ACC[Match == "Nonmatch" & ACC == 1]),
+    Dprime = qnorm(
+      ifelse(hit / (hit + miss) < 1,
+             hit / (hit + miss),
+             1 - 1 / (2 * (hit + miss))
+      )
+    ) - qnorm(
+      ifelse(fa / (fa + cr) > 0,
+             fa / (fa + cr),
+             1 / (2 * (fa + cr))
+      )
+    )) %>% 
+  select(-"hit",-"fa",-"miss",-"cr")
+df2.dprime
+```
+
+## calculate Dprime based SPE
+
+```{r calculate dprime-based SPE}
+df2.dprime.SPE <- df2.dprime %>% 
+  dplyr::group_by(Subject, Session)  %>%
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = Dprime) %>%
+  dplyr::summarise(dprime_SPE = Self - (Stranger + Friend) / 2) %>% #mean dprime of self - mean dprime of other
+  tidyr::spread(key = Session, value = dprime_SPE)
+
+df2.dprime.SPE.ICC <- df2.dprime.SPE[, -1]
+psych::ICC(df2.dprime.SPE.ICC, lmer = FALSE)
+```
+
+## calculate Efficiency 
+$\mathrm{Efficiency}=$ \frac{\operatorname{mean} R T}{A C C}
+
+```{r calculate Efficiency}
+df2.efficiency <- df2.clean %>% 
+  dplyr::group_by(Subject, Identity, Match, Session) %>% 
+  dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% 
+  dplyr::ungroup()
+df2.efficiency
+```
+
+## calculate Efficiency-based SPE
+
+```{r calculate Efficiency based SPE}
+df2.efficiency.SPE <- df2.efficiency %>%
+  dplyr::filter(Match == "Match") %>% #选取match
+  dplyr::group_by(Subject, Session) %>%
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = Eff) %>%
+  dplyr::summarise(eff_SPE = Self - (Stranger + Friend) / 2) %>% #eff of self-match - eff of other-match
+  tidyr::spread(key = Session, value = eff_SPE)
+
+df2.efficiency.SPE.ICC <- df2.efficiency.SPE[, -1]
+psych::ICC(df2.efficiency.SPE.ICC, lmer = FALSE)
+```
+
+## preprocess DDM results
+
+```{r}
+df.ddm <- read.csv("../2_3_PilotData/test_retest_pilot_ddm_results.csv")
+## preprocess raw ddm results
+filter_con <- c("v_", "z_")
+df.ddm_wide <- df.ddm %>% dplyr::select(X, mean) %>% 
+  tidyr::pivot_wider(names_from = "X", values_from = "mean") %>% 
+  dplyr::select(tidyr::contains(filter_con), -tidyr::contains("_std"))
+
+df.ddm_long <- df.ddm_wide %>% 
+  tidyr::pivot_longer(1:ncol(df.ddm_wide), names_to = c("parameter", "info"), names_sep = "_", values_to = "value") %>% dplyr::mutate(
+    info = str_remove(info, "subj"),
+    condition = str_extract(info, "(?<=\\().+?(?=\\))"), 
+    subjx = str_extract(info, "(?<=\\).).*\\d"), 
+  ) %>% tidyr::separate(condition, c("Matchness", "Session", "Identity"))%>%
+dplyr::select(subjx, parameter, Matchness, Session, Identity, value)
+df.ddm_long
+```
+
+## calculate drift rate(v) based SPE
+## ddm model1 v,z ~ session,match, identity
+
+```{r}
+v.SPE <- df.ddm_long %>% 
+  dplyr::filter(Matchness == "Match" & parameter == "v") %>% 
+  dplyr::group_by(subjx, Session) %>% 
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = value) %>% 
+  dplyr::summarise(v_SPE = Self - (Stranger + Friend) / 2) %>% 
+  ungroup()
+
+
+v.SPE.ICC <- v.SPE %>%
+  tidyr::spread(key = Session, value = v_SPE)
+
+v.SPE.ICC <- v.SPE.ICC[, -1]
+psych::ICC(v.SPE.ICC, lmer = FALSE)
+```
+
+## calculate starting point(z) based SPE
+## ddm model1 v,z ~ session,match, identity
+
+```{r}
+z.SPE <- df.ddm_long %>% 
+  dplyr::filter(Matchness == "Match" & parameter == "z") %>% 
+  dplyr::group_by(subjx, Session) %>% 
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = value) %>% 
+  dplyr::summarise(z_SPE = Self - (Stranger + Friend) / 2) %>% 
+  ungroup()
+
+
+z.SPE.ICC <- z.SPE %>%
+  tidyr::spread(key = Session, value = z_SPE)
+
+z.SPE.ICC <- z.SPE.ICC[, -1]
+psych::ICC(z.SPE.ICC, lmer = FALSE)
+```
+
+## Practical effect on rt 
+
+```{r}
+source("simple_contrast.R")
+df_simple <- df2.clean %>% 
+  dplyr::select(Subject, Session, Match, Identity, RT_ms)
+```
+
+## define contrasts
+
+```{r}
+contrasts(df_simple$Session) <- simple(6)
+
+colnames(contrasts(df_simple$Session)) <- levels(df_simple$Session)[2:6]
+
+contrasts(df_simple$Match) <- simple(2)
+
+colnames(contrasts(df_simple$Match)) <- levels(df_simple$Match)[2]
+
+contrasts(df_simple$Identity) <- simple(3)
+
+colnames(contrasts(df_simple$Identity)) <- levels(df_simple$Identity)[2:3]
+```
+
+## creat hlm
+
+```{r}
+hlm_sim <- lmer(RT_ms ~ Session*Match*Identity+(1|Subject), data = df_simple)
+summary(hlm_sim)
+anova(hlm_sim)
+```
