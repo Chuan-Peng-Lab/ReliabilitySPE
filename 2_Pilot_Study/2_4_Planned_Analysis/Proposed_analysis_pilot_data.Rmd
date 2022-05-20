@@ -1,6 +1,6 @@
 ---
 title: "Test_retest_pilot_data_proposed_analysis"
-author: "Helenliu"
+author: "Helenliu & Yuanrui Zheng"
 date: "18/05/2022"
 output: html_document
 ---
