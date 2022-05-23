@@ -5,7 +5,7 @@ date: "18/05/2022"
 output: html_document
 ---
 
-This  script is a realization of the analysis plan in stage 1 registration. We ran the pilot data through our proposed statistical analysis to see whether our proposed analysis code is appropriate for the secondary data structure. As the pilot data is simulated randomly, the results here does not have any reference significance.
+This  script is used for testing the planned analyses in stage 1 registration. We tested the script on simulated data. As the simulated data are randomly sampled from a previous dataset, we should not interpret the result in any meaningful way.
 
 ```{r used pacakge}
 #import used package
@@ -24,31 +24,27 @@ cur_dir <-  here::here()
 knitr::opts_knit$set(root.dir = 'cur_dir')
 ```
 
-## import reference data
+## import simulated data
 
 ```{r}
 #getwd()
-df2 <-  read.csv('../2_3_PilotData/simulated_data.csv',header = T, sep=",", stringsAsFactors = FALSE) # import pilot data
+df2 <-  read.csv('../2_3_SimData/simulated_data.csv',header = T, sep=",", stringsAsFactors = FALSE) # import pilot data
 head(df2)
 ```
 
-## preprocess pilot data 
+## Preprocess
 
 ```{r}
 df2.clean <- df2 %>% 
-  #dplyr::filter(!Subject %in% excldSub_M) %>%       # we will have a invalid subjects exclude list
-  #dplyr::filter(Subject != "6031")%>% # one participant who have invalid 5th session
-  #dplyr::filter(Subject != "6009") %>% #  one participant who has confusing information
-  #dplyr::filter(Emotion == "control") %>%  # in the secondary data we only need the control condition
-  dplyr::filter(ACC != -1 & ACC != 2) %>%         #exclude no response/wrong response
-  dplyr::filter(Trialtype == "exp") %>% #filter practice trials
-  dplyr::filter(!(RT <= 0.2 & RT >= 1.5 )) %>%     #only need 1500ms >RT >200ms
+  dplyr::filter(ACC != -1 & ACC != 2) %>%         # exclude no response/wrong response
+  dplyr::filter(Trialtype == "exp") %>%           # filter practice trials
+  dplyr::filter(!(RT <= 0.2 & RT >= 1.5 )) %>%    # only need 1500ms >RT >200ms
   dplyr::rename(RT_sec = RT) %>%
   dplyr::mutate(RT_ms = RT_sec*1000) %>%
   dplyr::mutate(Match = Matchness) %>%
-  dplyr::select(Subject,Session,Match,Identity,RT_ms,RT_sec,ACC) %>%
-  dplyr::mutate_at(vars(Subject, Session,Match,Identity), as.factor)%>% 
-  dplyr::group_by(Subject,Session,Match,Identity)
+  dplyr::select(Subject, Session, Match, Identity, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate_at(vars(Subject, Session, Match, Identity), as.factor)%>% 
+  dplyr::group_by(Subject, Session, Match, Identity)
 df2.clean
 ```
 
@@ -57,17 +53,17 @@ df2.clean
 ```{r}
 data_fitting_DDM <- df2.clean %>%
   dplyr::group_by(Subject, Session, Match, Identity) %>% 
-  dplyr::select("Subject", "Session", "Match", "Identity", "RT_ms", "ACC")
+  dplyr::select("Subject", "Session", "Match", "Identity", "RT_sec", "ACC") # DDM should use second as the unite.
 count(unique(data_fitting_DDM$Subject))
 #unique(data_fitting_DDM$ACC) #check 
 
 ###save clean data to a local file
-path_out = "../2_3_PilotData/"
+path_out = "../2_3_SimData/"
 fileName = paste(path_out, 'simulate_data_fitting_DDM.csv', sep = '')
 write_csv(data_fitting_DDM, fileName, col_names = TRUE, append = FALSE)
 ```
 
-## calculate mean rt1(distinguish between match & nonmatch)
+## Calculate mean rt1 (distinguish between match & nonmatch)
 $\mathrm{Mean RT_1}=$ \frac{\sum R T}{n \text { (trials) }}
 
 ```{r}
@@ -81,7 +77,12 @@ df2.rt1 <- df2.clean %>%
 df2.rt1
 ```
 
-## calculate rt1 based SPE (only considering match condition)
+## SPE index 1: RT1 
+This SPE index only consider match condition.
+
+Also, the SPE is indexed by the means RT differences between self and averaged others (friend & stranger).
+
+We will focus on XXX when analyzing the real data
 
 ```{r calculate rt1 based SPE}
 df2.rt1.SPE <- df2.rt1 %>%
@@ -89,16 +90,19 @@ df2.rt1.SPE <- df2.rt1 %>%
   dplyr::group_by(Subject, Session) %>%
   tidyr::pivot_wider(names_from = Identity,
                      values_from = mean_rt) %>%
-  dplyr::summarise(rt_1_SPE = Self - (Stranger + Friend) / 2) #mean rt of self-match - mean rt of other-match
+  dplyr::summarise(rt_1_SPE = Self - (Stranger + Friend) / 2) # mean rt of self-match - mean rt of other-match
 df2.rt1.SPE
 
 df2.rt1.SPE.ICC <-   df2.rt1.SPE %>%
-  tidyr::spread(key = Session, value = rt_1_SPE) #wide-format data
+  tidyr::spread(key = Session, value = rt_1_SPE) # wide-format data
 
-df2.rt1.SPE.ICC <- df2.rt1.SPE.ICC[, -1]
-psych::ICC(df2.rt1.SPE.ICC, lmer = FALSE) #calculate ICC
+psych::ICC(df2.rt1.SPE.ICC[, -1], lmer = FALSE) # calculate ICC
 ```
-## calculate mean rt2 ( not distinguish match & nonmatch)
+## SPE index 2: RT2
+XXXX ( not distinguish match & nonmatch)
+XXXX
+
+(How will we interpret the results in the future)
 
 ```{r calculate rt2}
 df2.rt2 <- df2.clean %>%
@@ -224,7 +228,7 @@ psych::ICC(df2.efficiency.SPE.ICC, lmer = FALSE)
 ## preprocess DDM results
 
 ```{r}
-df.ddm <- read.csv("../2_3_PilotData/test_retest_pilot_ddm_results.csv")
+df.ddm <- read.csv("../2_3_SimData/test_retest_pilot_ddm_results.csv")
 ## preprocess raw ddm results
 filter_con <- c("v_", "z_")
 df.ddm_wide <- df.ddm %>% dplyr::select(X, mean) %>% 

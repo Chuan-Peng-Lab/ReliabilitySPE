@@ -1,12 +1,13 @@
 ---
-title: "R simulate_pilot_data"
+title: "R Get the simulate_data"
 author: "Helen Liu & Yikang Liu"
 date: "16/05/2022"
 output: html_document
 ---
 
-This script is used to generate the pilot data in stage 1 registration. We applied the Bootstrap methods where samples are drawn from the open data of Hu et al. (2020) (accessible at https://osf.io/mhdsn/, or in "2_2_1_refData" folder) with replacement (allowing the same sample to appear more than once in the pilot data). 
-Following the format of the secondary data, the pilot data has 6 sessions of 34 participants’ data, where for each participant in each session, there are 24 practice trials and 360 experimental trials (six types of shape-label associations: two matches(matched/mismatched) x three shape associations, with 60 trials per association). 
+This script is used to generate the "fake" data in stage 1 registration. We applied the Bootstrap methods where samples are drawn from the open data of Hu et al. (2020) (accessible at https://osf.io/mhdsn/, or in "2_2_1_refData" folder) with replacement (allowing the same sample to appear more than once in the fake data). 
+
+Following the format of the secondary data, the fake data has 6 sessions of 34 participants’ data, where for each participant in each session, there are 24 practice trials and 360 experimental trials (six types of shape-label associations: two matches(matched/mismatched) x three shape associations, with 60 trials per association). 
 
 
 ```{r import used pacakge}
@@ -25,7 +26,7 @@ knitr::opts_knit$set(root.dir = 'cur_dir')
 ## import reference data
 
 ```{r import reference data}
-rsp_data = read_csv('../2_2_MaterialProc/2_2_1_refData/MS_rep_matchingTask_raw.csv') #reference of pilot data 
+rsp_data = read_csv('../2_2_MaterialProc/2_2_1_refData/MS_rep_matchingTask_raw.csv') #reference of fake data 
 ```
 
 ## set parameters for simulation
@@ -199,7 +200,7 @@ sum(simdata$ACC == -1 |simdata$ACC == 2)
 
 ```{r}
 ###save simulated data to a local file
-path_out = ("../2_3_PilotData/") # define path out 
+path_out = ("../2_3_SimData/") # define path out 
 fileName = paste(path_out, 'simulated_data.csv', sep = '')
 write_csv(simdata, fileName, col_names = TRUE, append = FALSE)
 ```
