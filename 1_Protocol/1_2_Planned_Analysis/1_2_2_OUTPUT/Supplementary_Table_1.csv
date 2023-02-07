@@ -1,0 +1,19 @@
+"SPE_type","SH_type","SH_r"
+"RT","First-Second",0.00981225254530887
+"RT","Odd-Even",-0.0467283672740305
+"RT","Permuted",0.0070051071666586
+"ACC","First-Second",0.0150745346180904
+"ACC","Odd-Even",-0.0505497227597385
+"ACC","Permuted",0.0692481237262701
+"Dprime","First-Second",0.00615530643645809
+"Dprime","Odd-Even",-0.0815237442284055
+"Dprime","Permuted",-0.0189414616715542
+"Efficiency","First-Second",0.0708930672006873
+"Efficiency","Odd-Even",-0.0398496412560675
+"Efficiency","Permuted",0.0475992169506544
+"DDM: v","First-Second",0.0353036596636854
+"DDM: v","Odd-Even",-0.0462164332725634
+"DDM: v","Permuted",0.0952176263486908
+"DDM: z","First-Second",0.070536219283343
+"DDM: z","Odd-Even",0.00628829537675975
+"DDM: z","Permuted",0.132595306140573
