@@ -1,0 +1,8 @@
+v0.0.1
+	add split-half and other results
+v0.0.2
+	revise split-half and other results
+v0.0.3
+	change the file systems and update citations
+v0.0.4
+	revise the whole paper

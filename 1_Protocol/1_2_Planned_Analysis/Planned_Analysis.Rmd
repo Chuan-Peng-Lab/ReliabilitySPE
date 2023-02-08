@@ -29,7 +29,7 @@ getwd()
 ## Import and Clean Raw_Data
 ```{r df.clean <- df.raw}
 # Import Pilot Data(Simulated Data)
-df.raw <-  read.csv('../reliability_ST_DE/simulated_data.csv',header = T, sep=",", stringsAsFactors = FALSE) 
+df.raw <-  read.csv('../1_2_Planned_Analysis/1_2_1_DATA/simulated_data.csv',header = T, sep=",", stringsAsFactors = FALSE) 
 df.clean <- df.raw %>% 
   dplyr::filter(ACC != -1 & ACC != 2) %>%         # exclude no response/wrong response
   dplyr::filter(Trialtype == "exp") %>%           # filter experiment trials
@@ -37,8 +37,6 @@ df.clean <- df.raw %>%
   dplyr::mutate(RT_sec = RT, RT_ms = RT*1000, Match = Matchness) %>%
   dplyr::select(Subject, Session, Match, Identity, RT_ms, RT_sec, ACC) %>%
   dplyr::mutate_at(vars(Subject, Session, Match, Identity), as.factor)
-
-head(df.clean)
 ```
 
 ## Data for DDM
@@ -50,13 +48,13 @@ df.DDM <- df.clean %>%
 # Check the uniqueness of the subject
 # count(unique(df.DDM$Subject)) 
 
-write.csv(df.DDM, "simulate_data_fitting_DDM.csv", row.names = FALSE)
+write.csv(df.DDM, "../1_2_Planned_Analysis/1_2_2_OUTPUT/simulate_data_fitting_DDM.csv", row.names = FALSE)
 ```
 
 ```{r Python code, Get DDM result}
 #Python get df.DDM(simulate_data_fitting_DDM.csv) 
 #Python return df.DDM.raw(test_retest_pilot_ddm_results.csv)
-df.DDM.raw <- read.csv("../reliability_ST_DE/test_retest_pilot_ddm_results.csv")
+df.DDM.raw <- read.csv("../1_2_Planned_Analysis/1_2_1_DATA/test_retest_pilot_ddm_results.csv")
 ```
 
 ```{r df.DDM.clean <- df.DDM.raw}
@@ -260,7 +258,7 @@ ggplot(plot.ICC, aes(x = ICC_type, y = ICC, color = ICC_type), width = 12, heigh
         strip.background = element_rect(color="black", fill="white", 
                                         size=1))  +
   guides(fill = guide_none(), color = guide_none())  #hide legend
-ggsave(filename="Figure1_SPE_ICC.png", width = 18, height = 10)
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure1_SPE_ICC.png", width = 18, height = 10)
 ```
 
 --------------------------------------------------------------------------------
@@ -688,7 +686,7 @@ ggplot(plot.SHR.MC, aes(x = SPE_type, y = SH_r, color = SPE_type), width = 6, he
                                         size=1))  +
   guides(fill = guide_none(), color = guide_none()) #hide legend
 
-ggsave(filename="Figure2_SPE_SHR.png", width = 9, height = 10)
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure2_SPE_SHR.png", width = 9, height = 10)
 ```
 
 --------------------------------------------------------------------------------
@@ -1023,7 +1021,7 @@ for(j in 1:length(list.SHR.Others)) {
 
 ### Save df.SHR.Other
 ```{r Save df.SHR.Other}
-write.csv(df.SHR.Other, "Supplementary_Table_1.csv", row.names = FALSE)
+write.csv(df.SHR.Other, "../1_2_Planned_Analysis/1_2_2_OUTPUT/Supplementary_Table_1.csv", row.names = FALSE)
 ```
 
 --------------------------------------------------------------------------------
@@ -1054,7 +1052,7 @@ df.dsc <- do.call(rbind, df.list) %>%
   dplyr::select(.,"1_mean","1_sd","2_mean","2_sd","3_mean","3_sd",
                   "4_mean","4_sd","5_mean","5_sd","6_mean","6_sd")
 
-write.csv(df.dsc, "Table_1.csv", row.names = TRUE)
+write.csv(df.dsc, "../1_2_Planned_Analysis/1_2_2_OUTPUT/Table_1.csv", row.names = TRUE)
 rm(df.list)
 ```
 
