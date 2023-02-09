@@ -5,4 +5,7 @@ v0.0.2
 v0.0.3
 	change the file systems and update citations
 v0.0.4
-	revise the whole paper
+	remake the whole paper
+v0.0.5
+	remake the references
+	adjust typography
