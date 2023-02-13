@@ -9,3 +9,9 @@ v0.0.4
 v0.0.5
 	remake the references
 	adjust typography
+v0.0.6
+	modify according to the chuanpeng's request
+v0.0.7
+	adjust the order of introduction
+	delete HLM
+	modify the analysis plan
