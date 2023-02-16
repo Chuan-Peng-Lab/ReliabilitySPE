@@ -16,7 +16,8 @@ library(lme4)
 library(lmerTest)
 
 library(data.table)
-library(hausekeep)
+library(hausekeep) #ezDDM
+library(FastDMinR) #FastDDM
 ```
 
 ## Set Working Directory
@@ -37,39 +38,6 @@ df.clean <- df.raw %>%
   dplyr::mutate(RT_sec = RT, RT_ms = RT*1000, Match = Matchness) %>%
   dplyr::select(Subject, Session, Match, Identity, RT_ms, RT_sec, ACC) %>%
   dplyr::mutate_at(vars(Subject, Session, Match, Identity), as.factor)
-```
-
-## Data for DDM
-```{r data_fitting_DDM}
-# DDM should use second as the unite.
-df.DDM <- df.clean %>%
-  dplyr::select("Subject", "Session", "Match", "Identity", "RT_sec", "ACC") 
-
-# Check the uniqueness of the subject
-# count(unique(df.DDM$Subject)) 
-
-write.csv(df.DDM, "../1_2_Planned_Analysis/1_2_2_OUTPUT/simulate_data_fitting_DDM.csv", row.names = FALSE)
-```
-
-```{r Python code, Get DDM result}
-#Python get df.DDM(simulate_data_fitting_DDM.csv) 
-#Python return df.DDM.raw(test_retest_pilot_ddm_results.csv)
-df.DDM.raw <- read.csv("../1_2_Planned_Analysis/1_2_1_DATA/test_retest_pilot_ddm_results.csv")
-```
-
-```{r df.DDM.clean <- df.DDM.raw}
-df.DDM.clean <- df.DDM.raw %>% 
-  dplyr::select(X, mean) %>% 
-  tidyr::pivot_wider(names_from = "X", values_from = "mean") %>% 
-  dplyr::select(tidyr::contains(c("v_", "z_")), -tidyr::contains("_std"))%>% 
-  tidyr::pivot_longer(1:ncol(.), names_to = c("parameter", "info"), names_sep = "_", values_to = "value") %>% 
-  dplyr::mutate(info = str_remove(info, "subj"),
-                condition = str_extract(info, "(?<=\\().+?(?=\\))"), 
-                subjx = str_extract(info, "(?<=\\).).*\\d"),) %>% 
-  tidyr::separate(condition, c("Matchness", "Session", "Identity"))%>%
-  dplyr::mutate(Subject = subjx, Parameter = parameter, 
-                Match = Matchness, Value = value) %>%
-  dplyr::select(Subject, Session, Match, Identity, Parameter, Value)
 ```
 
 --------------------------------------------------------------------------------
@@ -159,34 +127,68 @@ df.ICC.Eff <- df.clean %>%
 psych::ICC(df.ICC.Eff, lmer = FALSE)
 ```
 
-```{r ICC of DDM: v, message= FALSE}
-df.ICC.v <- df.DDM.clean %>% 
-  dplyr::filter(Match == "Match" & Parameter == "v") %>% 
+```{r ICC of ezDDM: v, message= FALSE}
+df.ICC.ez.v <- df.clean %>% 
+  hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+  dplyr::mutate(z = a/v) %>%
+  dplyr::select(Subject, Session, Match, Identity, v, z) %>%
+  dplyr::select(-z) %>%
+  dplyr::filter(Match == "Match") %>% 
   dplyr::group_by(Subject, Session) %>% 
   tidyr::pivot_wider(names_from = Identity,
-                     values_from = Value) %>% 
+                     values_from = v) %>% 
   dplyr::summarise(v_SPE = Self - (Stranger + Friend) / 2) %>% 
   ungroup() %>%
   tidyr::spread(key = Session, value = v_SPE) %>%
   dplyr::select(-Subject)
 
-psych::ICC(df.ICC.v, lmer = FALSE)
+psych::ICC(df.ICC.ez.v, lmer = FALSE)
 ```
 
-```{r ICC of DDM: z, message= FALSE}
-df.ICC.z <- df.DDM.clean %>% 
-  dplyr::filter(Match == "Match" & Parameter == "z") %>% 
+```{r ICC of ezDDM: z, message= FALSE}
+df.ICC.ez.z <- df.clean %>% 
+  hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+  dplyr::mutate(z = a/v) %>%
+  dplyr::select(Subject, Session, Match, Identity, v, z) %>%
+  dplyr::select(-v) %>%
+  dplyr::filter(Match == "Match") %>% 
   dplyr::group_by(Subject, Session) %>% 
   tidyr::pivot_wider(names_from = Identity,
-                     values_from = Value) %>% 
+                     values_from = z) %>% 
   dplyr::summarise(z_SPE = Self - (Stranger + Friend) / 2) %>% 
   ungroup() %>%
   tidyr::spread(key = Session, value = z_SPE) %>%
   dplyr::select(-Subject)
 
-psych::ICC(df.ICC.z, lmer = FALSE)
+psych::ICC(df.ICC.ez.z, lmer = FALSE)
 ```
 
+```{r}
+df.DDM <- df.clean %>%
+  dplyr::mutate(Match = (ifelse(Match=="Match","1","2")),
+                Identity =(ifelse(Identity=="Self","1",
+                                      (ifelse(Identity=="Friend", "2", "3"))))) %>%
+  dplyr::mutate(Subject = as.numeric(Subject),
+                Session = as.numeric(Session),
+                Match = as.numeric(Match),
+                Identity = as.numeric(Identity),
+                RT_ms = as.numeric(RT_ms))
+```
+
+```{r fastDDM}
+result_temp1 <- fast_dm(df.DDM,
+                        Subject = "Subject",
+                        Conditions = "Session",
+                        TIME = "RT_ms",
+                        RESPONSE = "ACC",
+                        method = "ml",
+                        fix_to = list(d = 0, p = 0, sv = 0, st0 = 0, szr = 0),
+                        depend_on_condition = list(a = c("Match", "Identity"),
+                                                   v = c("Match", "Identity")),
+                        precision = 5,
+                        invariant = c("t0","zr"))
+
+```
 ## Calculation for ICC
 ```{r ICC_calculation}
 ICC_calculation <- function(SPE_ICC) {
@@ -200,7 +202,7 @@ ICC_calculation <- function(SPE_ICC) {
   colnames(ICC_result_final)[8] <- "ULCI"
   ICC_result_final$ICC_type <- rep(c("RT","ACC",
                                      "Dprime","Efficiency",
-                                     "v","z"), 
+                                     "ez_v","ez_z"), 
                                      each = nrow(ICC_result_final)/6)
   
   colnames(ICC_result_final)[7] <- "LLCI"
@@ -209,7 +211,7 @@ ICC_calculation <- function(SPE_ICC) {
     dplyr::mutate(.,ICC_type = factor(ICC_type, 
                                       levels = c("RT","ACC",
                                                  "Dprime","Efficiency",
-                                                 "v","z")) ) %>%
+                                                 "ez_v","ez_z")) ) %>%
     dplyr::arrange(.,type) %>%
     dplyr::select(type, ICC_type, ICC, LLCI, ULCI) 
   return(ICC_result_final)
@@ -219,7 +221,7 @@ ICC_calculation <- function(SPE_ICC) {
 ```{r DF for Plot ICC}
 list.ICC <- list(df.ICC.RT, df.ICC.ACC,
                  df.ICC.Dprime, df.ICC.Eff,
-                 df.ICC.v, df.ICC.z) 
+                 df.ICC.ez.v, df.ICC.ez.z) 
 
 plot.ICC <- ICC_calculation(SPE_ICC = list.ICC) %>%
   dplyr::filter(type == "ICC2" | type == "ICC2k")
@@ -1025,17 +1027,6 @@ write.csv(df.SHR.Other, "../1_2_Planned_Analysis/1_2_2_OUTPUT/Supplementary_Tabl
 ```
 
 --------------------------------------------------------------------------------
-
-# HLM
-```{r HLM Analysis}
-options(scipen=999)
-HLM.result <- lmer(RT_ms ~ Session*Match*Identity+(1|Subject), data = df.clean)
-```
-
-```{r HLM Output}
-summary(HLM.result)
-anova(HLM.result)
-```
 
 # Descriptive Statistics
 ```{r Descriptive Statistics}
