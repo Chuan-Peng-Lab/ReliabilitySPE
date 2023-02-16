@@ -26,7 +26,7 @@ knitr::opts_knit$set(root.dir = 'cur_dir')
 ## import reference data
 
 ```{r import reference data}
-rsp_data = read_csv('../2_2_MaterialProc/2_2_1_refData/MS_rep_matchingTask_raw.csv') #reference of fake data 
+rsp_data = read_csv('../4_Data_Extraction/4_1_Raw_Data/MS_rep_matchingTask_raw.csv') #reference of fake data 
 ```
 
 ## set parameters for simulation
@@ -200,7 +200,7 @@ sum(simdata$ACC == -1 |simdata$ACC == 2)
 
 ```{r}
 ###save simulated data to a local file
-path_out = ("../2_3_SimData/") # define path out 
+path_out = ("../1_Protocol/1_2_Planned_Analysis/1_2_1_DATA/") # define path out 
 fileName = paste(path_out, 'simulated_data.csv', sep = '')
 write_csv(simdata, fileName, col_names = TRUE, append = FALSE)
 ```
