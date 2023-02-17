@@ -17,7 +17,6 @@ library(lmerTest)
 
 library(data.table)
 library(hausekeep) #ezDDM
-library(FastDMinR) #FastDDM
 ```
 
 ## Set Working Directory
@@ -163,32 +162,6 @@ df.ICC.ez.z <- df.clean %>%
 psych::ICC(df.ICC.ez.z, lmer = FALSE)
 ```
 
-```{r}
-df.DDM <- df.clean %>%
-  dplyr::mutate(Match = (ifelse(Match=="Match","1","2")),
-                Identity =(ifelse(Identity=="Self","1",
-                                      (ifelse(Identity=="Friend", "2", "3"))))) %>%
-  dplyr::mutate(Subject = as.numeric(Subject),
-                Session = as.numeric(Session),
-                Match = as.numeric(Match),
-                Identity = as.numeric(Identity),
-                RT_ms = as.numeric(RT_ms))
-```
-
-```{r fastDDM}
-result_temp1 <- fast_dm(df.DDM,
-                        Subject = "Subject",
-                        Conditions = "Session",
-                        TIME = "RT_ms",
-                        RESPONSE = "ACC",
-                        method = "ml",
-                        fix_to = list(d = 0, p = 0, sv = 0, st0 = 0, szr = 0),
-                        depend_on_condition = list(a = c("Match", "Identity"),
-                                                   v = c("Match", "Identity")),
-                        precision = 5,
-                        invariant = c("t0","zr"))
-
-```
 ## Calculation for ICC
 ```{r ICC_calculation}
 ICC_calculation <- function(SPE_ICC) {
