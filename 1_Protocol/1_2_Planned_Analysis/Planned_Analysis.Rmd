@@ -109,7 +109,7 @@ df.ICC.Dprime <- df.clean %>%
 psych::ICC(df.ICC.Dprime, lmer = FALSE)
 ```
 
-```{r Eff of Efficiency, message= FALSE}
+```{r ICC of Efficiency, message= FALSE}
 df.ICC.Eff <- df.clean %>% 
   dplyr::group_by(Subject, Identity, Match, Session) %>% 
   dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% # Calculation Formula
@@ -175,7 +175,7 @@ ICC_calculation <- function(SPE_ICC) {
   colnames(ICC_result_final)[8] <- "ULCI"
   ICC_result_final$ICC_type <- rep(c("RT","ACC",
                                      "Dprime","Efficiency",
-                                     "ez_v","ez_z"), 
+                                     "ezDDM_v","ezDDM_z"), 
                                      each = nrow(ICC_result_final)/6)
   
   colnames(ICC_result_final)[7] <- "LLCI"
@@ -184,7 +184,7 @@ ICC_calculation <- function(SPE_ICC) {
     dplyr::mutate(.,ICC_type = factor(ICC_type, 
                                       levels = c("RT","ACC",
                                                  "Dprime","Efficiency",
-                                                 "ez_v","ez_z")) ) %>%
+                                                 "ezDDM_v","ezDDM_z")) ) %>%
     dplyr::arrange(.,type) %>%
     dplyr::select(type, ICC_type, ICC, LLCI, ULCI) 
   return(ICC_result_final)
@@ -567,7 +567,7 @@ for(j in 1:length(list.SHR.MC)) {
   print(paste("Permutated Split-half reliability:", round(r, 7)))
   print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
   
-  plot.SHR.MC[5,1] <- "DDM: v"
+  plot.SHR.MC[5,1] <- "ezDDM_v"
   plot.SHR.MC[5,2] <- r
   plot.SHR.MC[5,3] <- CI[1]
   plot.SHR.MC[5,4] <- CI[2]
@@ -614,7 +614,7 @@ for(j in 1:length(list.SHR.MC)) {
   print(paste("Permutated Split-half reliability:", round(r, 7)))
   print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
   
-  plot.SHR.MC[6,1] <- "DDM: z"
+  plot.SHR.MC[6,1] <- "ezDDM_z"
   plot.SHR.MC[6,2] <- r
   plot.SHR.MC[6,3] <- CI[1]
   plot.SHR.MC[6,4] <- CI[2]
@@ -628,7 +628,7 @@ plot.SHR.MC <- plot.SHR.MC
 
 ### Plot SHR
 ```{r Code for Plot SHR, message= FALSE, warning = FALSE}
-plot.SHR.MC$SPE_type<- factor(plot.SHR.MC$SPE_type, levels = c("RT", "ACC", "Dprime", "Eff", "DDM: v", "DDM: z"))
+plot.SHR.MC$SPE_type<- factor(plot.SHR.MC$SPE_type, levels = c("RT", "ACC", "Dprime", "Eff", "ezDDM_v", "ezDDM_z"))
 
 ggplot(plot.SHR.MC, aes(x = SPE_type, y = SH_r, color = SPE_type), width = 6, height = 6) +
   geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1) +
