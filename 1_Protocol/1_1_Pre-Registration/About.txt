@@ -15,3 +15,7 @@ v0.0.7
 	adjust the order of introduction
 	delete HLM
 	modify the analysis plan
+v0.0.8
+	remake abstract and introduction
+	remain ezddm, delete fastddm and hddm
+	add flow chark
