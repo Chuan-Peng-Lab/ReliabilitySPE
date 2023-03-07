@@ -1,5 +1,5 @@
 ---
-title: "self_reliability_DE"
+title: "SALT Planned Analysis for Pilot Data"
 author: "yuki"
 date: "2023-01-29"
 output: html_document
@@ -8,15 +8,22 @@ output: html_document
 ## Library Packages
 ```{r used pacakge, include=FALSE}
 #import used package
-library(tidyverse)
-library(Rmisc)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
 library(psych)
 library(here)
-library(lme4)
-library(lmerTest)
 
+# More efficient
 library(data.table)
-library(hausekeep) #ezDDM
+
+# ezDDM
+library(hausekeep) 
+
+# Parallel Computing
+library(parallel)
+library(doParallel)
+library(foreach)
 ```
 
 ## Set Working Directory
@@ -37,6 +44,138 @@ df.clean <- df.raw %>%
   dplyr::mutate(RT_sec = RT, RT_ms = RT*1000, Match = Matchness) %>%
   dplyr::select(Subject, Session, Match, Identity, RT_ms, RT_sec, ACC) %>%
   dplyr::mutate_at(vars(Subject, Session, Match, Identity), as.factor)
+```
+
+--------------------------------------------------------------------------------
+
+# Split-Half Reliability
+
+## Monte Carlo
+
+### Monte Carlo Split Generator
+
+```{r Monte Carlo Split Generator single thread}
+list.SHR.MC <- mcshrgener_st(df.split = df.clean, iteration = 10)
+# iteration = 100
+# user      system    elapsed 
+# 119.55    3.11      124.58 
+# 257 MB
+```
+
+```{r Monte Carlo Split Generator multiple thread}
+list.SHR.MC.para <- mcshrgener(df.split = df.clean, iteration = 10, num_cores = 16)
+# iteration = 100
+# user      system    elapsed 
+# 4.99      1.59      42.42 
+# 880 MB
+```
+
+### 6 Parameters SHR r[CI] (RT, ACC, Dprime, Efficiency, DDM: z, DDM: z)
+```{r NULL DF for Plot Split-Half Reliability (Monte Carlo)}
+plot.SHR.MC <- data.table(SPE_type = character(6),
+                          SH_r = numeric(6),
+                          LLCI = numeric(6),
+                          ULCI = numeric(6))
+```
+
+### Parallel Funcion
+```{r SHR.MC of RT, message=FALSE, warning=FALSE}
+mcshr(list = list.SHR.MC.para, nc = 16, indice = "rt")
+```
+
+```{r SHR.MC of ACC, message=FALSE, warning=FALSE}
+mcshr(list = list.SHR.MC.para, nc = 16, indice = "acc")
+```
+
+```{r SHR.MC of Dprime, message=FALSE, warning=FALSE}
+mcshr(list = list.SHR.MC.para, nc = 16, indice = "d")
+```
+
+```{r SHR.MC of Efficiency, message=FALSE, warning=FALSE}
+mcshr(list = list.SHR.MC.para, nc = 16, indice = "eff")
+```
+
+```{r SHR.MC of DDM: v, message=FALSE, warning=FALSE}
+mcshr(list = list.SHR.MC.para, nc = 16, indice = "ddmv")
+```
+
+```{r SHR.MC of DDM: z, message=FALSE, warning=FALSE}
+mcshr(list = list.SHR.MC.para, nc = 16, indice = "ddmz")
+```
+
+### Plot SHR
+```{r Code for Plot SHR, message= FALSE, warning = FALSE}
+plot.SHR.MC$SPE_type<- factor(plot.SHR.MC$SPE_type, levels = c("RT", "ACC", "Dprime", "Eff", "ezDDM_v", "ezDDM_z"))
+
+ggplot(plot.SHR.MC, aes(x = SPE_type, y = SH_r, color = SPE_type), width = 6, height = 6) +
+  geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1) +
+  geom_line() +
+  coord_flip() + #flips the x and y axes of a plot
+  labs(y = "Monte Carlo-based Split-Half Reliability", x = "SPE_Type") +
+  scale_x_discrete() +
+  scale_y_continuous(limits = c(-0.4, 1), 
+                     sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
+                                             labels = c("unacceptable", "poor",
+                                                         "acceptable", "excellent")),
+                                             breaks = seq(-0.4,1,by = 0.1)) +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "black") + #add dotted line
+  geom_hline(yintercept = 0.5, linetype = "dotted", color = "black") +
+  geom_hline(yintercept = 0.7, linetype = "dotted", color = "black") +
+  geom_hline(yintercept = 1, linetype = "dotted", color = "black") +
+  geom_point() +
+  theme_bw() +
+  theme(text = element_text(size = 20),
+        axis.text.x = element_text(size = 15),
+        axis.text.y = element_text(size = 25),
+        axis.title = element_text(size = 30),
+        plot.title = element_text(size = 24),
+        legend.key.size = unit(2, "cm"), 
+        legend.text = element_text(size = 20),
+        legend.title = element_blank(),
+        legend.position = "top",
+        panel.grid = element_blank(),#hide the line in background
+        strip.background = element_rect(color="black", fill="white", 
+                                        size=1))  +
+  guides(fill = guide_none(), color = guide_none()) #hide legend
+
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure1_SPE_SHR.png", width = 9, height = 10)
+```
+
+--------------------------------------------------------------------------------
+
+## Others (First-Second, Odd-Even, Permuted)
+
+### Calculation for Other Split
+```{r list.SHR.Others <- Null}
+list.SHR.Others <- vector("list", 3)
+```
+
+### 6 Parameters SHR r[CI] (RT, ACC, Dprime, Efficiency, DDM: z, DDM: z)
+```{r list.SHR.Others <- list.SHR.FS, list.SHR.OD, list.SHR.Per}
+list.SHR.Per <- split_tool(df.split = df.clean, method = "permuted")
+list.SHR.FS <- split_tool(df.split = df.clean, method = "fs")
+list.SHR.OD <- split_tool(df.split = df.clean, method = "od")
+list.SHR.Others <- list(list.SHR.FS, list.SHR.OD, list.SHR.Per)
+```
+
+```{r NULL DF for Other Split-Half Reliability}
+df.SHR.Other <- data.table(SPE_type = character(18),
+                           SH_type = rep(c("First-Second", "Odd-Even", "Permuted"), times = 6),
+                           SH_r = numeric(18))
+```
+
+```{r Other SHR, message = FALSE, warning = FALSE, include = FALSE}
+shr(list = list.SHR.Others, indice = "rt")
+shr(list = list.SHR.Others, indice = "acc")
+shr(list = list.SHR.Others, indice = "d")
+shr(list = list.SHR.Others, indice = "eff")
+shr(list = list.SHR.Others, indice = "ddmv")
+shr(list = list.SHR.Others, indice = "ddmz")
+```
+
+### Save df.SHR.Other
+```{r Save df.SHR.Other}
+write.csv(df.SHR.Other, "../1_2_Planned_Analysis/1_2_2_OUTPUT/Supplementary_Table_1.csv", row.names = FALSE)
 ```
 
 --------------------------------------------------------------------------------
@@ -163,33 +302,6 @@ psych::ICC(df.ICC.ez.z, lmer = FALSE)
 ```
 
 ## Calculation for ICC
-```{r ICC_calculation}
-ICC_calculation <- function(SPE_ICC) {
-  ICC_output <- lapply(SPE_ICC, function(x) {psych::ICC(x, lmer = FALSE)})
-  ICC_result <- list()
-  for (i in 1:length(ICC_output)){
-    ICC_result[[i]] <- ICC_output[[i]][[1]]
-  }
-  ICC_result_final <- rbindlist(ICC_result) 
-  colnames(ICC_result_final)[7] <- "LLCI"
-  colnames(ICC_result_final)[8] <- "ULCI"
-  ICC_result_final$ICC_type <- rep(c("RT","ACC",
-                                     "Dprime","Efficiency",
-                                     "ezDDM_v","ezDDM_z"), 
-                                     each = nrow(ICC_result_final)/6)
-  
-  colnames(ICC_result_final)[7] <- "LLCI"
-  colnames(ICC_result_final)[8] <- "ULCI"
-  ICC_result_final <- ICC_result_final %>%
-    dplyr::mutate(.,ICC_type = factor(ICC_type, 
-                                      levels = c("RT","ACC",
-                                                 "Dprime","Efficiency",
-                                                 "ezDDM_v","ezDDM_z")) ) %>%
-    dplyr::arrange(.,type) %>%
-    dplyr::select(type, ICC_type, ICC, LLCI, ULCI) 
-  return(ICC_result_final)
-}
-```
 
 ```{r DF for Plot ICC}
 list.ICC <- list(df.ICC.RT, df.ICC.ACC,
@@ -233,828 +345,7 @@ ggplot(plot.ICC, aes(x = ICC_type, y = ICC, color = ICC_type), width = 12, heigh
         strip.background = element_rect(color="black", fill="white", 
                                         size=1))  +
   guides(fill = guide_none(), color = guide_none())  #hide legend
-ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure1_SPE_ICC.png", width = 18, height = 10)
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure2_SPE_ICC.png", width = 18, height = 10)
 ```
 
 --------------------------------------------------------------------------------
-
-# Split-Half Reliability
-
-## Monte Carlo
-
-### Calculation for Monte Carlo Split
-```{r SHR.MC_calculation}
-SHR.MC_calculation <- function(df.split, iteration) {
-# Scientific notation
-options(scipen = 999)
-
-# MC seed
-set.seed(123)
-
-#convert data.frame to data.table
-setDT(df.split)
-
-# Stratify the data by Match and Identity
-split_data <- split(df.split,list(df.split$Subject, df.split$Session,
-                                   df.split$Match, df.split$Identity))
-
-# Initialize a vector to store the Pearson correlation coefficients
-split_list <- vector("list", iteration)
-
-  for (j in 1:iteration) {
-  
-    # Initialize empty lists to store the split-half data sets
-    str_half_split_1 <- list()
-    str_half_split_2 <- list()
-
-    # Calculate the split-half reliability for each group
-    str_half_split <- lapply(split_data, function(x) {
-      
-      # Remove rows with missing values 
-      data <- x[complete.cases(x),]
-
-      # Permute the rows of the data and split it into two halves
-      permuted_data <- data[sample(nrow(data)),]
-      half_split_1 <- permuted_data[1:floor(nrow(permuted_data)/2),]
-      half_split_2 <- permuted_data[(floor(nrow(permuted_data)/2)+1):nrow(permuted_data),]
-
-      # Get the minimum number of rows between the two data sets
-      min_rows <- min(nrow(half_split_1), nrow(half_split_2))
-
-      # Subset both data sets to use the same number of rows
-      half_split_1 <- half_split_1[1:min_rows,]
-      half_split_2 <- half_split_2[1:min_rows,]
-
-      # Return the split-half data sets
-      return(list(half_split_1, half_split_2))
-      })
-
-  # Combine the split-half data sets from all groups
-  str_half_split_1 <- do.call(rbind, lapply(str_half_split, "[[", 1))
-  str_half_split_2 <- do.call(rbind, lapply(str_half_split, "[[", 2))
-
-  split_list[[j]] <- list(str_half_split_1, str_half_split_2)
-
-}
-
-return(split_list)
-}
-
-```
-
-```{r List for Split-Half Reliability (Monte Carlo)}
-list.SHR.MC <- SHR.MC_calculation(df.split = df.clean, iteration = 10)
-```
-
-### 6 Parameters SHR r[CI] (RT, ACC, Dprime, Efficiency, DDM: z, DDM: z)
-```{r NULL DF for Plot Split-Half Reliability (Monte Carlo)}
-plot.SHR.MC <- data.table(SPE_type = character(6),
-                          SH_r = numeric(6),
-                          LLCI = numeric(6),
-                          ULCI = numeric(6))
-```
-
-```{r SHR.MC of RT, message=FALSE}
-r_values <- list()
-
-for(j in 1:length(list.SHR.MC)) {
-  
-    SPE_half_1 <- list.SHR.MC[[j]][[1]] %>%
-    dplyr::filter(.,Match == "Match", ACC == "1") %>%
-    dplyr::group_by(Subject, Session, Identity) %>%
-    dplyr::summarise(mean_rt = mean(RT_ms)) %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by(Subject, Session) %>%
-    tidyr::pivot_wider(names_from = Identity,
-                       values_from = mean_rt) %>%
-    dplyr::summarise(rt_1_SPE = Self - (Stranger + Friend) / 2) %>% # mean rt of self-match - mean rt of other-match
-    dplyr::ungroup() %>%
-    dplyr::select(rt_1_SPE) 
-    
-  SPE_half_2 <- list.SHR.MC[[j]][[2]] %>%
-    dplyr::filter(.,Match == "Match", ACC == "1") %>%
-    dplyr::group_by(Subject, Session, Identity) %>%
-    dplyr::summarise(mean_rt = mean(RT_ms)) %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by(Subject, Session) %>%
-    tidyr::pivot_wider(names_from = Identity,
-                       values_from = mean_rt) %>%
-    dplyr::summarise(rt_1_SPE = Self - (Stranger + Friend) / 2) %>% # mean rt of self-match - mean rt of other-match
-    dplyr::ungroup() %>%
-    dplyr::select(rt_1_SPE) 
-    
-    r_values[[j]] <- cor(SPE_half_1, SPE_half_2, method = "pearson")
-}
-
-  # Calculate the mean of the Pearson correlation coefficients
-  r_values_vector <- unlist(r_values)
-  r <- mean(r_values_vector)
-  CI <- quantile(r_values_vector, c(0.025, 0.975))
-  print(paste("Permutated Split-half reliability:", round(r, 7)))
-  print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
-  
-  plot.SHR.MC[1,1] <- "RT"
-  plot.SHR.MC[1,2] <- r
-  plot.SHR.MC[1,3] <- CI[1]
-  plot.SHR.MC[1,4] <- CI[2]
-  
-  rm(CI, r, j, r_values_vector, r_values, SPE_half_1, SPE_half_2)
-```
-
-```{r SHR.MC of ACC, message = FALSE}
-r_values <- list()
-
-for(j in 1:length(list.SHR.MC)) {
-  
-    SPE_half_1 <- list.SHR.MC[[j]][[1]] %>%
-      dplyr::filter(.,Match == "Match") %>%   
-      dplyr::group_by(Subject,Session,Identity)%>% 
-      dplyr::summarise(acc = mean(ACC))%>% 
-      dplyr::ungroup() %>% 
-      dplyr::group_by(Subject,Session) %>%
-      tidyr::pivot_wider(names_from = Identity, 
-                                      values_from = acc) %>%
-      dplyr::summarise(acc_SPE = Self - (Stranger + Friend)/2) %>%
-      dplyr::ungroup() %>%
-      dplyr::select(acc_SPE)
-    
-  SPE_half_2 <- list.SHR.MC[[j]][[2]] %>%
-      dplyr::filter(.,Match == "Match") %>%   
-      dplyr::group_by(Subject,Session,Identity)%>% 
-      dplyr::summarise(acc = mean(ACC))%>% 
-      dplyr::ungroup() %>% 
-      dplyr::group_by(Subject,Session) %>%
-      tidyr::pivot_wider(names_from = Identity, 
-                                      values_from = acc) %>%
-      dplyr::summarise(acc_SPE = Self - (Stranger + Friend)/2) %>%
-      dplyr::ungroup() %>%
-      dplyr::select(acc_SPE)
-    
-    r_values[[j]] <- cor(SPE_half_1, SPE_half_2, method = "pearson")
-}
-
-  # Calculate the mean of the Pearson correlation coefficients
-  r_values_vector <- unlist(r_values)
-  r <- mean(r_values_vector)
-  CI <- quantile(r_values_vector, c(0.025, 0.975))
-  print(paste("Permutated Split-half reliability:", round(r, 7)))
-  print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
-  
-  plot.SHR.MC[2,1] <- "ACC"
-  plot.SHR.MC[2,2] <- r
-  plot.SHR.MC[2,3] <- CI[1]
-  plot.SHR.MC[2,4] <- CI[2]
-  
-  rm(CI, r, j, r_values_vector, r_values, SPE_half_1, SPE_half_2)
-```
-
-```{r SHR.MC of Dprime, message = FALSE}
-r_values <- list()
-
-for(j in 1:length(list.SHR.MC)) {
-    SPE_half_1 <- list.SHR.MC[[j]][[1]] %>%
-    dplyr::group_by(Subject,Session,Identity) %>% 
-    dplyr::summarise(
-      hit = length(ACC[Match == "Match" & ACC == 1]),
-      fa = length(ACC[Match == "Nonmatch" & ACC == 0]),
-      miss = length(ACC[Match == "Match" & ACC == 0]),
-      cr = length(ACC[Match == "Nonmatch" & ACC == 1]),
-      Dprime = qnorm(
-        ifelse(hit / (hit + miss) < 1,
-               hit / (hit + miss),
-               1 - 1 / (2 * (hit + miss))
-              )
-           ) - qnorm(
-        ifelse(fa / (fa + cr) > 0,
-               fa / (fa + cr),
-               1 / (2 * (fa + cr))
-              )
-                    )) %>% 
-    dplyr::ungroup() %>%
-    select(-"hit",-"fa",-"miss",-"cr") %>%
-    dplyr::group_by(Subject, Session)  %>%
-    tidyr::pivot_wider(names_from = Identity,
-                     values_from = Dprime) %>%
-    dplyr::summarise(dprime_SPE = Self - (Stranger + Friend) / 2) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(dprime_SPE)
-    
-  SPE_half_2 <- list.SHR.MC[[j]][[2]] %>%
-    dplyr::group_by(Subject,Session,Identity) %>% 
-    dplyr::summarise(
-      hit = length(ACC[Match == "Match" & ACC == 1]),
-      fa = length(ACC[Match == "Nonmatch" & ACC == 0]),
-      miss = length(ACC[Match == "Match" & ACC == 0]),
-      cr = length(ACC[Match == "Nonmatch" & ACC == 1]),
-      Dprime = qnorm(
-        ifelse(hit / (hit + miss) < 1,
-               hit / (hit + miss),
-               1 - 1 / (2 * (hit + miss))
-              )
-           ) - qnorm(
-        ifelse(fa / (fa + cr) > 0,
-               fa / (fa + cr),
-               1 / (2 * (fa + cr))
-              )
-                    )) %>% 
-    dplyr::ungroup() %>%
-    select(-"hit",-"fa",-"miss",-"cr") %>%
-    dplyr::group_by(Subject, Session)  %>%
-    tidyr::pivot_wider(names_from = Identity,
-                     values_from = Dprime) %>%
-    dplyr::summarise(dprime_SPE = Self - (Stranger + Friend) / 2) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(dprime_SPE)
-    
-    r_values[[j]] <- cor(SPE_half_1, SPE_half_2, method = "pearson")
-}
-
-  # Calculate the mean of the Pearson correlation coefficients
-  r_values_vector <- unlist(r_values)
-  r <- mean(r_values_vector)
-  CI <- quantile(r_values_vector, c(0.025, 0.975))
-  print(paste("Permutated Split-half reliability:", round(r, 7)))
-  print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
-  
-  
-  plot.SHR.MC[3,1] <- "Dprime"
-  plot.SHR.MC[3,2] <- r
-  plot.SHR.MC[3,3] <- CI[1]
-  plot.SHR.MC[3,4] <- CI[2]
-  
-  rm(CI, r, j, r_values_vector, r_values, SPE_half_1, SPE_half_2)
-```
-
-```{r SHR.MC of Efficiency, message = FALSE}
-r_values <- list()
-
-for(j in 1:length(list.SHR.MC)) {
-  
-    SPE_half_1 <- list.SHR.MC[[j]][[1]] %>%
-    dplyr::group_by(Subject, Identity, Match, Session) %>% 
-    dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% 
-    dplyr::ungroup() %>%
-    dplyr::group_by(Subject, Session) %>%
-    tidyr::pivot_wider(names_from = Identity,
-                       values_from = Eff) %>%
-    dplyr::summarise(eff_SPE = Self - (Stranger + Friend) / 2) %>% 
-    dplyr::ungroup() %>%
-    dplyr::select(eff_SPE)
-    
-  SPE_half_2 <- list.SHR.MC[[j]][[2]] %>%
-    dplyr::group_by(Subject, Identity, Match, Session) %>% 
-    dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% 
-    dplyr::ungroup() %>%
-    dplyr::group_by(Subject, Session) %>%
-    tidyr::pivot_wider(names_from = Identity,
-                       values_from = Eff) %>%
-    dplyr::summarise(eff_SPE = Self - (Stranger + Friend) / 2) %>% 
-    dplyr::ungroup() %>%
-    dplyr::select(eff_SPE)
-    
-    r_values[[j]] <- cor(SPE_half_1, SPE_half_2, method = "pearson")
-}
-
-  # Calculate the mean of the Pearson correlation coefficients
-  r_values_vector <- unlist(r_values)
-  r <- mean(r_values_vector)
-  CI <- quantile(r_values_vector, c(0.025, 0.975))
-  print(paste("Permutated Split-half reliability:", round(r, 7)))
-  print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
-  
-  plot.SHR.MC[4,1] <- "Eff"
-  plot.SHR.MC[4,2] <- r
-  plot.SHR.MC[4,3] <- CI[1]
-  plot.SHR.MC[4,4] <- CI[2]
-  
-  rm(CI, r, j, r_values_vector, r_values, SPE_half_1, SPE_half_2)
-```
-
-```{r SHR.MC of DDM: v, message = FALSE}
-r_values <- list()
-
-for(j in 1:length(list.SHR.MC)) {
-  
-  SPE_half_1 <- list.SHR.MC[[j]][[1]] %>%
-    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
-    dplyr::select(Subject, Session, Match, Identity, v) %>%
-    dplyr::filter(Match == "Match") %>% 
-    dplyr::group_by(Subject, Session) %>% 
-    tidyr::pivot_wider(names_from = Identity,
-                      values_from = v) %>% 
-    dplyr::summarise(v_SPE = Self - (Stranger + Friend) / 2) %>% 
-    ungroup() %>%
-    dplyr::select(v_SPE)
-    
-  SPE_half_2 <- list.SHR.MC[[j]][[2]] %>%
-    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
-    dplyr::select(Subject, Session, Match, Identity, v) %>%
-    dplyr::filter(Match == "Match") %>% 
-    dplyr::group_by(Subject, Session) %>% 
-    tidyr::pivot_wider(names_from = Identity,
-                      values_from = v) %>% 
-    dplyr::summarise(v_SPE = Self - (Stranger + Friend) / 2) %>% 
-    ungroup() %>%
-    dplyr::select(v_SPE)
-    
-    r_values[[j]] <- cor(SPE_half_1, SPE_half_2, method = "pearson")
-}
-
-  # Calculate the mean of the Pearson correlation coefficients
-  r_values_vector <- unlist(r_values)
-  r <- mean(r_values_vector)
-  CI <- quantile(r_values_vector, c(0.025, 0.975))
-  print(paste("Permutated Split-half reliability:", round(r, 7)))
-  print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
-  
-  plot.SHR.MC[5,1] <- "ezDDM_v"
-  plot.SHR.MC[5,2] <- r
-  plot.SHR.MC[5,3] <- CI[1]
-  plot.SHR.MC[5,4] <- CI[2]
-  
-  rm(CI, r, j, r_values_vector, r_values, SPE_half_1, SPE_half_2)
-```
-
-```{r SHR.MC of DDM: z, message = FALSE}
-r_values <- list()
-
-for(j in 1:length(list.SHR.MC)) {
-  
-    SPE_half_1 <- list.SHR.MC[[j]][[1]] %>%
-      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
-      dplyr::mutate(., z = a/v) %>%
-      dplyr::select(Subject, Session, Match, Identity, z) %>%
-      dplyr::filter(Match == "Match") %>% 
-      dplyr::group_by(Subject, Session) %>% 
-      tidyr::pivot_wider(names_from = Identity,
-                         values_from = z) %>% 
-      dplyr::summarise(z_SPE = Self - (Stranger + Friend) / 2) %>% 
-      ungroup() %>%
-      dplyr::select(z_SPE)
-    
-  SPE_half_2 <- list.SHR.MC[[j]][[2]] %>%
-      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
-      dplyr::mutate(., z = a/v) %>%
-      dplyr::select(Subject, Session, Match, Identity, z) %>%
-      dplyr::filter(Match == "Match") %>% 
-      dplyr::group_by(Subject, Session) %>% 
-      tidyr::pivot_wider(names_from = Identity,
-                         values_from = z) %>% 
-      dplyr::summarise(z_SPE = Self - (Stranger + Friend) / 2) %>% 
-      ungroup() %>%
-      dplyr::select(z_SPE)
-    
-    r_values[[j]] <- cor(SPE_half_1, SPE_half_2, method = "pearson")
-}
-
-  # Calculate the mean of the Pearson correlation coefficients
-  r_values_vector <- unlist(r_values)
-  r <- mean(r_values_vector)
-  CI <- quantile(r_values_vector, c(0.025, 0.975))
-  print(paste("Permutated Split-half reliability:", round(r, 7)))
-  print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
-  
-  plot.SHR.MC[6,1] <- "ezDDM_z"
-  plot.SHR.MC[6,2] <- r
-  plot.SHR.MC[6,3] <- CI[1]
-  plot.SHR.MC[6,4] <- CI[2]
-  
-  rm(CI, r, j, r_values_vector, r_values, SPE_half_1, SPE_half_2)
-```
-
-```{r Clean Head of DF}
-plot.SHR.MC <- plot.SHR.MC
-```
-
-### Plot SHR
-```{r Code for Plot SHR, message= FALSE, warning = FALSE}
-plot.SHR.MC$SPE_type<- factor(plot.SHR.MC$SPE_type, levels = c("RT", "ACC", "Dprime", "Eff", "ezDDM_v", "ezDDM_z"))
-
-ggplot(plot.SHR.MC, aes(x = SPE_type, y = SH_r, color = SPE_type), width = 6, height = 6) +
-  geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1) +
-  geom_line() +
-  coord_flip() + #flips the x and y axes of a plot
-  labs(y = "Monte Carlo-based Split-Half Reliability", x = "SPE_Type") +
-  scale_x_discrete() +
-  scale_y_continuous(limits = c(-0.4, 1), 
-                     sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
-                                             labels = c("unacceptable", "poor",
-                                                         "acceptable", "excellent")),
-                                             breaks = seq(-0.4,1,by = 0.1)) +
-  geom_hline(yintercept = 0, linetype = "dotted", color = "black") + #add dotted line
-  geom_hline(yintercept = 0.5, linetype = "dotted", color = "black") +
-  geom_hline(yintercept = 0.7, linetype = "dotted", color = "black") +
-  geom_hline(yintercept = 1, linetype = "dotted", color = "black") +
-  geom_point() +
-  theme_bw() +
-  theme(text = element_text(size = 20),
-        axis.text.x = element_text(size = 15),
-        axis.text.y = element_text(size = 25),
-        axis.title = element_text(size = 30),
-        plot.title = element_text(size = 24),
-        legend.key.size = unit(2, "cm"), 
-        legend.text = element_text(size = 20),
-        legend.title = element_blank(),
-        legend.position = "top",
-        panel.grid = element_blank(),#hide the line in background
-        strip.background = element_rect(color="black", fill="white", 
-                                        size=1))  +
-  guides(fill = guide_none(), color = guide_none()) #hide legend
-
-ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure2_SPE_SHR.png", width = 9, height = 10)
-```
-
---------------------------------------------------------------------------------
-
-## Others (First-Second, Odd-Even, Permuted)
-
-### Calculation for Other Split
-```{r Split Tool}
-  split_tool <- function(df.split, method) {
-
-  # Set the seed to fix the output value
-  set.seed(123)
-
-  # Scientific notation
-  options(scipen = 999)
-
-  # Stratify the data by Match and Identity
-  split_data <- split(df.split,list(df.split$Subject, df.split$Session,
-                                    df.split$Match, df.split$Identity))
-
-  # Initialize empty lists to store the split-half data sets
-  str_half_split_1 <- list()
-  str_half_split_2 <- list()
-
-    # Calculate the split-half reliability for each group
-    str_half_split <- lapply(split_data, function(x) {
-      
-      # Remove rows with missing values 
-      data <- x[complete.cases(x),]
-
-      
-      if(method == "permuted") {
-        # Permute the rows of the data and split it into two halves
-        permuted_data <- data[sample(nrow(data)),]
-        half_split_1 <- permuted_data[1:floor(nrow(permuted_data)/2),]
-        half_split_2 <- permuted_data[(floor(nrow(permuted_data)/2)+1):nrow(permuted_data),]
-      }
-      else if(method == "fs") {
-        # Split the data into two subsets using a first-second split
-        half_split_1 <- data[1:floor(nrow(data)/2),]
-        half_split_2 <- data[(floor(nrow(data)/2)+1):nrow(data),]  
-      }
-      else {
-        # Create a vector of row indices
-        row_indices <- seq(1, nrow(data))
-        # Select the odd-numbered indices for one split-half group
-        half_split_1 <- data[row_indices %% 2 == 1, ]
-        # Select the even-numbered indices for the other split-half group
-        half_split_2 <- data[row_indices %% 2 == 0, ]
-      }
-      
-    # Get the minimum number of rows between the two data sets
-    min_rows <- min(nrow(half_split_1), nrow(half_split_2))
-
-    # Subset both data sets to use the same number of rows
-    half_split_1 <- half_split_1[1:min_rows,]
-    half_split_2 <- half_split_2[1:min_rows,]
-
-    # Return the split-half data sets
-    return(list(half_split_1, half_split_2))
-      })
-
-  # Combine the split-half data sets from all groups
-  str_half_split_1 <- do.call(rbind, lapply(str_half_split, "[[", 1))
-  str_half_split_2 <- do.call(rbind, lapply(str_half_split, "[[", 2))
-
-  split_list <- list(str_half_split_1, str_half_split_2)
-  
-  return(split_list)
-}
-```
-
-```{r list.SHR.Others <- Null}
-  list.SHR.Others <- vector("list", 3)
-```
-
-### 6 Parameters SHR r[CI] (RT, ACC, Dprime, Efficiency, DDM: z, DDM: z)
-```{r list.SHR.Others <- list.SHR.FS, list.SHR.OD, list.SHR.Per}
-list.SHR.Per <- split_tool(df.split = df.clean, method = "permuted")
-list.SHR.FS <- split_tool(df.split = df.clean, method = "fs")
-list.SHR.OD <- split_tool(df.split = df.clean, method = "od")
-list.SHR.Others <- list(list.SHR.FS, list.SHR.OD, list.SHR.Per)
-```
-
-```{r NULL DF for Other Split-Half Reliability}
-df.SHR.Other <- data.table(SPE_type = character(18),
-                           SH_type = rep(c("First-Second", "Odd-Even", "Permuted"), times = 6),
-                           SH_r = numeric(18))
-```
-
-```{r SHR.Other of RT, message=FALSE}
-for(j in 1:length(list.SHR.Others)) {  
-  SPE_half_1 <- list.SHR.Others[[j]][[1]] %>%
-    dplyr::filter(.,Match == "Match", ACC == "1") %>%
-    dplyr::group_by(Subject, Session, Identity) %>%
-    dplyr::summarise(mean_rt = mean(RT_ms)) %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by(Subject, Session) %>%
-    tidyr::pivot_wider(names_from = Identity,
-                       values_from = mean_rt) %>%
-    dplyr::summarise(rt_1_SPE = Self - (Stranger + Friend) / 2) %>% # mean rt of self-match - mean rt of other-match
-    dplyr::ungroup() %>%
-    dplyr::select(rt_1_SPE) 
-    
-  SPE_half_2 <- list.SHR.Others[[j]][[2]] %>%
-    dplyr::filter(.,Match == "Match", ACC == "1") %>%
-    dplyr::group_by(Subject, Session, Identity) %>%
-    dplyr::summarise(mean_rt = mean(RT_ms)) %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by(Subject, Session) %>%
-    tidyr::pivot_wider(names_from = Identity,
-                       values_from = mean_rt) %>%
-    dplyr::summarise(rt_1_SPE = Self - (Stranger + Friend) / 2) %>% # mean rt of self-match - mean rt of other-match
-    dplyr::ungroup() %>%
-    dplyr::select(rt_1_SPE) 
-    
-    r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
-
-
-  df.SHR.Other[j,1] <- "RT"
-  df.SHR.Other[j,3] <- r_value
-}
-  
-  rm(j, r_value, SPE_half_1, SPE_half_2)
-```
-
-```{r SHR.Other of ACC, message=FALSE}
-for(j in 1:length(list.SHR.Others)) {  
-    SPE_half_1 <- list.SHR.Others[[j]][[1]] %>%
-      dplyr::filter(.,Match == "Match") %>%   
-      dplyr::group_by(Subject,Session,Identity)%>% 
-      dplyr::summarise(acc = mean(ACC))%>% 
-      dplyr::ungroup() %>% 
-      dplyr::group_by(Subject,Session) %>%
-      tidyr::pivot_wider(names_from = Identity, 
-                                      values_from = acc) %>%
-      dplyr::summarise(acc_SPE = Self - (Stranger + Friend)/2) %>%
-      dplyr::ungroup() %>%
-      dplyr::select(acc_SPE)
-    
-  SPE_half_2 <- list.SHR.Others[[j]][[2]] %>%
-      dplyr::filter(.,Match == "Match") %>%   
-      dplyr::group_by(Subject,Session,Identity)%>% 
-      dplyr::summarise(acc = mean(ACC))%>% 
-      dplyr::ungroup() %>% 
-      dplyr::group_by(Subject,Session) %>%
-      tidyr::pivot_wider(names_from = Identity, 
-                                      values_from = acc) %>%
-      dplyr::summarise(acc_SPE = Self - (Stranger + Friend)/2) %>%
-      dplyr::ungroup() %>%
-      dplyr::select(acc_SPE)
-    
-    r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
-
-
-  df.SHR.Other[j+3,1] <- "ACC"
-  df.SHR.Other[j+3,3] <- r_value
-}
-  
-  rm(j, r_value, SPE_half_1, SPE_half_2)
-```
-
-```{r SHR.Other of Dprime, message=FALSE}
-for(j in 1:length(list.SHR.Others)) {  
-    SPE_half_1 <- list.SHR.Others[[j]][[1]] %>%
-    dplyr::group_by(Subject,Session,Identity) %>% 
-    dplyr::summarise(
-      hit = length(ACC[Match == "Match" & ACC == 1]),
-      fa = length(ACC[Match == "Nonmatch" & ACC == 0]),
-      miss = length(ACC[Match == "Match" & ACC == 0]),
-      cr = length(ACC[Match == "Nonmatch" & ACC == 1]),
-      Dprime = qnorm(
-        ifelse(hit / (hit + miss) < 1,
-               hit / (hit + miss),
-               1 - 1 / (2 * (hit + miss))
-              )
-           ) - qnorm(
-        ifelse(fa / (fa + cr) > 0,
-               fa / (fa + cr),
-               1 / (2 * (fa + cr))
-              )
-                    )) %>% 
-    dplyr::ungroup() %>%
-    select(-"hit",-"fa",-"miss",-"cr") %>%
-    dplyr::group_by(Subject, Session)  %>%
-    tidyr::pivot_wider(names_from = Identity,
-                     values_from = Dprime) %>%
-    dplyr::summarise(dprime_SPE = Self - (Stranger + Friend) / 2) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(dprime_SPE)
-    
-  SPE_half_2 <- list.SHR.Others[[j]][[2]] %>%
-    dplyr::group_by(Subject,Session,Identity) %>% 
-    dplyr::summarise(
-      hit = length(ACC[Match == "Match" & ACC == 1]),
-      fa = length(ACC[Match == "Nonmatch" & ACC == 0]),
-      miss = length(ACC[Match == "Match" & ACC == 0]),
-      cr = length(ACC[Match == "Nonmatch" & ACC == 1]),
-      Dprime = qnorm(
-        ifelse(hit / (hit + miss) < 1,
-               hit / (hit + miss),
-               1 - 1 / (2 * (hit + miss))
-              )
-           ) - qnorm(
-        ifelse(fa / (fa + cr) > 0,
-               fa / (fa + cr),
-               1 / (2 * (fa + cr))
-              )
-                    )) %>% 
-    dplyr::ungroup() %>%
-    select(-"hit",-"fa",-"miss",-"cr") %>%
-    dplyr::group_by(Subject, Session)  %>%
-    tidyr::pivot_wider(names_from = Identity,
-                     values_from = Dprime) %>%
-    dplyr::summarise(dprime_SPE = Self - (Stranger + Friend) / 2) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(dprime_SPE)
-    
-    r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
-
-
-  df.SHR.Other[j+6,1] <- "Dprime"
-  df.SHR.Other[j+6,3] <- r_value
-}
-  
-  rm(j, r_value, SPE_half_1, SPE_half_2)
-```
-
-```{r SHR.Other of Efficiency, message=FALSE}
-for(j in 1:length(list.SHR.Others)) {  
-    SPE_half_1 <- list.SHR.Others[[j]][[1]] %>%
-    dplyr::group_by(Subject, Identity, Match, Session) %>% 
-    dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% 
-    dplyr::ungroup() %>%
-    dplyr::group_by(Subject, Session) %>%
-    tidyr::pivot_wider(names_from = Identity,
-                       values_from = Eff) %>%
-    dplyr::summarise(eff_SPE = Self - (Stranger + Friend) / 2) %>% 
-    dplyr::ungroup() %>%
-    dplyr::select(eff_SPE)
-    
-  SPE_half_2 <- list.SHR.Others[[j]][[2]] %>%
-    dplyr::group_by(Subject, Identity, Match, Session) %>% 
-    dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% 
-    dplyr::ungroup() %>%
-    dplyr::group_by(Subject, Session) %>%
-    tidyr::pivot_wider(names_from = Identity,
-                       values_from = Eff) %>%
-    dplyr::summarise(eff_SPE = Self - (Stranger + Friend) / 2) %>% 
-    dplyr::ungroup() %>%
-    dplyr::select(eff_SPE)
-    
-    r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
-
-
-  df.SHR.Other[j+9,1] <- "Efficiency"
-  df.SHR.Other[j+9,3] <- r_value
-}
-  
-  rm(j, r_value, SPE_half_1, SPE_half_2)
-```
-
-```{r SHR.Other of DDM: v, message=FALSE}
-for(j in 1:length(list.SHR.Others)) {  
-  SPE_half_1 <- list.SHR.Others[[j]][[1]] %>%
-    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
-    dplyr::select(Subject, Session, Match, Identity, v) %>%
-    dplyr::filter(Match == "Match") %>% 
-    dplyr::group_by(Subject, Session) %>% 
-    tidyr::pivot_wider(names_from = Identity,
-                      values_from = v) %>% 
-    dplyr::summarise(v_SPE = Self - (Stranger + Friend) / 2) %>% 
-    ungroup() %>%
-    dplyr::select(v_SPE)
-    
-  SPE_half_2 <- list.SHR.Others[[j]][[2]] %>%
-    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
-    dplyr::select(Subject, Session, Match, Identity, v) %>%
-    dplyr::filter(Match == "Match") %>% 
-    dplyr::group_by(Subject, Session) %>% 
-    tidyr::pivot_wider(names_from = Identity,
-                      values_from = v) %>% 
-    dplyr::summarise(v_SPE = Self - (Stranger + Friend) / 2) %>% 
-    ungroup() %>%
-    dplyr::select(v_SPE)
-    
-    r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
-
-
-  df.SHR.Other[j+12,1] <- "DDM: v"
-  df.SHR.Other[j+12,3] <- r_value
-}
-  
-  rm(j, r_value, SPE_half_1, SPE_half_2)
-```
-
-```{r SHR.Other of DDM: z, message=FALSE}
-for(j in 1:length(list.SHR.Others)) {  
-  SPE_half_1 <- list.SHR.Others[[j]][[1]] %>%
-      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
-      dplyr::mutate(., z = a/v) %>%
-      dplyr::select(Subject, Session, Match, Identity, z) %>%
-      dplyr::filter(Match == "Match") %>% 
-      dplyr::group_by(Subject, Session) %>% 
-      tidyr::pivot_wider(names_from = Identity,
-                         values_from = z) %>% 
-      dplyr::summarise(z_SPE = Self - (Stranger + Friend) / 2) %>% 
-      ungroup() %>%
-      dplyr::select(z_SPE)
-    
-  SPE_half_2 <- list.SHR.Others[[j]][[2]] %>%
-      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
-      dplyr::mutate(., z = a/v) %>%
-      dplyr::select(Subject, Session, Match, Identity, z) %>%
-      dplyr::filter(Match == "Match") %>% 
-      dplyr::group_by(Subject, Session) %>% 
-      tidyr::pivot_wider(names_from = Identity,
-                         values_from = z) %>% 
-      dplyr::summarise(z_SPE = Self - (Stranger + Friend) / 2) %>% 
-      ungroup() %>%
-      dplyr::select(z_SPE)
-    
-    r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
-
-
-  df.SHR.Other[j+15,1] <- "DDM: z"
-  df.SHR.Other[j+15,3] <- r_value
-}
-  
-  rm(j, r_value, SPE_half_1, SPE_half_2)
-```
-
-### Save df.SHR.Other
-```{r Save df.SHR.Other}
-write.csv(df.SHR.Other, "../1_2_Planned_Analysis/1_2_2_OUTPUT/Supplementary_Table_1.csv", row.names = FALSE)
-```
-
---------------------------------------------------------------------------------
-
-# Descriptive Statistics
-```{r Descriptive Statistics}
-options(scipen = 999)
-
-# 对每个子list进行操作，计算平均值和标准差
-df.list <- lapply(list.ICC, function(x) {
-  x %>%
-    summarize_all(list(mean = mean, sd = sd))
-})
-
-# 将结果绑定到一个新的数据框df.dsc中
-df.dsc <- do.call(rbind, df.list) %>%
-  dplyr::select(.,"1_mean","1_sd","2_mean","2_sd","3_mean","3_sd",
-                  "4_mean","4_sd","5_mean","5_sd","6_mean","6_sd")
-
-write.csv(df.dsc, "../1_2_Planned_Analysis/1_2_2_OUTPUT/Table_1.csv", row.names = TRUE)
-rm(df.list)
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
