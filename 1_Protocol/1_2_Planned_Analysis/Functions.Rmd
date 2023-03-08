@@ -65,15 +65,16 @@ return(split_list)
 ```
 
 ```{r mcshrgener}
-mcshrgener <- function(df.split, iteration, nc) {
+mcshrgener <- function(df.split, iteration, nc, sub, var1, var2, var3) {
   # Scientific notation
   options(scipen = 999)
-
+  
   # Convert data.frame to data.table
   setDT(df.split)
 
   # Stratify the data by Match and Identity
-  split_data <- split(df.split, list(df.split$Subject, df.split$Session, df.split$Match, df.split$Identity))
+  split_data <- split(df.split, list(df.split[[sub]], df.split[[var1]], 
+                                     df.split[[var2]], df.split[[var3]]))
 
   # Initialize a vector to store the Pearson correlation coefficients
   split_list <- vector("list", iteration)
@@ -180,9 +181,9 @@ mcshr_rt <- function(list, nc) {
   plot.SHR.MC[1,3] <<- CI[1]
   plot.SHR.MC[1,4] <<- CI[2]
   
-  print(paste("Estimated Indece is Reaction Time"))
-  print(paste("Monte-Carlo Split-Half Reliability:", round(r, 7)))
-  print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
+  cat("Estimated Indece: Reaction Time\n")
+  cat("Monte-Carlo Split-Half Reliability:", round(r, 7), "\n")
+  cat("95% CI:", paste(round(CI, 7), collapse=", "))
 }
 
 ```
@@ -235,9 +236,9 @@ mcshr_acc <- function(list, nc) {
   plot.SHR.MC[2,3] <<- CI[1]
   plot.SHR.MC[2,4] <<- CI[2]
   
-  print(paste("Estimated Indece is Accuracy"))
-  print(paste("Monte-Carlo Split-Half Reliability:", round(r, 7)))
-  print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
+  cat("Estimated Indece: Accuracy\n")
+  cat("Monte-Carlo Split-Half Reliability:", round(r, 7), "\n")
+  cat("95% CI:", paste(round(CI, 7), collapse=", "))
 }
 ```
 
@@ -319,9 +320,9 @@ mcshr_d <- function(list, nc) {
   plot.SHR.MC[3,3] <<- CI[1]
   plot.SHR.MC[3,4] <<- CI[2]
   
-  print(paste("Estimated Indece is d prime"))
-  print(paste("Monte-Carlo Split-Half Reliability:", round(r, 7)))
-  print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
+  cat("Estimated Indece: d prime\n")
+  cat("Monte-Carlo Split-Half Reliability:", round(r, 7), "\n")
+  cat("95% CI:", paste(round(CI, 7), collapse=", "))
 }
 ```
 
@@ -371,10 +372,9 @@ mcshr_eff <- function(list, nc) {
   plot.SHR.MC[4,3] <<- CI[1]
   plot.SHR.MC[4,4] <<- CI[2]
   
-  print(paste("Estimated Indece is Efficiency"))
-  print(paste("Monte-Carlo Split-Half Reliability:", round(r, 7)))
-  print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
-
+  cat("Estimated Indece: Efficiency\n")
+  cat("Monte-Carlo Split-Half Reliability:", round(r, 7), "\n")
+  cat("95% CI:", paste(round(CI, 7), collapse=", "))
 }
 ```
 
@@ -424,9 +424,9 @@ mcshr_ddmv <- function(list, nc) {
   plot.SHR.MC[5,3] <<- CI[1]
   plot.SHR.MC[5,4] <<- CI[2]
   
-  print(paste("Estimated Indece is DDM: v"))
-  print(paste("Monte-Carlo Split-Half Reliability:", round(r, 7)))
-  print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
+  cat("Estimated Indece: DDM: v\n")
+  cat("Monte-Carlo Split-Half Reliability:", round(r, 7), "\n")
+  cat("95% CI:", paste(round(CI, 7), collapse=", "))
 }
 ```
 
@@ -478,9 +478,9 @@ mcshr_ddmz <- function(list, nc) {
   plot.SHR.MC[6,3] <<- CI[1]
   plot.SHR.MC[6,4] <<- CI[2]
   
-  print(paste("Estimated Indece is DDM: z"))
-  print(paste("Monte-Carlo Split-Half Reliability:", round(r, 7)))
-  print(paste("95% CI:", paste(round(CI, 7), collapse=", ")))
+  cat("Estimated Indece: DDM: z\n")
+  cat("Monte-Carlo Split-Half Reliability:", round(r, 7), "\n")
+  cat("95% CI:", paste(round(CI, 7), collapse=", "))
 
 }
 ```

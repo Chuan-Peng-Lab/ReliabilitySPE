@@ -7,34 +7,33 @@ output: html_document
 # Preparation
 ## Library Packages
 ```{r used pacakge, include=FALSE}
-#import used package
+# wd
+library(here)
+# clean data
 library(tidyr)
 library(dplyr)
-library(ggplot2)
-library(psych)
-library(here)
-
 # More efficient
 library(data.table)
-
+# for ICC
+library(psych)
 # ezDDM
 library(hausekeep) 
-
+# plot
+library(ggplot2)
 # Parallel Computing
+library(foreach)
 library(parallel)
 library(doParallel)
-library(foreach)
 ```
 
 ## Set Working Directory
 ```{r Set Working Directory}
 WD <-  here::here()
-knitr::opts_knit$set(root.dir = 'cur_dir')
 getwd()
 ```
 
 ## Import and Clean Raw_Data
-```{r df.clean <- df.raw}
+```{r Pilot Data df.clean <- df.raw}
 # Import Pilot Data(Simulated Data)
 df.raw <-  read.csv('../1_2_Planned_Analysis/1_2_1_DATA/simulated_data.csv',header = T, sep=",", stringsAsFactors = FALSE) 
 df.clean <- df.raw %>% 
@@ -42,8 +41,8 @@ df.clean <- df.raw %>%
   dplyr::filter(Trialtype == "exp") %>%           # filter experiment trials
   dplyr::filter(!(RT <= 0.2 & RT >= 1.5 )) %>%    # only need 1500ms >RT >200ms
   dplyr::mutate(RT_sec = RT, RT_ms = RT*1000, Match = Matchness) %>%
-  dplyr::select(Subject, Session, Match, Identity, RT_ms, RT_sec, ACC) %>%
-  dplyr::mutate_at(vars(Subject, Session, Match, Identity), as.factor)
+  dplyr::select(Subject, Match, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate_at(vars(Subject, Match, Identity, Session), as.factor)
 ```
 
 --------------------------------------------------------------------------------
@@ -63,7 +62,8 @@ list.SHR.MC <- mcshrgener_st(df.split = df.clean, iteration = 10)
 ```
 
 ```{r Monte Carlo Split Generator multiple thread}
-list.SHR.MC.para <- mcshrgener(df.split = df.clean, iteration = 10, num_cores = 16)
+list.SHR.MC.para <- mcshrgener(df.split = df.clean, iteration = 10, nc = 16, 
+                               sub = "Subject", var1 = "Match", var2 = "Identity", var3 = "Session")
 # iteration = 100
 # user      system    elapsed 
 # 4.99      1.59      42.42 
@@ -79,27 +79,12 @@ plot.SHR.MC <- data.table(SPE_type = character(6),
 ```
 
 ### Parallel Funcion
-```{r SHR.MC of RT, message=FALSE, warning=FALSE}
+```{r Monte-Carlo Split-Half Reliability, message=FALSE, warning=FALSE}
 mcshr(list = list.SHR.MC.para, nc = 16, indice = "rt")
-```
-
-```{r SHR.MC of ACC, message=FALSE, warning=FALSE}
 mcshr(list = list.SHR.MC.para, nc = 16, indice = "acc")
-```
-
-```{r SHR.MC of Dprime, message=FALSE, warning=FALSE}
 mcshr(list = list.SHR.MC.para, nc = 16, indice = "d")
-```
-
-```{r SHR.MC of Efficiency, message=FALSE, warning=FALSE}
 mcshr(list = list.SHR.MC.para, nc = 16, indice = "eff")
-```
-
-```{r SHR.MC of DDM: v, message=FALSE, warning=FALSE}
 mcshr(list = list.SHR.MC.para, nc = 16, indice = "ddmv")
-```
-
-```{r SHR.MC of DDM: z, message=FALSE, warning=FALSE}
 mcshr(list = list.SHR.MC.para, nc = 16, indice = "ddmz")
 ```
 
@@ -145,16 +130,13 @@ ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure1_SPE_SHR.png", widt
 
 ## Others (First-Second, Odd-Even, Permuted)
 
-### Calculation for Other Split
-```{r list.SHR.Others <- Null}
-list.SHR.Others <- vector("list", 3)
-```
-
 ### 6 Parameters SHR r[CI] (RT, ACC, Dprime, Efficiency, DDM: z, DDM: z)
 ```{r list.SHR.Others <- list.SHR.FS, list.SHR.OD, list.SHR.Per}
 list.SHR.Per <- split_tool(df.split = df.clean, method = "permuted")
 list.SHR.FS <- split_tool(df.split = df.clean, method = "fs")
 list.SHR.OD <- split_tool(df.split = df.clean, method = "od")
+
+list.SHR.Others <- vector("list", 3)
 list.SHR.Others <- list(list.SHR.FS, list.SHR.OD, list.SHR.Per)
 ```
 
