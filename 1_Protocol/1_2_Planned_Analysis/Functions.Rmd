@@ -64,7 +64,7 @@ return(split_list)
 
 ```
 
-```{r mcshrgener}
+```{r mcshrgener_mt}
 mcshrgener <- function(df.split, iteration, nc, sub, var1, var2, var3) {
   # Scientific notation
   options(scipen = 999)

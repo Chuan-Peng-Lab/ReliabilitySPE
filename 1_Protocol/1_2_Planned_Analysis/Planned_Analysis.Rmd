@@ -93,27 +93,30 @@ mcshr(list = list.SHR.MC.para, nc = 16, indice = "ddmz")
 plot.SHR.MC$SPE_type<- factor(plot.SHR.MC$SPE_type, levels = c("RT", "ACC", "Dprime", "Eff", "ezDDM_v", "ezDDM_z"))
 
 ggplot(plot.SHR.MC, aes(x = SPE_type, y = SH_r, color = SPE_type), width = 6, height = 6) +
-  geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1) +
+  geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1, size = 2) +
   geom_line() +
+  geom_point(size = 5) +
   coord_flip() + #flips the x and y axes of a plot
-  labs(y = "Monte Carlo-based Split-Half Reliability", x = "SPE_Type") +
+  theme(axis.title.x = element_text(margin = margin(t = 20))) +
   scale_x_discrete() +
   scale_y_continuous(limits = c(-0.4, 1), 
                      sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
                                              labels = c("unacceptable", "poor",
                                                          "acceptable", "excellent")),
                                              breaks = seq(-0.4,1,by = 0.1)) +
-  geom_hline(yintercept = 0, linetype = "dotted", color = "black") + #add dotted line
-  geom_hline(yintercept = 0.5, linetype = "dotted", color = "black") +
-  geom_hline(yintercept = 0.7, linetype = "dotted", color = "black") +
-  geom_hline(yintercept = 1, linetype = "dotted", color = "black") +
-  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1) + #add dotted line
+  geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1) +
+  geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1) +
+  geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1) +
   theme_bw() +
+  labs(y = "Monte Carlo-based Split-Half Reliability", x = "Indices") +
   theme(text = element_text(size = 20),
-        axis.text.x = element_text(size = 15),
-        axis.text.y = element_text(size = 25),
-        axis.title = element_text(size = 30),
-        plot.title = element_text(size = 24),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20),
+        axis.title = element_text(size = 25),
+        axis.title.x = element_text(margin = margin(t = 20)),
+        axis.title.y = element_text(margin = margin(t = 10)),
+        plot.margin = unit(c(1,1,1,1), "cm"),
         legend.key.size = unit(2, "cm"), 
         legend.text = element_text(size = 20),
         legend.title = element_blank(),
@@ -123,7 +126,7 @@ ggplot(plot.SHR.MC, aes(x = SPE_type, y = SH_r, color = SPE_type), width = 6, he
                                         size=1))  +
   guides(fill = guide_none(), color = guide_none()) #hide legend
 
-ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure1_SPE_SHR.png", width = 9, height = 10)
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure1_SPE_SHR.png", width = 15, height = 10)
 ```
 
 --------------------------------------------------------------------------------
@@ -297,28 +300,31 @@ plot.ICC <- ICC_calculation(SPE_ICC = list.ICC) %>%
 ## Plot ICC
 ```{r Code for Plot ICC, message= FALSE, warning = FALSE}
 ggplot(plot.ICC, aes(x = ICC_type, y = ICC, color = ICC_type), width = 12, height = 8) +
-  geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1) +
+  geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1, size = 2) +
   geom_line() +
-  facet_wrap(~ type, scales = "free_x", strip.position = "top") + 
+  geom_point(size = 5) +
+  facet_wrap(~ type, scales = "free_x", strip.position = "top", nrow = 2, dir = "v") + 
   coord_flip() + #flips the x and y axes of a plot
-  labs(y = "ICC", x = "Parameter") +
   scale_x_discrete() +
   scale_y_continuous(limits = c(-0.4, 1), 
                      sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
                                              labels = c("unacceptable", "poor",
                                                          "acceptable", "excellent")),
                                              breaks = seq(-0.4,1,by = 0.1)) +
-  geom_hline(yintercept = 0, linetype = "dotted", color = "black") + #add dotted line
-  geom_hline(yintercept = 0.5, linetype = "dotted", color = "black") +
-  geom_hline(yintercept = 0.7, linetype = "dotted", color = "black") +
-  geom_hline(yintercept = 1, linetype = "dotted", color = "black") +
-  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1) + #add dotted line
+  geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1) +
+  geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1) +
+  geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1) +
   theme_bw() +
+  labs(y = "Intraclass Correlation Coefficient", x = "Indices") +
   theme(text = element_text(size = 20),
-        axis.text.x = element_text(size = 15),
-        axis.text.y = element_text(size = 25),
-        axis.title = element_text(size = 30),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20),
+        axis.title = element_text(size = 25),
+        axis.title.x = element_text(margin = margin(t = 20)),
+        axis.title.y = element_text(margin = margin(t = 10)),
         plot.title = element_text(size = 24),
+        plot.margin = unit(c(1,1,1,1), "cm"),
         legend.key.size = unit(2, "cm"), 
         legend.text = element_text(size = 20),
         legend.title = element_blank(),
@@ -327,7 +333,7 @@ ggplot(plot.ICC, aes(x = ICC_type, y = ICC, color = ICC_type), width = 12, heigh
         strip.background = element_rect(color="black", fill="white", 
                                         size=1))  +
   guides(fill = guide_none(), color = guide_none())  #hide legend
-ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure2_SPE_ICC.png", width = 18, height = 10)
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure2_SPE_ICC.png", width = 15, height = 20)
 ```
 
 --------------------------------------------------------------------------------
