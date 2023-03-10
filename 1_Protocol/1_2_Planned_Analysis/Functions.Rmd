@@ -367,7 +367,7 @@ mcshr_eff <- function(list, nc) {
   r <- mean(r_values_vector)
   CI <- quantile(r_values_vector, c(0.025, 0.975))
 
-  plot.SHR.MC[4,1] <<- "Eff"
+  plot.SHR.MC[4,1] <<- "Efficiency"
   plot.SHR.MC[4,2] <<- r
   plot.SHR.MC[4,3] <<- CI[1]
   plot.SHR.MC[4,4] <<- CI[2]
