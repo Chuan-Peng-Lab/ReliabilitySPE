@@ -1,4 +1,4 @@
-ExperimentName,Subject,Age,Handedness,Sex,Block,Bed,corr[Block],form[Block],Procedure[Block],Bed[Trial],corr[Trial],form[Trial],Label[Trial],MT4.ACC,MT4.RT,Procedure[Trial],RPresponseExp.ACC,RPresponseExp.RT,target,TargetAss,Slide2.ACC,Slide2.RT,PrimeAss
+ExperimentName,Subject,Age,Handedness,Sex,Block,Bed,corr[Block],form[Block],Procedure[Block],Match,corr[Trial],form[Trial],Label[Trial],MT4.ACC,MT4.RT,Procedure,ACC,RT,target,Identity,Slide2.ACC,Slide2.RT,PrimeAss
 RP_Personenaufg,1,19,right,female,1,in,s,,Mprac,,,,,,,,,,,,,,
 RP_Personenaufg,1,19,right,female,2,mn,s,,Mprac,,,,,,,,,,,,,,
 RP_Personenaufg,1,19,right,female,3,mn,s,,Mprac,,,,,,,,,,,,,,
