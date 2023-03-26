@@ -10,6 +10,7 @@ library(here)
 library(tidyverse)
 ```
 
+
 # Paper 6 
 ## Experiment 1 (Identtiy = 3)
 ```{r Paper 6}
@@ -32,6 +33,7 @@ df.P6 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_6/RawData.csv") %>%
                 Identity = ifelse(Identity == "P1", "Self", ifelse(Identity == "P2", "Friend", Identity)),
                 Session = ifelse(Session == "Top", 1, ifelse(Session == "Bottom", 2, Session)))
 ```
+
 
 # Paper 51 
 ## Experiment 1 (Identtiy = 3)
@@ -86,6 +88,7 @@ df.P51.E2 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_51/51_exp_2.csv"
     dplyr::arrange(Subject, Match, Identity)
 ```
 
+
 # Paper 54 
 ## Experiment 1 (Identtiy = 3)
 ```{r Paper 54 Experiment 1}
@@ -108,6 +111,7 @@ df.P54.E1 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_54/54_exp_1.csv"
     dplyr::arrange(Subject, Match, Identity)
 ```
 
+## Experiment 3 (Identtiy = 3)
 ```{r Paper 54 Experiment 3}
 df.P54.E3 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_54/54_exp_3.csv") %>%
   dplyr::filter(.,Procedure == "RPproc",
@@ -126,5 +130,104 @@ df.P54.E3 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_54/54_exp_3.csv"
     dplyr::filter(RT_ms >= 200 & RT_ms <= 1500) %>%
     dplyr::arrange(Subject, Match, Identity)
 ```
+
+
+# Paper n4
+## Experiment 1 (Identtiy = 3)
+```{r Paper n4 Experiment 1}
+df.Pn4.E1 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n4/n4_exp_1.csv") %>%
+  dplyr::mutate(.,Subject = as.numeric(subject),
+                  Match = case_when(type == "match" ~ "Match",
+                                    type == "nonmatch" ~ "Nonmatch"),
+                  Match = as.character(Match),
+                  Identity = as.character(shape),
+                  RT_ms = as.numeric(latency),
+                  RT_sec = RT_ms/1000,
+                  ACC = as.numeric(correct)) %>%
+  dplyr::filter(.,RT_ms >= 200 & RT_ms <= 1500,
+                  blocktype == "mixed",
+                  ACC == 1 | ACC == 0) %>%
+  dplyr::select(.,Subject, Match, Identity,
+                  RT_ms, RT_sec, ACC) %>%
+  dplyr::arrange(Subject, Match, Identity)
+```
+
+
+# Paper n16
+## Experiment 1 (Identtiy = 2)
+```{r Paper n16 Experiment 1}
+df.Pn16.E1 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n16/E1_equal.csv") %>%
+    dplyr::mutate(.,Subject = as.numeric(Participant..),
+                    Match = case_when(Trial.Type == "Matching" ~ "Match",
+                                      Trial.Type == "Nonmatching" ~ "Nonmatch"),
+                    Match = as.character(Match),
+                    Identity = as.character(Shape.Association),
+                    RT_ms = as.numeric(Reponse.Time),
+                    RT_sec = RT_ms/1000,
+                    ACC = as.numeric(Target.Accuracy)) %>%
+    dplyr::filter(.,RT_ms >= 200 & RT_ms <= 1500,
+                    ACC == 1 | ACC == 0) %>%
+    dplyr::select(.,Subject, Match, Identity,
+                    RT_ms, RT_sec, ACC) %>%
+    dplyr::arrange(Subject, Match, Identity)
+```
+
+## Experiment 2 (Identtiy = 2)
+```{r Paper n16 Experiment 2}
+df.Pn16.E2 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n16/E2_conf.csv") %>%
+    dplyr::mutate(.,Subject = as.numeric(Participant..),
+                    Match = case_when(Trial.Type == "Matching" ~ "Match",
+                                      Trial.Type == "Nonmatching" ~ "Nonmatch"),
+                    Match = as.character(Match),
+                    Identity = as.character(Shape.Association),
+                    RT_ms = as.numeric(Response.Time),
+                    RT_sec = RT_ms/1000,
+                    ACC = as.numeric(Target.Accuracy)) %>%
+    dplyr::filter(.,RT_ms >= 200 & RT_ms <= 1500,
+                    ACC == 1 | ACC == 0) %>%
+    dplyr::select(.,Subject, Match, Identity,
+                    RT_ms, RT_sec, ACC) %>%
+    dplyr::arrange(Subject, Match, Identity)
+```
+
+## Experiment 3 (Identtiy = 2)
+```{r Paper n16 Experiment 3}
+df.Pn16.E3 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n16/E3_disconf.csv") %>%
+    dplyr::mutate(.,Subject = as.numeric(Participant..),
+                    Match = case_when(Trial.Type == "Matching" ~ "Match",
+                                      Trial.Type == "Nonmatching" ~ "Nonmatch"),
+                    Match = as.character(Match),
+                    Identity = as.character(Shape.Association),
+                    RT_ms = as.numeric(Response.Time),
+                    RT_sec = RT_ms/1000,
+                    ACC = as.numeric(Target.Accuracy)) %>%
+    dplyr::filter(.,RT_ms >= 200 & RT_ms <= 1500,
+                    ACC == 1 | ACC == 0) %>%
+    dplyr::select(.,Subject, Match, Identity,
+                    RT_ms, RT_sec, ACC) %>%
+    dplyr::arrange(Subject, Match, Identity)
+```
+
+
+# Paper n23
+## Experiment 1 (Identtiy = 3)
+```{r Paper n23 Experiment 1}
+df.Pn23.E1 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n23/SALT_guan.csv") %>%
+    dplyr::mutate(.,Subject = as.numeric(Subject),
+                    Match = case_when(Correctanswer == "j" ~ "Match",
+                                      Correctanswer == "f" ~ "Nonmatch"),
+                    Match = as.character(Match),
+                    Identity = as.character(Shape),
+                    Session = as.numeric(Group),
+                    RT_ms = as.numeric(iti.RT),
+                    RT_sec = RT_ms/1000,
+                    ACC = as.numeric(iti.ACC)) %>%
+    dplyr::filter(.,RT_ms >= 200 & RT_ms <= 1500,
+                    ACC == 1 | ACC == 0) %>%
+    dplyr::select(.,Subject, Match, Identity, Session, 
+                    RT_ms, RT_sec, ACC) %>%
+    dplyr::arrange(Subject, Match, Identity, Session)
+```
+
 
 
