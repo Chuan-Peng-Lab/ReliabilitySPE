@@ -146,24 +146,20 @@ mcshr_rt <- function(list, nc) {
       dplyr::group_by(Subject, Session, Identity) %>%
       dplyr::summarise(mean_rt = mean(RT_ms)) %>%
       dplyr::ungroup() %>%
-      dplyr::group_by(Subject, Session) %>%
       tidyr::pivot_wider(names_from = Identity,
                          values_from = mean_rt) %>%
-      dplyr::summarise(rt_1_SPE = Self - (Stranger + Friend) / 2) %>% # mean rt of self-match - mean rt of other-match
-      dplyr::ungroup() %>%
-      dplyr::select(rt_1_SPE) 
+      dplyr::mutate(rt_1_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
+      dplyr::select(rt_1_SPE)
     
     SPE_half_2 <- list[[j]][[2]] %>%
       dplyr::filter(., Match == "Match", ACC == "1") %>%
       dplyr::group_by(Subject, Session, Identity) %>%
       dplyr::summarise(mean_rt = mean(RT_ms)) %>%
       dplyr::ungroup() %>%
-      dplyr::group_by(Subject, Session) %>%
       tidyr::pivot_wider(names_from = Identity,
                          values_from = mean_rt) %>%
-      dplyr::summarise(rt_1_SPE = Self - (Stranger + Friend) / 2) %>% # mean rt of self-match - mean rt of other-match
-      dplyr::ungroup() %>%
-      dplyr::select(rt_1_SPE) 
+      dplyr::mutate(rt_1_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
+      dplyr::select(rt_1_SPE)
 
     cor(SPE_half_1, SPE_half_2, method = "pearson")
   }
@@ -201,11 +197,9 @@ mcshr_acc <- function(list, nc) {
       dplyr::group_by(Subject,Session,Identity)%>% 
       dplyr::summarise(acc = mean(ACC))%>% 
       dplyr::ungroup() %>% 
-      dplyr::group_by(Subject,Session) %>%
-      tidyr::pivot_wider(names_from = Identity, 
-                                      values_from = acc) %>%
-      dplyr::summarise(acc_SPE = Self - (Stranger + Friend)/2) %>%
-      dplyr::ungroup() %>%
+      tidyr::pivot_wider(names_from = Identity,
+                         values_from = acc) %>%
+      dplyr::mutate(acc_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
       dplyr::select(acc_SPE)
     
   SPE_half_2 <- list[[j]][[2]] %>%
@@ -213,11 +207,9 @@ mcshr_acc <- function(list, nc) {
       dplyr::group_by(Subject,Session,Identity)%>% 
       dplyr::summarise(acc = mean(ACC))%>% 
       dplyr::ungroup() %>% 
-      dplyr::group_by(Subject,Session) %>%
-      tidyr::pivot_wider(names_from = Identity, 
-                                      values_from = acc) %>%
-      dplyr::summarise(acc_SPE = Self - (Stranger + Friend)/2) %>%
-      dplyr::ungroup() %>%
+      tidyr::pivot_wider(names_from = Identity,
+                         values_from = acc) %>%
+      dplyr::mutate(acc_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
       dplyr::select(acc_SPE)
 
     cor(SPE_half_1, SPE_half_2, method = "pearson")
@@ -270,11 +262,9 @@ mcshr_d <- function(list, nc) {
                     )) %>% 
     dplyr::ungroup() %>%
     select(-"hit",-"fa",-"miss",-"cr") %>%
-    dplyr::group_by(Subject, Session)  %>%
     tidyr::pivot_wider(names_from = Identity,
-                     values_from = Dprime) %>%
-    dplyr::summarise(dprime_SPE = Self - (Stranger + Friend) / 2) %>%
-    dplyr::ungroup() %>%
+                       values_from = Dprime) %>%
+    dplyr::mutate(dprime_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
     dplyr::select(dprime_SPE)
     
   SPE_half_2 <- list[[j]][[2]] %>%
@@ -297,11 +287,9 @@ mcshr_d <- function(list, nc) {
                     )) %>% 
     dplyr::ungroup() %>%
     select(-"hit",-"fa",-"miss",-"cr") %>%
-    dplyr::group_by(Subject, Session)  %>%
     tidyr::pivot_wider(names_from = Identity,
-                     values_from = Dprime) %>%
-    dplyr::summarise(dprime_SPE = Self - (Stranger + Friend) / 2) %>%
-    dplyr::ungroup() %>%
+                       values_from = Dprime) %>%
+    dplyr::mutate(dprime_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
     dplyr::select(dprime_SPE)
 
     cor(SPE_half_1, SPE_half_2, method = "pearson")
@@ -334,26 +322,22 @@ mcshr_eff <- function(list, nc) {
 
   r_values <- foreach(j = 1:length(list), .packages = c("dplyr", "tidyr")) %dopar% {
     
-    SPE_half_1 <- list[[j]][[1]] %>%
+  SPE_half_1 <- list[[j]][[1]] %>%
     dplyr::group_by(Subject, Identity, Match, Session) %>% 
     dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% 
     dplyr::ungroup() %>%
-    dplyr::group_by(Subject, Session) %>%
     tidyr::pivot_wider(names_from = Identity,
                        values_from = Eff) %>%
-    dplyr::summarise(eff_SPE = Self - (Stranger + Friend) / 2) %>% 
-    dplyr::ungroup() %>%
+    dplyr::mutate(eff_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
     dplyr::select(eff_SPE)
     
   SPE_half_2 <- list[[j]][[2]] %>%
     dplyr::group_by(Subject, Identity, Match, Session) %>% 
     dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% 
     dplyr::ungroup() %>%
-    dplyr::group_by(Subject, Session) %>%
     tidyr::pivot_wider(names_from = Identity,
                        values_from = Eff) %>%
-    dplyr::summarise(eff_SPE = Self - (Stranger + Friend) / 2) %>% 
-    dplyr::ungroup() %>%
+    dplyr::mutate(eff_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
     dplyr::select(eff_SPE)
 
     cor(SPE_half_1, SPE_half_2, method = "pearson")
@@ -390,22 +374,18 @@ mcshr_ddmv <- function(list, nc) {
     hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
     dplyr::select(Subject, Session, Match, Identity, v) %>%
     dplyr::filter(Match == "Match") %>% 
-    dplyr::group_by(Subject, Session) %>% 
     tidyr::pivot_wider(names_from = Identity,
-                      values_from = v) %>% 
-    dplyr::summarise(v_SPE = Self - (Stranger + Friend) / 2) %>% 
-    ungroup() %>%
+                       values_from = v) %>%
+    dplyr::mutate(v_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
     dplyr::select(v_SPE)
     
   SPE_half_2 <- list[[j]][[2]] %>%
     hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
     dplyr::select(Subject, Session, Match, Identity, v) %>%
     dplyr::filter(Match == "Match") %>% 
-    dplyr::group_by(Subject, Session) %>% 
     tidyr::pivot_wider(names_from = Identity,
-                      values_from = v) %>% 
-    dplyr::summarise(v_SPE = Self - (Stranger + Friend) / 2) %>% 
-    ungroup() %>%
+                       values_from = v) %>%
+    dplyr::mutate(v_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
     dplyr::select(v_SPE)
 
     cor(SPE_half_1, SPE_half_2, method = "pearson")
@@ -443,11 +423,9 @@ mcshr_ddmz <- function(list, nc) {
       dplyr::mutate(., z = a/v) %>%
       dplyr::select(Subject, Session, Match, Identity, z) %>%
       dplyr::filter(Match == "Match") %>% 
-      dplyr::group_by(Subject, Session) %>% 
       tidyr::pivot_wider(names_from = Identity,
-                         values_from = z) %>% 
-      dplyr::summarise(z_SPE = Self - (Stranger + Friend) / 2) %>% 
-      ungroup() %>%
+                         values_from = z) %>%
+      dplyr::mutate(z_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
       dplyr::select(z_SPE)
     
   SPE_half_2 <- list[[j]][[2]] %>%
@@ -455,11 +433,9 @@ mcshr_ddmz <- function(list, nc) {
       dplyr::mutate(., z = a/v) %>%
       dplyr::select(Subject, Session, Match, Identity, z) %>%
       dplyr::filter(Match == "Match") %>% 
-      dplyr::group_by(Subject, Session) %>% 
       tidyr::pivot_wider(names_from = Identity,
-                         values_from = z) %>% 
-      dplyr::summarise(z_SPE = Self - (Stranger + Friend) / 2) %>% 
-      ungroup() %>%
+                         values_from = z) %>%
+      dplyr::mutate(z_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
       dplyr::select(z_SPE)
 
     cor(SPE_half_1, SPE_half_2, method = "pearson")
@@ -580,24 +556,20 @@ shr_rt <- function(list) {
       dplyr::group_by(Subject, Session, Identity) %>%
       dplyr::summarise(mean_rt = mean(RT_ms)) %>%
       dplyr::ungroup() %>%
-      dplyr::group_by(Subject, Session) %>%
       tidyr::pivot_wider(names_from = Identity,
                          values_from = mean_rt) %>%
-      dplyr::summarise(rt_1_SPE = Self - (Stranger + Friend) / 2) %>% # mean rt of self-match - mean rt of other-match
-      dplyr::ungroup() %>%
-      dplyr::select(rt_1_SPE) 
+      dplyr::mutate(rt_1_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
+      dplyr::select(rt_1_SPE)
     
     SPE_half_2 <- list[[j]][[2]] %>%
       dplyr::filter(.,Match == "Match", ACC == "1") %>%
       dplyr::group_by(Subject, Session, Identity) %>%
       dplyr::summarise(mean_rt = mean(RT_ms)) %>%
       dplyr::ungroup() %>%
-      dplyr::group_by(Subject, Session) %>%
       tidyr::pivot_wider(names_from = Identity,
                          values_from = mean_rt) %>%
-      dplyr::summarise(rt_1_SPE = Self - (Stranger + Friend) / 2) %>% # mean rt of self-match - mean rt of other-match
-      dplyr::ungroup() %>%
-      dplyr::select(rt_1_SPE) 
+      dplyr::mutate(rt_1_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
+      dplyr::select(rt_1_SPE)
     
       r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
 
@@ -616,11 +588,9 @@ shr_acc <- function(list) {
         dplyr::group_by(Subject,Session,Identity)%>% 
         dplyr::summarise(acc = mean(ACC))%>% 
         dplyr::ungroup() %>% 
-        dplyr::group_by(Subject,Session) %>%
-        tidyr::pivot_wider(names_from = Identity, 
-                                        values_from = acc) %>%
-        dplyr::summarise(acc_SPE = Self - (Stranger + Friend)/2) %>%
-        dplyr::ungroup() %>%
+        tidyr::pivot_wider(names_from = Identity,
+                           values_from = acc) %>%
+        dplyr::mutate(acc_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
         dplyr::select(acc_SPE)
     
     SPE_half_2 <- list[[j]][[2]] %>%
@@ -628,11 +598,9 @@ shr_acc <- function(list) {
         dplyr::group_by(Subject,Session,Identity)%>% 
         dplyr::summarise(acc = mean(ACC))%>% 
         dplyr::ungroup() %>% 
-        dplyr::group_by(Subject,Session) %>%
-        tidyr::pivot_wider(names_from = Identity, 
-                                      values_from = acc) %>%
-        dplyr::summarise(acc_SPE = Self - (Stranger + Friend)/2) %>%
-        dplyr::ungroup() %>%
+        tidyr::pivot_wider(names_from = Identity,
+                           values_from = acc) %>%
+        dplyr::mutate(acc_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
         dplyr::select(acc_SPE)
     
       r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
@@ -667,11 +635,9 @@ shr_d <- function(list) {
                     )) %>% 
     dplyr::ungroup() %>%
     select(-"hit",-"fa",-"miss",-"cr") %>%
-    dplyr::group_by(Subject, Session)  %>%
     tidyr::pivot_wider(names_from = Identity,
-                     values_from = Dprime) %>%
-    dplyr::summarise(dprime_SPE = Self - (Stranger + Friend) / 2) %>%
-    dplyr::ungroup() %>%
+                       values_from = Dprime) %>%
+    dplyr::mutate(dprime_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
     dplyr::select(dprime_SPE)
     
   SPE_half_2 <- list[[j]][[2]] %>%
@@ -694,11 +660,9 @@ shr_d <- function(list) {
                     )) %>% 
     dplyr::ungroup() %>%
     select(-"hit",-"fa",-"miss",-"cr") %>%
-    dplyr::group_by(Subject, Session)  %>%
     tidyr::pivot_wider(names_from = Identity,
-                     values_from = Dprime) %>%
-    dplyr::summarise(dprime_SPE = Self - (Stranger + Friend) / 2) %>%
-    dplyr::ungroup() %>%
+                       values_from = Dprime) %>%
+    dplyr::mutate(dprime_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
     dplyr::select(dprime_SPE)
     
     r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
@@ -717,22 +681,18 @@ shr_eff <- function(list) {
       dplyr::group_by(Subject, Identity, Match, Session) %>% 
       dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% 
       dplyr::ungroup() %>%
-      dplyr::group_by(Subject, Session) %>%
       tidyr::pivot_wider(names_from = Identity,
                          values_from = Eff) %>%
-      dplyr::summarise(eff_SPE = Self - (Stranger + Friend) / 2) %>% 
-      dplyr::ungroup() %>%
+      dplyr::mutate(eff_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
       dplyr::select(eff_SPE)
     
     SPE_half_2 <- list[[j]][[2]] %>%
       dplyr::group_by(Subject, Identity, Match, Session) %>% 
       dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% 
       dplyr::ungroup() %>%
-      dplyr::group_by(Subject, Session) %>%
       tidyr::pivot_wider(names_from = Identity,
-                       values_from = Eff) %>%
-      dplyr::summarise(eff_SPE = Self - (Stranger + Friend) / 2) %>% 
-      dplyr::ungroup() %>%
+                         values_from = Eff) %>%
+      dplyr::mutate(eff_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
       dplyr::select(eff_SPE)
     
       r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
@@ -752,22 +712,18 @@ shr_ddmv <- function(list) {
       hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
       dplyr::select(Subject, Session, Match, Identity, v) %>%
       dplyr::filter(Match == "Match") %>% 
-      dplyr::group_by(Subject, Session) %>% 
       tidyr::pivot_wider(names_from = Identity,
-                         values_from = v) %>% 
-      dplyr::summarise(v_SPE = Self - (Stranger + Friend) / 2) %>% 
-      ungroup() %>%
+                         values_from = v) %>%
+      dplyr::mutate(v_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
       dplyr::select(v_SPE)
     
     SPE_half_2 <- list[[j]][[2]] %>%
       hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
       dplyr::select(Subject, Session, Match, Identity, v) %>%
       dplyr::filter(Match == "Match") %>% 
-      dplyr::group_by(Subject, Session) %>% 
       tidyr::pivot_wider(names_from = Identity,
-                         values_from = v) %>% 
-      dplyr::summarise(v_SPE = Self - (Stranger + Friend) / 2) %>% 
-      ungroup() %>%
+                         values_from = v) %>%
+      dplyr::mutate(v_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
       dplyr::select(v_SPE)
     
       r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
@@ -787,11 +743,9 @@ shr_ddmz <- function(list) {
         dplyr::mutate(., z = a/v) %>%
         dplyr::select(Subject, Session, Match, Identity, z) %>%
         dplyr::filter(Match == "Match") %>% 
-        dplyr::group_by(Subject, Session) %>% 
         tidyr::pivot_wider(names_from = Identity,
-                           values_from = z) %>% 
-        dplyr::summarise(z_SPE = Self - (Stranger + Friend) / 2) %>% 
-        ungroup() %>%
+                           values_from = z) %>%
+        dplyr::mutate(z_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
         dplyr::select(z_SPE)
     
     SPE_half_2 <- list[[j]][[2]] %>%
@@ -799,11 +753,9 @@ shr_ddmz <- function(list) {
         dplyr::mutate(., z = a/v) %>%
         dplyr::select(Subject, Session, Match, Identity, z) %>%
         dplyr::filter(Match == "Match") %>% 
-        dplyr::group_by(Subject, Session) %>% 
         tidyr::pivot_wider(names_from = Identity,
-                           values_from = z) %>% 
-        dplyr::summarise(z_SPE = Self - (Stranger + Friend) / 2) %>% 
-        ungroup() %>%
+                           values_from = z) %>%
+        dplyr::mutate(z_SPE = Self - rowMeans(select(., -(1:which(names(.)=="Self"))), na.rm = TRUE)) %>%
         dplyr::select(z_SPE)
     
       r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
