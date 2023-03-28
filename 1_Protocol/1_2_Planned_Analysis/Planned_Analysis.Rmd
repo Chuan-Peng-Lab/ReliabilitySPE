@@ -24,6 +24,10 @@ library(ggplot2)
 library(foreach)
 library(parallel)
 library(doParallel)
+
+# myfunction: splithalf
+# install.packages("./splithalf_0.0.1.tar.gz")
+library(splithalf)
 ```
 
 ## Set Working Directory
@@ -63,8 +67,8 @@ list.SHR.MC <- mcshrgener_st(df.split = df.clean, iteration = 10)
 ```
 
 ```{r Monte Carlo Split Generator multiple thread}
-list.SHR.MC.para <- mcshrgener(df.split = df.clean, iteration = 10, nc = 16, 
-                               sub = "Subject", var1 = "Match", var2 = "Identity", var3 = "Session")
+list.SHR.MC.para <- splithalf::sh_tool(df.split = df.clean, iteration = 10, nc = 16, method = "mc",
+                                       sub = "Subject", var1 = "Match", var2 = "Identity", var3 = "Session")
 # iteration = 100
 # user      system    elapsed 
 # 4.99      1.59      42.42 
@@ -142,9 +146,12 @@ ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure1_SPE_SHR.png", widt
 
 ### 6 Parameters SHR r[CI] (RT, ACC, Dprime, Efficiency, DDM: z, DDM: z)
 ```{r list.SHR.Others <- list.SHR.FS, list.SHR.OD, list.SHR.Per}
-list.SHR.Per <- split_tool(df.split = df.clean, method = "permuted")
-list.SHR.FS <- split_tool(df.split = df.clean, method = "fs")
-list.SHR.OD <- split_tool(df.split = df.clean, method = "od")
+list.SHR.Per <- splithalf::sh_tool(df.split = df.clean, method = "permuted", 
+                                   sub = "Subject", var1 = "Match", var2 = "Identity", var3 = "Session")
+list.SHR.FS <- splithalf::sh_tool(df.split = df.clean, method = "fs", 
+                                  sub = "Subject", var1 = "Match", var2 = "Identity", var3 = "Session")
+list.SHR.OD <- splithalf::sh_tool(df.split = df.clean, method = "od", 
+                                  sub = "Subject", var1 = "Match", var2 = "Identity", var3 = "Session")
 
 list.SHR.Others <- vector("list", 3)
 list.SHR.Others <- list(list.SHR.FS, list.SHR.OD, list.SHR.Per)
