@@ -18,7 +18,7 @@ setDT(df.split)
 
 # Stratify the data by Match and Identity
 split_data <- split(df.split,list(df.split$Subject, df.split$Session,
-                                   df.split$Match, df.split$Identity))
+                                  df.split$Match, df.split$Identity))
 
 # Initialize a vector to store the Pearson correlation coefficients
 split_list <- vector("list", iteration)
@@ -82,6 +82,9 @@ mcshrgener <- function(df.split, iteration, nc, sub, var1, var2, var3) {
   # Initialize the parallel backend
   registerDoParallel(nc)
 
+  # declare j variable
+  j <- 0
+  
   # Run the for loop in parallel
   split_list <- foreach(j = 1:iteration, .combine = "c") %dopar% {
     set.seed(122+j)
@@ -484,7 +487,7 @@ mcshr <- function(list, nc, indice) {
 
 # Other SHR functions
 ```{r Split Tool}
-  split_tool <- function(df.split, method) {
+  split_tool <- function(df.split, method, sub, var1, var2, var3) {
 
   # Set the seed to fix the output value
   set.seed(123)
@@ -493,8 +496,8 @@ mcshr <- function(list, nc, indice) {
   options(scipen = 999)
 
   # Stratify the data by Match and Identity
-  split_data <- split(df.split,list(df.split$Subject, df.split$Session,
-                                    df.split$Match, df.split$Identity))
+  split_data <- split(df.split, list(df.split[[sub]], df.split[[var1]], 
+                                     df.split[[var2]], df.split[[var3]]))
 
   # Initialize empty lists to store the split-half data sets
   str_half_split_1 <- list()
