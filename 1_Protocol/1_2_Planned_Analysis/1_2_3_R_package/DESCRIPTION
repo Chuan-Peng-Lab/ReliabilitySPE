@@ -1,0 +1,12 @@
+Package: splithalf
+Type: Package
+Title: R package for split half
+Version: 0.0.1
+Author: yuki <hmz1969a@gmail.com>
+Maintainer: yuki <hmz1969a@gmail.com>
+Description: This package is used to split your data by 4 method.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: data.table, foreach, parallel, doParallel
+RoxygenNote: 7.2.3
