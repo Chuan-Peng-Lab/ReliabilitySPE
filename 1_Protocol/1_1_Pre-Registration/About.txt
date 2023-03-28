@@ -1,0 +1,21 @@
+v0.0.1
+	add split-half and other results
+v0.0.2
+	revise split-half and other results
+v0.0.3
+	change the file systems and update citations
+v0.0.4
+	remake the whole paper
+v0.0.5
+	remake the references
+	adjust typography
+v0.0.6
+	modify according to the chuanpeng's request
+v0.0.7
+	adjust the order of introduction
+	delete HLM
+	modify the analysis plan
+v0.0.8
+	remake abstract and introduction
+	remain ezddm, delete fastddm and hddm
+	add flow chark

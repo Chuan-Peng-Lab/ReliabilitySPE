@@ -1,0 +1,363 @@
+---
+title: "SALT Planned Analysis for Pilot Data"
+author: "yuki"
+date: "2023-01-29"
+output: html_document
+---
+# Preparation
+## Library Packages
+```{r used pacakge, include=FALSE}
+# wd
+library(here)
+# clean data
+library(tidyr)
+library(dplyr)
+# More efficient
+library(data.table)
+# for ICC
+library(psych)
+# ezDDM
+library(hausekeep) 
+# plot
+library(ggplot2)
+# Parallel Computing
+library(foreach)
+library(parallel)
+library(doParallel)
+
+# myfunction: splithalf
+# install.packages("./splithalf_0.0.1.tar.gz")
+library(splithalf)
+```
+
+## Set Working Directory
+```{r Set Working Directory}
+WD <-  here::here()
+getwd()
+```
+
+## Import and Clean Raw_Data
+```{r Pilot Data df.clean <- df.raw}
+# Import Pilot Data(Simulated Data)
+df.raw <-  read.csv('../1_2_Planned_Analysis/1_2_1_DATA/simulated_data.csv',header = T, sep=",", stringsAsFactors = FALSE) 
+df.clean <- df.raw %>% 
+  dplyr::filter(ACC != -1 & ACC != 2) %>%         # exclude no response/wrong response
+  dplyr::filter(Trialtype == "exp") %>%           # filter experiment trials
+  dplyr::filter(!(RT <= 0.2 & RT >= 1.5 )) %>%    # only need 1500ms >RT >200ms
+  dplyr::mutate(RT_sec = RT, RT_ms = RT*1000, Match = Matchness) %>%
+  dplyr::select(Subject, Match, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate_at(vars(Match, Identity, Session), as.factor) %>%
+  dplyr::mutate(Identity = factor(Identity, levels = c("Self", "Friend", "Stranger"))) 
+```
+
+--------------------------------------------------------------------------------
+
+# Split-Half Reliability
+
+## Monte Carlo
+
+### Monte Carlo Split Generator
+
+```{r Monte Carlo Split Generator single thread}
+list.SHR.MC <- mcshrgener_st(df.split = df.clean, iteration = 10)
+# iteration = 100
+# user      system    elapsed 
+# 119.55    3.11      124.58 
+# 257 MB
+```
+
+```{r Monte Carlo Split Generator multiple thread}
+list.SHR.MC.para <- splithalf::sh_tool(df.split = df.clean, iteration = 10, nc = 16, method = "mc",
+                                       sub = "Subject", var1 = "Match", var2 = "Identity", var3 = "Session")
+# iteration = 100
+# user      system    elapsed 
+# 4.99      1.59      42.42 
+# 880 MB
+```
+
+### 6 Parameters SHR r[CI] (RT, ACC, Dprime, Efficiency, DDM: z, DDM: z)
+```{r NULL DF for Plot Split-Half Reliability (Monte Carlo)}
+plot.SHR.MC <- data.table(SPE_type = character(6),
+                          SH_r = numeric(6),
+                          LLCI = numeric(6),
+                          ULCI = numeric(6))
+```
+
+### Parallel Funcion
+```{r Monte-Carlo Split-Half Reliability, message=FALSE, warning=FALSE}
+mcshr(list = list.SHR.MC.para, nc = 16, indice = "rt")
+mcshr(list = list.SHR.MC.para, nc = 16, indice = "acc")
+mcshr(list = list.SHR.MC.para, nc = 16, indice = "d")
+mcshr(list = list.SHR.MC.para, nc = 16, indice = "eff")
+mcshr(list = list.SHR.MC.para, nc = 16, indice = "ddmv")
+mcshr(list = list.SHR.MC.para, nc = 16, indice = "ddmz")
+```
+
+```{r plot.ICC_fake}
+# Because the SHR calculated from the simulated data is too extreme, 
+# we used artificially generated ICC data to draw the graph here.
+plot.SHR.MC_fake <- read.csv("./1_2_1_DATA/plot.SHR.MC_fake.csv")
+```
+
+### Plot SHR
+```{r Code for Plot SHR, message= FALSE, warning = FALSE}
+plot.SHR.MC_fake$SPE_type<- factor(plot.SHR.MC_fake$SPE_type, levels = c("ezDDM_z", "ezDDM_v", "Efficiency", "Dprime","ACC", "RT"))
+
+ggplot(plot.SHR.MC_fake, aes(x = SPE_type, y = SH_r, color = SPE_type), width = 6, height = 6) +
+  geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1, size = 2) +
+  #geom_line() +
+  geom_point(size = 5) +
+  coord_flip() + #flips the x and y axes of a plot
+  theme(axis.title.x = element_text(margin = margin(t = 20))) +
+  scale_x_discrete() +
+  scale_y_continuous(limits = c(0, 1), 
+                     sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
+                                             labels = c("unacceptable", "poor",
+                                                         "acceptable", "excellent")),
+                                             breaks = seq(0,1,by = 0.1)) +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1) + #add dotted line
+  geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1) +
+  geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1) +
+  geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1) +
+  theme_bw() +
+  labs(y = "Monte Carlo-based Split-Half Reliability", x = "Indices") +
+  theme(text = element_text(size = 20),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20),
+        axis.title = element_text(size = 25),
+        axis.title.x = element_text(margin = margin(t = 20)),
+        axis.title.y = element_text(margin = margin(t = 10)),
+        plot.margin = unit(c(1,1,1,1), "cm"),
+        legend.key.size = unit(2, "cm"), 
+        legend.text = element_text(size = 20),
+        legend.title = element_blank(),
+        legend.position = "top",
+        panel.grid = element_blank(),#hide the line in background
+        strip.background = element_rect(color="black", fill="white", 
+                                        size=1))  +
+  guides(fill = guide_none(), color = guide_none()) #hide legend
+
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure1_SPE_SHR.png", width = 15, height = 10)
+```
+
+--------------------------------------------------------------------------------
+
+## Others (First-Second, Odd-Even, Permuted)
+
+### 6 Parameters SHR r[CI] (RT, ACC, Dprime, Efficiency, DDM: z, DDM: z)
+```{r list.SHR.Others <- list.SHR.FS, list.SHR.OD, list.SHR.Per}
+list.SHR.Per <- splithalf::sh_tool(df.split = df.clean, method = "permuted", 
+                                   sub = "Subject", var1 = "Match", var2 = "Identity", var3 = "Session")
+list.SHR.FS <- splithalf::sh_tool(df.split = df.clean, method = "fs", 
+                                  sub = "Subject", var1 = "Match", var2 = "Identity", var3 = "Session")
+list.SHR.OD <- splithalf::sh_tool(df.split = df.clean, method = "od", 
+                                  sub = "Subject", var1 = "Match", var2 = "Identity", var3 = "Session")
+
+list.SHR.Others <- vector("list", 3)
+list.SHR.Others <- list(list.SHR.FS, list.SHR.OD, list.SHR.Per)
+```
+
+```{r NULL DF for Other Split-Half Reliability}
+df.SHR.Other <- data.table(SPE_type = character(18),
+                           SH_type = rep(c("First-Second", "Odd-Even", "Permuted"), times = 6),
+                           SH_r = numeric(18))
+```
+
+```{r Other SHR, message = FALSE, warning = FALSE, include = FALSE}
+shr(list = list.SHR.Others, indice = "rt")
+shr(list = list.SHR.Others, indice = "acc")
+shr(list = list.SHR.Others, indice = "d")
+shr(list = list.SHR.Others, indice = "eff")
+shr(list = list.SHR.Others, indice = "ddmv")
+shr(list = list.SHR.Others, indice = "ddmz")
+```
+
+### Save df.SHR.Other
+```{r Save df.SHR.Other}
+write.csv(df.SHR.Other, "../1_2_Planned_Analysis/1_2_2_OUTPUT/Supplementary_Table_1.csv", row.names = FALSE)
+```
+
+--------------------------------------------------------------------------------
+
+# ICC
+## 6 Parameters DF for ICC (RT, ACC, Dprime, Efficiency, DDM: z, DDM: z)
+```{r ICC of RT, message= FALSE}
+df.ICC.RT <- df.clean %>%
+  dplyr::filter(ACC == "1") %>%
+  dplyr::group_by(Subject, Session, Match, Identity) %>%
+  dplyr::summarise(mean_rt = mean(RT_ms)) %>% # Calculation Formula
+  dplyr::ungroup() %>%
+  dplyr::filter(Match == "Match") %>% 
+  dplyr::group_by(Subject, Session) %>%
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = mean_rt) %>%
+  dplyr::summarise(rt_1_SPE = Self - (Stranger + Friend) / 2) %>%
+  dplyr::ungroup() %>%
+  tidyr::spread(key = Session, value = rt_1_SPE) %>%
+  dplyr::select(-Subject)
+
+psych::ICC(df.ICC.RT, lmer = FALSE)
+```
+
+```{r ICC of ACC, message= FALSE}
+df.ICC.ACC <- df.clean %>%
+  dplyr::group_by(Subject,Session,Match,Identity)%>% 
+  dplyr::summarise(acc = mean(ACC))%>% # Calculation Formula
+  dplyr::ungroup() %>%
+  dplyr::filter(Match == "Match") %>% 
+  dplyr::group_by(Subject,Session) %>%
+  tidyr::pivot_wider(names_from = Identity, 
+                                  values_from = acc) %>%
+  dplyr::summarise(acc_SPE = Self - (Stranger + Friend)/2) %>%  
+  dplyr::ungroup() %>%
+  tidyr::spread(key = Session, value = acc_SPE) %>%
+  dplyr::select(-Subject)
+
+psych::ICC(df.ICC.ACC, lmer = FALSE)
+```
+
+```{r ICC of Dprime, message= FALSE}
+df.ICC.Dprime <- df.clean %>% 
+  dplyr::group_by(Subject,Session,Identity) %>% 
+  dplyr::summarise(hit = length(ACC[Match == "Match" & ACC == 1]),
+                   fa = length(ACC[Match == "Nonmatch" & ACC == 0]),
+                   miss = length(ACC[Match == "Match" & ACC == 0]),
+                   cr = length(ACC[Match == "Nonmatch" & ACC == 1]),
+                   Dprime = qnorm(
+                                  ifelse(hit / (hit + miss) < 1,
+                                         hit / (hit + miss),
+                                         1 - 1 / (2 * (hit + miss))
+                                         )
+                                 ) - qnorm(
+                                  ifelse(fa / (fa + cr) > 0,
+                                         fa / (fa + cr),
+                                         1 / (2 * (fa + cr))
+                                        )
+                                          )
+                   ) %>% # Calculation Formula
+  dplyr::select(-"hit",-"fa",-"miss",-"cr") %>%
+  dplyr::group_by(Subject, Session)  %>%
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = Dprime) %>%
+  dplyr::summarise(dprime_SPE = Self - (Stranger + Friend) / 2) %>% 
+  dplyr::ungroup() %>%  
+  tidyr::spread(key = Session, value = dprime_SPE) %>%
+  dplyr::select(-Subject)
+
+psych::ICC(df.ICC.Dprime, lmer = FALSE)
+```
+
+```{r ICC of Efficiency, message= FALSE}
+df.ICC.Eff <- df.clean %>% 
+  dplyr::group_by(Subject, Identity, Match, Session) %>% 
+  dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% # Calculation Formula
+  dplyr::ungroup() %>%
+  dplyr::filter(Match == "Match") %>% 
+  dplyr::group_by(Subject, Session) %>%
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = Eff) %>%
+  dplyr::summarise(eff_SPE = Self - (Stranger + Friend) / 2) %>% #eff of self-match - eff of other-match
+  dplyr::ungroup() %>% 
+  tidyr::spread(key = Session, value = eff_SPE) %>%
+  dplyr::select(-Subject)
+
+psych::ICC(df.ICC.Eff, lmer = FALSE)
+```
+
+```{r ICC of ezDDM: v, message= FALSE}
+df.ICC.ez.v <- df.clean %>% 
+  hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+  dplyr::mutate(z = a/v) %>%
+  dplyr::select(Subject, Session, Match, Identity, v, z) %>%
+  dplyr::select(-z) %>%
+  dplyr::filter(Match == "Match") %>% 
+  dplyr::group_by(Subject, Session) %>% 
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = v) %>% 
+  dplyr::summarise(v_SPE = Self - (Stranger + Friend) / 2) %>% 
+  ungroup() %>%
+  tidyr::spread(key = Session, value = v_SPE) %>%
+  dplyr::select(-Subject)
+
+psych::ICC(df.ICC.ez.v, lmer = FALSE)
+```
+
+```{r ICC of ezDDM: z, message= FALSE}
+df.ICC.ez.z <- df.clean %>% 
+  hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+  dplyr::mutate(z = a/v) %>%
+  dplyr::select(Subject, Session, Match, Identity, v, z) %>%
+  dplyr::select(-v) %>%
+  dplyr::filter(Match == "Match") %>% 
+  dplyr::group_by(Subject, Session) %>% 
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = z) %>% 
+  dplyr::summarise(z_SPE = Self - (Stranger + Friend) / 2) %>% 
+  ungroup() %>%
+  tidyr::spread(key = Session, value = z_SPE) %>%
+  dplyr::select(-Subject)
+
+psych::ICC(df.ICC.ez.z, lmer = FALSE)
+```
+
+## Calculation for ICC
+
+```{r DF for Plot ICC}
+list.ICC <- list(df.ICC.RT, df.ICC.ACC,
+                 df.ICC.Dprime, df.ICC.Eff,
+                 df.ICC.ez.v, df.ICC.ez.z) 
+
+plot.ICC <- ICC_calculation(SPE_ICC = list.ICC) %>%
+  dplyr::filter(type == "ICC2" | type == "ICC2k")
+```
+
+```{r plot.ICC_fake}
+# Because the ICC calculated from the simulated data is too extreme, 
+# we used artificially generated ICC data to draw the graph here.
+plot.ICC_fake <- read.csv("./1_2_1_DATA/plot.ICC_fake.csv") %>%
+  dplyr::mutate(.,ICC_type = factor(ICC_type, 
+                                    levels = c("ezDDM_z", "ezDDM_v", 
+                                               "Efficiency", "Dprime",
+                                               "ACC", "RT")) )
+```
+
+## Plot ICC
+```{r Code for Plot ICC, message= FALSE, warning = FALSE}
+ggplot(plot.ICC_fake, aes(x = ICC_type, y = ICC, color = ICC_type), width = 12, height = 8) +
+  geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1, size = 2) +
+  geom_point(size = 5) +
+  facet_wrap(~ type, scales = "free_x", strip.position = "top", nrow = 2, dir = "v") + 
+  coord_flip() + #flips the x and y axes of a plot
+  scale_x_discrete() +
+  scale_y_continuous(limits = c(0, 1), 
+                     sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
+                                             labels = c("unacceptable", "poor",
+                                                         "acceptable", "excellent")),
+                                             breaks = seq(0,1,by = 0.1)) +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1) + #add dotted line
+  geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1) +
+  geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1) +
+  geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1) +
+  theme_bw() +
+  labs(y = "Intraclass Correlation Coefficient", x = "Indices") +
+  theme(text = element_text(size = 20),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20),
+        axis.title = element_text(size = 25),
+        axis.title.x = element_text(margin = margin(t = 20)),
+        axis.title.y = element_text(margin = margin(t = 10)),
+        plot.title = element_text(size = 25),
+        plot.margin = unit(c(1,1,1,1), "cm"),
+        legend.key.size = unit(2, "cm"), 
+        legend.text = element_text(size = 20),
+        legend.title = element_blank(),
+        legend.position = "top",
+        panel.grid = element_blank(),#hide the line in background
+        strip.text = element_text(size = 20),
+        strip.background = element_rect(color="black", fill="white", 
+                                        size=1))  +
+  guides(fill = guide_none(), color = guide_none())  #hide legend
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure2_SPE_ICC.png", width = 15, height = 20)
+```
+
+--------------------------------------------------------------------------------
