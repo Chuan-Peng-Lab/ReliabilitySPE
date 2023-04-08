@@ -9,6 +9,17 @@ output: html_document
 library(tidyverse)
 ```
 
+# Paper 0
+```{r Paper 0}
+df.P0 <- read.csv("../4_Data_Extraction/4_1_Raw_Data/SALT_raw.csv") %>%
+  dplyr::filter(Emotion == "control",
+                !(RT_sec <= 0.2 & RT_sec >= 1.5 ),
+                ACC == 1 | ACC == 0,
+                !is.na(BlockList.Sample)) %>%
+  dplyr::select(.,Subject, Subject, Match, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(Identity = factor(Identity, levels = c("Self", "Friend", "Stranger"))) %>%
+  dplyr::arrange(Subject, Match, Identity, Session) 
+```
 
 # Paper 6 
 ## Experiment 1 (Identtiy = 3)
