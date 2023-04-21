@@ -1,8 +1,14 @@
+# R
 .Rproj.user
 .Rhistory
 .RData
+
+# Sensitive Files
 1_Protocol/1_1_Pre-Registration/1_1_1_Old Version/
 1_Protocol/1_1_Pre-Registration/1_1_2_C-P_Revised/
 2_Literature_Search/
-3_Article_Screen/Test_retest_SALT.Data/
+3_Article_Screen/Reliability_SPMT.Data/
 4_Data_Extraction/4_2_Open_Data/
+
+# Office temp Files
+~$*
