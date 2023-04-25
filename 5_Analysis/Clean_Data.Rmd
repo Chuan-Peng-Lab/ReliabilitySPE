@@ -7,6 +7,7 @@ output: html_document
 # Package
 ```{r package}
 library(tidyverse)
+library(readxl)
 ```
 
 # Paper 0
@@ -16,7 +17,7 @@ df.P0 <- read.csv("../4_Data_Extraction/4_1_Raw_Data/SALT_raw.csv") %>%
                 !(RT_sec <= 0.2 & RT_sec >= 1.5 ),
                 ACC == 1 | ACC == 0,
                 !is.na(BlockList.Sample)) %>%
-  dplyr::select(.,Subject, Subject, Match, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::select(.,Subject, Match, Identity, Session, RT_ms, RT_sec, ACC) %>%
   dplyr::mutate(Identity = factor(Identity, levels = c("Self", "Friend", "Stranger"))) %>%
   dplyr::arrange(Subject, Match, Identity, Session) 
 ```
@@ -46,6 +47,22 @@ df.P6 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_6/P6_Exp1_raw.csv") 
   dplyr::arrange(Subject, Match, Identity, Session)
 ```
 
+# Paper 46 (Dark Light Box)
+## Experiment 2 (Identtiy = 2)
+```{r Paper 46}
+df.P46 <- readxl::read_excel("../4_Data_Extraction/4_2_Open_Data/Paper_46/Exp2/P46_Exp2_raw.xlsx")  %>%
+  dplyr::select(.,Subject, Match = Condition, Identity = Shape, Session = ShapeLoc, RT_sec = rt, ACC = corr) %>%
+  dplyr::filter(.,ACC == 1 | ACC == 0,
+                  !(RT_sec <= 0.2 & RT_sec >= 1.5 )) %>%
+  dplyr::mutate(Match = ifelse(Match == "Mismatch", "Nonmatch", Match),
+                Session = ifelse(Session == "Top", 1, ifelse(Session == "Bottom", 2, Session)),
+                RT_sec = as.numeric(RT_sec),
+                RT_ms = RT_sec * 1000,) %>%
+  dplyr::select(.,Subject, Match, Identity, Session,
+                RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(Identity = factor(Identity, levels = c("Self", "Stranger"))) %>%
+  dplyr::arrange(Subject, Match, Identity, Session)
+```
 
 # Paper 51 
 ## Experiment 1 (Identtiy = 3)
@@ -318,5 +335,23 @@ df.Pn23.E1 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n23/Pn23_Exp1_r
     dplyr::arrange(Subject, Match, Identity, Session) 
 ```
 
-
-
+# Paper s1 (Face)
+## Experiment 1 (Identtiy = 3)
+```{r Paper s1 Experiment 1}
+df.Ps1.E1 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_s1/Ps1_Exp1_raw.csv") %>%
+  dplyr::select(Subject = Participant.Public.ID, Match = P_Orginal, Identity = P_Group, Session = 1, 
+                RT_ms = Reaction.Time, ACC = Correct) %>%
+  dplyr::mutate(Match = case_when(Match == "JA" ~ "Match",
+                                  Match == "NEIN" ~ "Nonmatch"),
+                Identity = case_when(Identity == "User" ~ "Self",
+                                     Identity == "Other" ~ "Stranger"),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = RT_ms/1000,
+                ACC = as.numeric(ACC)) %>%
+  dplyr::filter(.,RT_ms >= 200 & RT_ms <= 1500,
+                  ACC == 1 | ACC == 0) %>% # 似乎对与人脸识别的反应时普遍很高
+  dplyr::select(.,Subject, Match, Identity, Session, 
+                  RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(Identity = factor(Identity, levels = c("Self", "Stranger"))) %>%
+  dplyr::arrange(Subject, Match, Identity, Session) 
+```
