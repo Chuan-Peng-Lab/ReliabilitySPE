@@ -1,0 +1,19 @@
+"Indices","Method","r"
+"RT","First-Second",0.01243434342225
+"RT","Odd-Even",-0.0108816158225733
+"RT","Permuted",0.0752011187957642
+"ACC","First-Second",0.0152322475994207
+"ACC","Odd-Even",-0.0317732745978012
+"ACC","Permuted",-0.099434467036074
+"Dprime","First-Second",0.0274188463990134
+"Dprime","Odd-Even",-0.065001867567516
+"Dprime","Permuted",-0.0692648467930721
+"Efficiency","First-Second",0.0722176737293697
+"Efficiency","Odd-Even",-0.0324266780936841
+"Efficiency","Permuted",-0.00949234724481987
+"ezDDM: v","First-Second",0.0344024240276205
+"ezDDM: v","Odd-Even",-0.0138383798964479
+"ezDDM: v","Permuted",-0.106988340533099
+"ezDDM: z","First-Second",0.0147764520612197
+"ezDDM: z","Odd-Even",0.0298301091005863
+"ezDDM: z","Permuted",-0.135608938025162

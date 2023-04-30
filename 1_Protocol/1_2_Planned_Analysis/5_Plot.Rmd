@@ -1,0 +1,117 @@
+---
+title: "5_Plot"
+author: "yuki"
+date: "2023-04-30"
+output: html_document
+---
+# Create NULL List
+```{r Create NULL List}
+plot <- list()
+```
+
+# Plot Monte Carlo
+```{r fake data}
+# Because the SHR calculated from the simulated data is too extreme, 
+# we used artificially generated ICC data to draw the graph here.
+plot.SHR.MC_fake <- read.csv("./1_2_1_DATA/plot.SHR.MC_fake.csv")
+```
+
+```{r Code for Plot SHR, message= FALSE, warning = FALSE}
+plot.SHR.MC_fake$SPE_type<- factor(plot.SHR.MC_fake$SPE_type, levels = c("ezDDM_z", "ezDDM_v", "Efficiency", "Dprime","ACC", "RT"))
+
+plot[[1]] <- ggplot(plot.SHR.MC_fake, aes(x = SPE_type, y = SH_r, color = SPE_type), width = 6, height = 6) +
+  geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1, size = 2) +
+  #geom_line() +
+  geom_point(size = 5) +
+  coord_flip() + #flips the x and y axes of a plot
+  theme(axis.title.x = element_text(margin = margin(t = 20))) +
+  scale_x_discrete() +
+  scale_y_continuous(limits = c(0, 1), 
+                     sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
+                                             labels = c("unacceptable", "poor",
+                                                         "acceptable", "excellent")),
+                                             breaks = seq(0,1,by = 0.1)) +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1) + #add dotted line
+  geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1) +
+  geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1) +
+  geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1) +
+  theme_bw() +
+  labs(y = "Monte Carlo-based Split-Half Reliability", x = "Indices") +
+  theme(text = element_text(size = 20),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20),
+        axis.title = element_text(size = 25),
+        axis.title.x = element_text(margin = margin(t = 20)),
+        axis.title.y = element_text(margin = margin(t = 10)),
+        plot.margin = unit(c(1,1,1,1), "cm"),
+        legend.key.size = unit(2, "cm"), 
+        legend.text = element_text(size = 20),
+        legend.title = element_blank(),
+        legend.position = "top",
+        panel.grid = element_blank(),#hide the line in background
+        strip.background = element_rect(color="black", fill="white", 
+                                        size=1))  +
+  guides(fill = guide_none(), color = guide_none()) #hide legend
+
+names(plot)[1] <- "Monte Carlo"
+
+rm(plot.SHR.MC_fake)
+
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure1_SPE_SHR.png", width = 15, height = 10)
+```
+
+--------------------------------------------------------------------------------
+
+## Plot ICC
+```{r plot.ICC_fake}
+# Because the ICC calculated from the simulated data is too extreme, 
+# we used artificially generated ICC data to draw the graph here.
+plot.ICC_fake <- read.csv("./1_2_1_DATA/plot.ICC_fake.csv") %>%
+  dplyr::mutate(.,ICC_type = factor(ICC_type, 
+                                    levels = c("ezDDM_z", "ezDDM_v", 
+                                               "Efficiency", "Dprime",
+                                               "ACC", "RT")) )
+```
+
+```{r Code for Plot ICC, message= FALSE, warning = FALSE}
+plot[[2]] <- ggplot(plot.ICC_fake, aes(x = ICC_type, y = ICC, color = ICC_type), width = 12, height = 8) +
+  geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1, size = 2) +
+  geom_point(size = 5) +
+  facet_wrap(~ type, scales = "free_x", strip.position = "top", nrow = 2, dir = "v") + 
+  coord_flip() + #flips the x and y axes of a plot
+  scale_x_discrete() +
+  scale_y_continuous(limits = c(0, 1), 
+                     sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
+                                             labels = c("unacceptable", "poor",
+                                                         "acceptable", "excellent")),
+                                             breaks = seq(0,1,by = 0.1)) +
+  geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1) + #add dotted line
+  geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1) +
+  geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1) +
+  geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1) +
+  theme_bw() +
+  labs(y = "Intraclass Correlation Coefficient", x = "Indices") +
+  theme(text = element_text(size = 20),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20),
+        axis.title = element_text(size = 25),
+        axis.title.x = element_text(margin = margin(t = 20)),
+        axis.title.y = element_text(margin = margin(t = 10)),
+        plot.title = element_text(size = 25),
+        plot.margin = unit(c(1,1,1,1), "cm"),
+        legend.key.size = unit(2, "cm"), 
+        legend.text = element_text(size = 20),
+        legend.title = element_blank(),
+        legend.position = "top",
+        panel.grid = element_blank(),#hide the line in background
+        strip.text = element_text(size = 20),
+        strip.background = element_rect(color="black", fill="white", 
+                                        size=1))  +
+  guides(fill = guide_none(), color = guide_none())  #hide legend
+
+names(plot)[2] <- "ICC"
+
+rm(plot.ICC_fake)
+
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure2_SPE_ICC.png", width = 15, height = 20)
+```

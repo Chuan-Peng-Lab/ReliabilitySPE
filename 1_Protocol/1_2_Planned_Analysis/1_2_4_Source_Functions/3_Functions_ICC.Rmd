@@ -1,0 +1,184 @@
+---
+title: "0_Functions_ICC"
+author: "yuki"
+date: "2023-04-30"
+output: html_document
+---
+# df for ICC 
+These functions are packaged
+library(batch)
+```{r ICC of RT}
+icc_rt <- function(df, Target) {
+  df <- df %>%
+    dplyr::filter(ACC == "1") %>%
+    dplyr::group_by(Subject, Session, Match, Identity) %>%
+    dplyr::summarise(mean_rt = mean(RT_ms)) %>% # Calculation Formula
+    dplyr::ungroup() %>%
+    dplyr::filter(Match == "Match") %>% 
+    dplyr::group_by(Subject, Session) %>%
+    tidyr::pivot_wider(names_from = Identity,
+                       values_from = mean_rt) %>%
+    dplyr::summarise(rt_1_SPE = Self - !!sym(Target)) %>%
+    dplyr::ungroup() %>%
+    tidyr::spread(key = Session, value = rt_1_SPE) %>%
+    dplyr::select(-Subject)
+  return(df)
+}
+```
+
+```{r ICC of ACC}
+icc_acc <- function(df, Target) {
+  df <- df %>%
+    dplyr::group_by(Subject, Session, Match, Identity)%>% 
+    dplyr::summarise(acc = mean(ACC))%>% # Calculation Formula
+    dplyr::ungroup() %>%
+    dplyr::filter(Match == "Match") %>% 
+    dplyr::group_by(Subject,Session) %>%
+    tidyr::pivot_wider(names_from = Identity, 
+                                    values_from = acc) %>%
+    dplyr::summarise(acc_SPE = Self - !!sym(Target)) %>%  
+    dplyr::ungroup() %>%
+    tidyr::spread(key = Session, value = acc_SPE) %>%
+    dplyr::select(-Subject)
+  return(df)
+}
+```
+
+```{r ICC of Dprime}
+icc_dp <- function(df, Target) {
+  df <- df %>%
+    dplyr::group_by(Subject,Session,Identity) %>% 
+    dplyr::summarise(hit = length(ACC[Match == "Match" & ACC == 1]),
+                     fa = length(ACC[Match == "Nonmatch" & ACC == 0]),
+                     miss = length(ACC[Match == "Match" & ACC == 0]),
+                     cr = length(ACC[Match == "Nonmatch" & ACC == 1]),
+                     Dprime = qnorm(
+                                    ifelse(hit / (hit + miss) < 1,
+                                           hit / (hit + miss),
+                                           1 - 1 / (2 * (hit + miss))
+                                           )
+                                   ) - qnorm(
+                                    ifelse(fa / (fa + cr) > 0,
+                                           fa / (fa + cr),
+                                           1 / (2 * (fa + cr))
+                                          )
+                                            )
+                     ) %>% # Calculation Formula
+    dplyr::select(-"hit",-"fa",-"miss",-"cr") %>%
+    dplyr::group_by(Subject, Session)  %>%
+    tidyr::pivot_wider(names_from = Identity,
+                       values_from = Dprime) %>%
+    dplyr::summarise(dprime_SPE = Self - !!sym(Target)) %>% 
+    dplyr::ungroup() %>%  
+    tidyr::spread(key = Session, value = dprime_SPE) %>%
+    dplyr::select(-Subject)
+  return(df)
+}
+```
+
+```{r ICC of Efficiency}
+icc_eff <- function(df, Target) {
+  df <- df %>%
+    dplyr::group_by(Subject, Identity, Match, Session) %>% 
+    dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% # Calculation Formula
+    dplyr::ungroup() %>%
+    dplyr::filter(Match == "Match") %>% 
+    dplyr::group_by(Subject, Session) %>%
+    tidyr::pivot_wider(names_from = Identity,
+                       values_from = Eff) %>%
+    dplyr::summarise(eff_SPE = Self - !!sym(Target)) %>% #eff of self-match - eff of other-match
+    dplyr::ungroup() %>% 
+    tidyr::spread(key = Session, value = eff_SPE) %>%
+    dplyr::select(-Subject)
+  return(df)
+}
+```
+
+```{r ICC of ezDDM: v}
+icc_ddmv <- function(df, Target) {
+  df <- df %>%
+    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+    dplyr::mutate(z = a/v) %>%
+    dplyr::select(Subject, Session, Match, Identity, v, z) %>%
+    dplyr::select(-z) %>%
+    dplyr::filter(Match == "Match") %>% 
+    dplyr::group_by(Subject, Session) %>% 
+    tidyr::pivot_wider(names_from = Identity,
+                       values_from = v) %>% 
+    dplyr::summarise(v_SPE = Self - !!sym(Target)) %>% 
+    ungroup() %>%
+    tidyr::spread(key = Session, value = v_SPE) %>%
+    dplyr::select(-Subject)
+  return(df)
+}
+```
+
+```{r ICC of ezDDM: z}
+icc_ddmz <- function(df, Target) {
+  df <- df %>%
+    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+    dplyr::mutate(z = a/v) %>%
+    dplyr::select(Subject, Session, Match, Identity, v, z) %>%
+    dplyr::select(-v) %>%
+    dplyr::filter(Match == "Match") %>% 
+    dplyr::group_by(Subject, Session) %>% 
+    tidyr::pivot_wider(names_from = Identity,
+                       values_from = z) %>% 
+    dplyr::summarise(z_SPE = Self - !!sym(Target)) %>% 
+    ungroup() %>%
+    tidyr::spread(key = Session, value = z_SPE) %>%
+    dplyr::select(-Subject)
+  return(df)
+}
+```
+
+```{r mcshr}
+icc <- function(df, indice, Target) {
+  if (indice == "rt") {
+    result <- icc_rt(df, Target)
+  } else if (indice == "acc") {
+    result <- icc_acc(df, Target)
+  } else if (indice == "dp") {
+    result <- icc_dp(df, Target)
+  } else if (indice == "eff") {
+    result <- icc_eff(df, Target)
+  } else if (indice == "ddmv") {
+    result <- icc_ddmv(df, Target)
+  } else if (indice == "ddmz") {
+    result <- icc_ddmz(df, Target)
+  } else {
+    stop("Invalid indice argument")
+  }
+  return(result)
+}
+```
+
+# ICC calculation
+```{r ICC_calculation}
+ICC_calculation <- function(SPE_ICC) {
+  ICC_output <- lapply(SPE_ICC, function(x) {psych::ICC(x, lmer = FALSE)})
+  ICC_result <- list()
+  for (i in 1:length(ICC_output)){
+    ICC_result[[i]] <- ICC_output[[i]][[1]]
+  }
+  ICC_result_final <- rbindlist(ICC_result) 
+  colnames(ICC_result_final)[7] <- "LLCI"
+  colnames(ICC_result_final)[8] <- "ULCI"
+  ICC_result_final$ICC_type <- rep(c("RT","ACC",
+                                     "Dprime","Efficiency",
+                                     "ezDDM_v","ezDDM_z"), 
+                                     each = nrow(ICC_result_final)/6)
+  
+  colnames(ICC_result_final)[7] <- "LLCI"
+  colnames(ICC_result_final)[8] <- "ULCI"
+  ICC_result_final <- ICC_result_final %>%
+    dplyr::mutate(.,ICC_type = factor(ICC_type, 
+                                      levels = c("RT","ACC",
+                                                 "Dprime","Efficiency",
+                                                 "ezDDM_v","ezDDM_z")) ) %>%
+    dplyr::arrange(.,type) %>%
+    dplyr::select(type, ICC_type, ICC, LLCI, ULCI) 
+  return(ICC_result_final)
+}
+```
+

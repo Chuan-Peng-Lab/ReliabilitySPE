@@ -1,0 +1,136 @@
+---
+title: "3_Reliability"
+author: "yuki"
+date: "2023-04-30"
+output: html_document
+---
+# Create NULL List
+```{r Create NULL List}
+res <- list()
+```
+
+# Monte Carlo
+```{r Name Self - Friend}
+res[[1]] <- list()
+names(res)[1] <- "Monte Carlo"
+```
+
+## Self - Friend
+```{r RT, message=FALSE, warning=FALSE}
+df.rt <- batch::mcshr(list = shl[[4]], nc = 16, indice = "rt", Target = "Friend")
+
+df.acc <- batch::mcshr(list = shl[[4]], nc = 16, indice = "acc", Target = "Friend")
+
+df.dp <- batch::mcshr(list = shl[[4]], nc = 16, indice = "dp", Target = "Friend")
+
+df.eff <- batch::mcshr(list = shl[[4]], nc = 16, indice = "eff", Target = "Friend")
+
+df.ddmv <- batch::mcshr(list = shl[[4]], nc = 16, indice = "ddmv", Target = "Friend")
+
+df.ddmz <- batch::mcshr(list = shl[[4]], nc = 16, indice = "ddmz", Target = "Friend")
+```
+
+```{r Rbind 6 Indices}
+res[[1]][[1]] <- rbind(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+rownames(res[[1]][[1]]) <- NULL
+names(res[[1]])[1] <- "Self - Friend"
+rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+```
+
+## Self - Stranger
+```{r RT, message=FALSE, warning=FALSE}
+df.rt <- batch::mcshr(list = shl[[4]], nc = 16, indice = "rt", Target = "Stranger")
+
+df.acc <- batch::mcshr(list = shl[[4]], nc = 16, indice = "acc", Target = "Stranger")
+
+df.dp <- batch::mcshr(list = shl[[4]], nc = 16, indice = "dp", Target = "Stranger")
+
+df.eff <- batch::mcshr(list = shl[[4]], nc = 16, indice = "eff", Target = "Stranger")
+
+df.ddmv <- batch::mcshr(list = shl[[4]], nc = 16, indice = "ddmv", Target = "Stranger")
+
+df.ddmz <- batch::mcshr(list = shl[[4]], nc = 16, indice = "ddmz", Target = "Stranger")
+```
+
+```{r Rbind 6 Indices}
+res[[1]][[2]] <- rbind(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+rownames(res[[1]][[2]]) <- NULL
+names(res[[1]])[2] <- "Self - Stranger"
+rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+```
+
+# First-Second, Odd-Even, Permuted
+```{r Name Self - Friend}
+res[[2]] <- list()
+names(res)[2] <- "Other Method"
+```
+
+## Self - Friend
+```{r RT, message=FALSE, warning=FALSE}
+df.rt <- batch::shr_rt(list = shl[1:3], Target = "Friend")
+
+df.acc <- batch::shr_acc(list = shl[1:3], Target = "Friend")
+
+df.dp <- batch::shr_dp(list = shl[1:3], Target = "Friend")
+
+df.eff <- batch::shr_eff(list = shl[1:3], Target = "Friend")
+
+df.ddmv <- batch::shr_ddmv(list = shl[1:3], Target = "Friend")
+
+df.ddmz <- batch::shr_ddmz(list = shl[1:3], Target = "Friend")
+```
+
+```{r Rbind 6 Indices}
+res[[2]][[1]] <- rbind(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+res[[2]][[1]] <- res[[2]][[1]] %>%
+  dplyr::mutate(Indices = res[[2]][[1]]$X1,
+                Method = res[[2]][[1]]$X2,
+                r = res[[2]][[1]]$X3,) %>%
+  dplyr::mutate(Method = case_when(Method == 1 ~ "First-Second",
+                                   Method == 2 ~ "Odd-Even",
+                                   Method == 3 ~ "Permuted")) %>%
+  dplyr::select(Indices, Method, r)
+
+rownames(res[[2]][[1]]) <- NULL
+names(res[[2]])[1] <- "Self - Friend"
+rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+```
+
+```{r Save SHR.Other}
+write.csv(res[[2]][[1]], "../1_2_Planned_Analysis/1_2_2_OUTPUT/Supplementary_Table_1.csv", row.names = FALSE)
+```
+
+## Self - Stranger
+```{r RT, message=FALSE, warning=FALSE}
+df.rt <- batch::shr_rt(list = shl[1:3], Target = "Stranger")
+
+df.acc <- batch::shr_acc(list = shl[1:3], Target = "Stranger")
+
+df.dp <- batch::shr_dp(list = shl[1:3], Target = "Stranger")
+
+df.eff <- batch::shr_eff(list = shl[1:3], Target = "Stranger")
+
+df.ddmv <- batch::shr_ddmv(list = shl[1:3], Target = "Stranger")
+
+df.ddmz <- batch::shr_ddmz(list = shl[1:3], Target = "Stranger")
+```
+
+```{r Rbind 6 Indices}
+res[[2]][[2]] <- rbind(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+res[[2]][[2]] <- res[[2]][[2]] %>%
+  dplyr::mutate(Indices = res[[2]][[2]]$X1,
+                Method = res[[2]][[2]]$X2,
+                r = res[[2]][[2]]$X3,) %>%
+  dplyr::mutate(Method = case_when(Method == 1 ~ "First-Second",
+                                   Method == 2 ~ "Odd-Even",
+                                   Method == 3 ~ "Permuted")) %>%
+  dplyr::select(Indices, Method, r)
+
+rownames(res[[2]][[2]]) <- NULL
+names(res[[2]])[2] <- "Self - Stranger"
+rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+```
+
+```{r Save SHR.Other}
+write.csv(res[[2]][[2]], "../1_2_Planned_Analysis/1_2_2_OUTPUT/Supplementary_Table_2.csv", row.names = FALSE)
+```
