@@ -3,20 +3,11 @@
 #' @param list list
 #' @param nc number of core
 #' @param Target target
-#' @param Subject subject id
-#' @param Match match
-#' @param Identity identity
-#' @param Session session
-#' @param RT_ms rt
-#' @param ACC acc
-#' @param Self self
 #'
 #' @return 结果
 #' @export 结果
 #'
-mcshr_ddmz <- function(list, nc, Target,
-                       Subject = "Subject", Match = "Match", Identity = "Identity", Session = "Session",
-                       RT_ms = "RT_ms", ACC = "ACC", Self = "Self") {
+mcshr_ddmz <- function(list, nc, Target) {
 
   # Initialize the parallel backend
   registerDoParallel(nc)
@@ -24,8 +15,6 @@ mcshr_ddmz <- function(list, nc, Target,
   r_values <- foreach(j = 1:length(list), .packages = c("dplyr", "tidyr", "hausekeep")) %dopar% {
 
     SPE_half_1 <- list[[j]][[1]] %>%
-      dplyr::mutate(Subject = !!sym(Subject), Session = !!sym(Session),
-                    Match = !!sym(Match) , Identity = !!sym(Identity), RT_ms = !!sym(RT_ms), ACC = !!sym(ACC)) %>%
       hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
       dplyr::mutate(., z = a/v) %>%
       dplyr::select(Subject, Session, Match, Identity, z) %>%
@@ -36,8 +25,6 @@ mcshr_ddmz <- function(list, nc, Target,
       dplyr::select(z_SPE)
 
     SPE_half_2 <- list[[j]][[2]] %>%
-      dplyr::mutate(Subject = !!sym(Subject), Session = !!sym(Session),
-                    Match = !!sym(Match) , Identity = !!sym(Identity), RT_ms = !!sym(RT_ms), ACC = !!sym(ACC)) %>%
       hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
       dplyr::mutate(., z = a/v) %>%
       dplyr::select(Subject, Session, Match, Identity, z) %>%

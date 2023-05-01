@@ -155,7 +155,7 @@ icc <- function(df, indice, Target) {
 
 # ICC calculation
 ```{r ICC_calculation}
-ICC_calculation <- function(SPE_ICC) {
+ICC_batch <- function(SPE_ICC) {
   ICC_output <- lapply(SPE_ICC, function(x) {psych::ICC(x, lmer = FALSE)})
   ICC_result <- list()
   for (i in 1:length(ICC_output)){

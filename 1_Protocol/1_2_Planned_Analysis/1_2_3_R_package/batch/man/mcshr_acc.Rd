@@ -4,18 +4,7 @@
 \alias{mcshr_acc}
 \title{Title}
 \usage{
-mcshr_acc(
-  list,
-  nc,
-  Target,
-  Subject = "Subject",
-  Match = "Match",
-  Identity = "Identity",
-  Session = "Session",
-  RT_ms = "RT_ms",
-  ACC = "ACC",
-  Self = "Self"
-)
+mcshr_acc(list, nc, Target)
 }
 \arguments{
 \item{list}{list}
@@ -23,20 +12,6 @@ mcshr_acc(
 \item{nc}{number of core}
 
 \item{Target}{target}
-
-\item{Subject}{subject id}
-
-\item{Match}{match}
-
-\item{Identity}{identity}
-
-\item{Session}{session}
-
-\item{RT_ms}{rt}
-
-\item{ACC}{acc}
-
-\item{Self}{self}
 }
 \value{
 结果

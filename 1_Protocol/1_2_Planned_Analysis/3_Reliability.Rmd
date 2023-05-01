@@ -17,17 +17,17 @@ names(res)[1] <- "Monte Carlo"
 
 ## Self - Friend
 ```{r RT, message=FALSE, warning=FALSE}
-df.rt <- batch::mcshr(list = shl[[4]], nc = 16, indice = "rt", Target = "Friend")
+df.rt <- batch::shr(list = shl[[4]], indice = "rt", Target = "Friend", nc = 16, mc = TRUE)
 
-df.acc <- batch::mcshr(list = shl[[4]], nc = 16, indice = "acc", Target = "Friend")
+df.acc <- batch::shr(list = shl[[4]], indice = "acc", Target = "Friend", nc = 16, mc = TRUE)
 
-df.dp <- batch::mcshr(list = shl[[4]], nc = 16, indice = "dp", Target = "Friend")
+df.dp <- batch::shr(list = shl[[4]], indice = "dp", Target = "Friend", nc = 16, mc = TRUE)
 
-df.eff <- batch::mcshr(list = shl[[4]], nc = 16, indice = "eff", Target = "Friend")
+df.eff <- batch::shr(list = shl[[4]], indice = "eff", Target = "Friend", nc = 16, mc = TRUE)
 
-df.ddmv <- batch::mcshr(list = shl[[4]], nc = 16, indice = "ddmv", Target = "Friend")
+df.ddmv <- batch::shr(list = shl[[4]], indice = "ddmv", Target = "Friend", nc = 16, mc = TRUE)
 
-df.ddmz <- batch::mcshr(list = shl[[4]], nc = 16, indice = "ddmz", Target = "Friend")
+df.ddmz <- batch::shr(list = shl[[4]], indice = "ddmz", Target = "Friend", nc = 16, mc = TRUE)
 ```
 
 ```{r Rbind 6 Indices}
@@ -39,17 +39,17 @@ rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
 
 ## Self - Stranger
 ```{r RT, message=FALSE, warning=FALSE}
-df.rt <- batch::mcshr(list = shl[[4]], nc = 16, indice = "rt", Target = "Stranger")
+df.rt <- batch::shr(list = shl[[4]], indice = "rt", Target = "Stranger", nc = 16, mc = TRUE)
 
-df.acc <- batch::mcshr(list = shl[[4]], nc = 16, indice = "acc", Target = "Stranger")
+df.acc <- batch::shr(list = shl[[4]], indice = "acc", Target = "Stranger", nc = 16, mc = TRUE)
 
-df.dp <- batch::mcshr(list = shl[[4]], nc = 16, indice = "dp", Target = "Stranger")
+df.dp <- batch::shr(list = shl[[4]], indice = "dp", Target = "Stranger", nc = 16, mc = TRUE)
 
-df.eff <- batch::mcshr(list = shl[[4]], nc = 16, indice = "eff", Target = "Stranger")
+df.eff <- batch::shr(list = shl[[4]], indice = "eff", Target = "Stranger", nc = 16, mc = TRUE)
 
-df.ddmv <- batch::mcshr(list = shl[[4]], nc = 16, indice = "ddmv", Target = "Stranger")
+df.ddmv <- batch::shr(list = shl[[4]], indice = "ddmv", Target = "Stranger", nc = 16, mc = TRUE)
 
-df.ddmz <- batch::mcshr(list = shl[[4]], nc = 16, indice = "ddmz", Target = "Stranger")
+df.ddmz <- batch::shr(list = shl[[4]], indice = "ddmz", Target = "Stranger", nc = 16, mc = TRUE)
 ```
 
 ```{r Rbind 6 Indices}
@@ -67,17 +67,17 @@ names(res)[2] <- "Other Method"
 
 ## Self - Friend
 ```{r RT, message=FALSE, warning=FALSE}
-df.rt <- batch::shr_rt(list = shl[1:3], Target = "Friend")
+df.rt <- batch::shr(list = shl[1:3], indice = "rt", Target = "Friend", nc = NULL, mc = FALSE)
 
-df.acc <- batch::shr_acc(list = shl[1:3], Target = "Friend")
+df.acc <-batch::shr(list = shl[1:3], indice = "acc", Target = "Friend", nc = NULL, mc = FALSE)
 
-df.dp <- batch::shr_dp(list = shl[1:3], Target = "Friend")
+df.dp <- batch::shr(list = shl[1:3], indice = "dp", Target = "Friend", nc = NULL, mc = FALSE)
 
-df.eff <- batch::shr_eff(list = shl[1:3], Target = "Friend")
+df.eff <- batch::shr(list = shl[1:3], indice = "eff", Target = "Friend", nc = NULL, mc = FALSE)
 
-df.ddmv <- batch::shr_ddmv(list = shl[1:3], Target = "Friend")
+df.ddmv <- batch::shr(list = shl[1:3], indice = "ddmv", Target = "Friend", nc = NULL, mc = FALSE)
 
-df.ddmz <- batch::shr_ddmz(list = shl[1:3], Target = "Friend")
+df.ddmz <- batch::shr(list = shl[1:3], indice = "ddmz", Target = "Friend", nc = NULL, mc = FALSE)
 ```
 
 ```{r Rbind 6 Indices}
@@ -102,17 +102,17 @@ write.csv(res[[2]][[1]], "../1_2_Planned_Analysis/1_2_2_OUTPUT/Supplementary_Tab
 
 ## Self - Stranger
 ```{r RT, message=FALSE, warning=FALSE}
-df.rt <- batch::shr_rt(list = shl[1:3], Target = "Stranger")
+df.rt <- batch::shr(list = shl[1:3], indice = "rt", Target = "Stranger", nc = NULL, mc = FALSE)
 
-df.acc <- batch::shr_acc(list = shl[1:3], Target = "Stranger")
+df.acc <-batch::shr(list = shl[1:3], indice = "acc", Target = "Stranger", nc = NULL, mc = FALSE)
 
-df.dp <- batch::shr_dp(list = shl[1:3], Target = "Stranger")
+df.dp <- batch::shr(list = shl[1:3], indice = "dp", Target = "Stranger", nc = NULL, mc = FALSE)
 
-df.eff <- batch::shr_eff(list = shl[1:3], Target = "Stranger")
+df.eff <- batch::shr(list = shl[1:3], indice = "eff", Target = "Stranger", nc = NULL, mc = FALSE)
 
-df.ddmv <- batch::shr_ddmv(list = shl[1:3], Target = "Stranger")
+df.ddmv <- batch::shr(list = shl[1:3], indice = "ddmv", Target = "Stranger", nc = NULL, mc = FALSE)
 
-df.ddmz <- batch::shr_ddmz(list = shl[1:3], Target = "Stranger")
+df.ddmz <- batch::shr(list = shl[1:3], indice = "ddmz", Target = "Stranger", nc = NULL, mc = FALSE)
 ```
 
 ```{r Rbind 6 Indices}

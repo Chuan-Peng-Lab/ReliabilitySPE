@@ -46,7 +46,7 @@ rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
 ```
 
 ```{r DF for Plot ICC}
-res[[3]][[1]] <- ICC_calculation(SPE_ICC = iccl[[1]]) %>%
+res[[3]][[1]] <- ICC_batch(SPE_ICC = iccl[[1]]) %>%
   dplyr::filter(type == "ICC2" | type == "ICC2k")
 names(res[[3]])[1] <- "Self - Friend"
 ```
@@ -85,7 +85,7 @@ rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
 ```
 
 ```{r DF for Plot ICC}
-res[[3]][[2]] <- ICC_calculation(SPE_ICC = iccl[[2]]) %>%
+res[[3]][[2]] <- ICC_batch(SPE_ICC = iccl[[2]]) %>%
   dplyr::filter(type == "ICC2" | type == "ICC2k")
 names(res[[3]])[2] <- "Self - Stranger"
 ```

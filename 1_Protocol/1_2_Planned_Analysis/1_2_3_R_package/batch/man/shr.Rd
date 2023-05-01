@@ -4,14 +4,18 @@
 \alias{shr}
 \title{Title}
 \usage{
-shr(list, indice, Target)
+shr(list, indice, Target, mc = FALSE, nc = NULL)
 }
 \arguments{
 \item{list}{list}
 
-\item{indice}{indices}
+\item{indice}{indice ("rc", "acc", "dp", "eff", "ddmv", "ddmz")}
 
 \item{Target}{target}
+
+\item{mc}{Monte Carlo or not}
+
+\item{nc}{number of core}
 }
 \value{
 结果

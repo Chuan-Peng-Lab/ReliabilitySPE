@@ -1,22 +1,19 @@
 #' Title
 #'
 #' @param list list
-#' @param indice indices
+#' @param indice indice ("rc", "acc", "dp", "eff", "ddmv", "ddmz")
 #' @param Target target
+#' @param mc Monte Carlo or not
+#' @param nc number of core
 #'
 #' @return 结果
 #' @export 结果
 #'
-shr <- function(list, indice, Target) {
-  result <- switch(indice,
-                   "rt" = shr_rt(list, Target),
-                   "acc" = shr_acc(list, Target),
-                   "dp" = shr_dp(list, Target),
-                   "eff" = shr_eff(list, Target),
-                   "ddmv" = shr_ddmv(list, Target),
-                   "ddmz" = shr_ddmz(list, Target),
-                   stop("Invalid indice argument")
-  )
+shr <- function(list, indice, Target, mc = FALSE, nc = NULL) {
+  if (mc) {
+    result <- mcshr(list, nc, indice, Target)
+  } else {
+    result <- nmshr(list, indice, Target)
+  }
   return(result)
 }
-

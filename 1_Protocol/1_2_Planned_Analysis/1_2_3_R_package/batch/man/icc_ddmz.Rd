@@ -4,36 +4,12 @@
 \alias{icc_ddmz}
 \title{Title}
 \usage{
-icc_ddmz(
-  df,
-  Target,
-  Subject = "Subject",
-  Match = "Match",
-  Identity = "Identity",
-  Session = "Session",
-  RT_ms = "RT_ms",
-  ACC = "ACC",
-  Self = "Self"
-)
+icc_ddmz(df, Target)
 }
 \arguments{
 \item{df}{df}
 
 \item{Target}{target}
-
-\item{Subject}{subject id}
-
-\item{Match}{match}
-
-\item{Identity}{identity}
-
-\item{Session}{session}
-
-\item{RT_ms}{rt}
-
-\item{ACC}{acc}
-
-\item{Self}{self}
 }
 \value{
 output
