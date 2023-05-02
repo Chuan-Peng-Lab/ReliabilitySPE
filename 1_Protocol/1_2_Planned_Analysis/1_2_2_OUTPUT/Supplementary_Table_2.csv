@@ -1,0 +1,19 @@
+Indices,Method,r
+RT,First-Second,.01
+RT,Odd-Even,-.01
+RT,Permuted,.08
+ACC,First-Second,.02
+ACC,Odd-Even,-.03
+ACC,Permuted,-.10
+Dprime,First-Second,.03
+Dprime,Odd-Even,-.07
+Dprime,Permuted,-.07
+Efficiency,First-Second,.07
+Efficiency,Odd-Even,-.03
+Efficiency,Permuted,-.01
+ezDDM: v,First-Second,.03
+ezDDM: v,Odd-Even,-.01
+ezDDM: v,Permuted,-.11
+ezDDM: z,First-Second,.01
+ezDDM: z,Odd-Even,.03
+ezDDM: z,Permuted,-.14

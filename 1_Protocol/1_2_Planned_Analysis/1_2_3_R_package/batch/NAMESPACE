@@ -1,0 +1,4 @@
+exportPattern("^[[:alpha:]]+")
+import("dplyr","tidyr", "hausekeep", "foreach", "parallel", "doParallel")
+importFrom("stats", "cor", "qnorm", "quantile")
+export("icc", "mcshr", "nmshr", "shr")

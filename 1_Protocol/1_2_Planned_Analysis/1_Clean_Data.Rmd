@@ -1,0 +1,58 @@
+---
+title: "1_Clean_Data"
+author: "yuki"
+date: "2023-04-30"
+output: html_document
+---
+# Library Packages
+```{r used pacakge, include=FALSE}
+# wd
+library(here)
+# clean data
+library(tidyr)
+library(dplyr)
+# More efficient
+library(data.table)
+# for ICC
+library(psych)
+# ezDDM
+library(hausekeep) 
+# plot
+library(ggplot2)
+# Parallel Computing
+library(foreach)
+library(parallel)
+library(doParallel)
+
+# myfunction: splithalf, batch
+# install.packages("./1_2_3_R_package/splithalf_0.0.1.tar.gz")
+library(splithalf)
+
+# install.packages("./1_2_3_R_package/batch_0.0.1.tar.gz")
+library(batch)
+```
+
+# Create NULL List
+```{r Create NULL List}
+df <- list()
+```
+
+# Import and Clean Raw_Data
+```{r Step1: Read Raw Data}
+# Import Pilot Data(Simulated Data)
+df[[1]] <-  read.csv('../1_2_Planned_Analysis/1_2_1_DATA/simulated_data.csv',header = T, sep=",", stringsAsFactors = FALSE) 
+names(df)[1] <- "Step1: Read Raw Data"
+```
+
+```{r Step2: Clean Data}
+df[[2]] <- df[[1]] %>% 
+  dplyr::filter(ACC != -1 & ACC != 2) %>%         # exclude no response/wrong response
+  dplyr::filter(Trialtype == "exp") %>%           # filter experiment trials
+  dplyr::filter(!(RT <= 0.2 & RT >= 1.5 )) %>%    # only need 1500ms >RT >200ms
+  dplyr::mutate(RT_sec = RT, RT_ms = RT*1000, Match = Matchness) %>%
+  dplyr::select(Subject, Match, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate_at(vars(Match, Identity, Session), as.factor) %>%
+  dplyr::mutate(Identity = factor(Identity, levels = c("Self", "Friend", "Stranger"))) 
+names(df)[1] <- "Step2: Clean Data"
+```
+
