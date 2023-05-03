@@ -8,10 +8,10 @@
 
 icc_eff <- function(df, Target) {
   df <- df %>%
-    dplyr::group_by(Subject, Identity, Match, Session) %>%
+    dplyr::group_by(Subject, Identity, Matching, Session) %>%
     dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% # Calculation Formula
     dplyr::ungroup() %>%
-    dplyr::filter(Match == "Match") %>%
+    dplyr::filter(Matching == "Matching") %>%
     dplyr::group_by(Subject, Session) %>%
     tidyr::pivot_wider(names_from = Identity,
                        values_from = Eff) %>%

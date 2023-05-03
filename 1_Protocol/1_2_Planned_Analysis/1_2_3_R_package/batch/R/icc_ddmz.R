@@ -8,11 +8,11 @@
 
 icc_ddmz <- function(df, Target) {
   df <- df %>%
-    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
     dplyr::mutate(z = a/v) %>%
-    dplyr::select(Subject, Session, Match, Identity, v, z) %>%
+    dplyr::select(Subject, Session, Matching, Identity, v, z) %>%
     dplyr::select(-v) %>%
-    dplyr::filter(Match == "Match") %>%
+    dplyr::filter(Matching == "Matching") %>%
     dplyr::group_by(Subject, Session) %>%
     tidyr::pivot_wider(names_from = Identity,
                        values_from = z) %>%

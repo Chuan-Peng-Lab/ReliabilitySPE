@@ -28,7 +28,7 @@ library(doParallel)
 # install.packages("./1_2_3_R_package/splithalf_0.0.1.tar.gz")
 library(splithalf)
 
-# install.packages("./1_2_3_R_package/batch_0.0.1.tar.gz")
+# install.packages("./1_2_3_R_package/batch_0.0.2.tar.gz")
 library(batch)
 ```
 
@@ -49,10 +49,12 @@ df[[2]] <- df[[1]] %>%
   dplyr::filter(ACC != -1 & ACC != 2) %>%         # exclude no response/wrong response
   dplyr::filter(Trialtype == "exp") %>%           # filter experiment trials
   dplyr::filter(!(RT <= 0.2 & RT >= 1.5 )) %>%    # only need 1500ms >RT >200ms
-  dplyr::mutate(RT_sec = RT, RT_ms = RT*1000, Match = Matchness) %>%
-  dplyr::select(Subject, Match, Identity, Session, RT_ms, RT_sec, ACC) %>%
-  dplyr::mutate_at(vars(Match, Identity, Session), as.factor) %>%
+  dplyr::mutate(RT_sec = RT, RT_ms = RT*1000, Matching = Matchness) %>%
+  dplyr::mutate(Matching = case_when(Matching == "Match" ~ "Matching",
+                                     Matching == "Nonmatch" ~ "Nonmatching")) %>%
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate_at(vars(Matching, Identity, Session), as.factor) %>%
   dplyr::mutate(Identity = factor(Identity, levels = c("Self", "Friend", "Stranger"))) 
-names(df)[1] <- "Step2: Clean Data"
+names(df)[2] <- "Step2: Clean Data"
 ```
 

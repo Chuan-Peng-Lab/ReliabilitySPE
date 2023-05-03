@@ -9,10 +9,10 @@
 icc_rt <- function(df, Target) {
   df <- df %>%
     dplyr::filter(ACC == "1") %>%
-    dplyr::group_by(Subject, Session, Match, Identity) %>%
+    dplyr::group_by(Subject, Session, Matching, Identity) %>%
     dplyr::summarise(mean_rt = mean(RT_ms)) %>% # Calculation Formula
     dplyr::ungroup() %>%
-    dplyr::filter(Match == "Match") %>%
+    dplyr::filter(Matching == "Matching") %>%
     dplyr::group_by(Subject, Session) %>%
     tidyr::pivot_wider(names_from = Identity,
                        values_from = mean_rt) %>%

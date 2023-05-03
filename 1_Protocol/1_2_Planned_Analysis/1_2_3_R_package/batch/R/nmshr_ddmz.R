@@ -10,20 +10,20 @@ nmshr_ddmz <- function(list, Target) {
   values <- data.frame(matrix(nrow = length(list), ncol = 3))
   for(j in 1:length(list)) {
     SPE_half_1 <- list[[j]][[1]] %>%
-      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
       dplyr::mutate(., z = a/v) %>%
-      dplyr::select(Subject, Session, Match, Identity, z) %>%
-      dplyr::filter(Match == "Match") %>%
+      dplyr::select(Subject, Session, Matching, Identity, z) %>%
+      dplyr::filter(Matching == "Matching") %>%
       tidyr::pivot_wider(names_from = Identity,
                          values_from = z) %>%
       dplyr::mutate(z_SPE = Self - !!sym(Target)) %>%
       dplyr::select(z_SPE)
 
     SPE_half_2 <- list[[j]][[2]] %>%
-      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
       dplyr::mutate(., z = a/v) %>%
-      dplyr::select(Subject, Session, Match, Identity, z) %>%
-      dplyr::filter(Match == "Match") %>%
+      dplyr::select(Subject, Session, Matching, Identity, z) %>%
+      dplyr::filter(Matching == "Matching") %>%
       tidyr::pivot_wider(names_from = Identity,
                          values_from = z) %>%
       dplyr::mutate(z_SPE = Self - !!sym(Target)) %>%

@@ -9,10 +9,10 @@
 icc_dp <- function(df, Target) {
   df <- df %>%
     dplyr::group_by(Subject,Session,Identity) %>%
-    dplyr::summarise(hit = length(ACC[Match == "Match" & ACC == 1]),
-                     fa = length(ACC[Match == "Nonmatch" & ACC == 0]),
-                     miss = length(ACC[Match == "Match" & ACC == 0]),
-                     cr = length(ACC[Match == "Nonmatch" & ACC == 1]),
+    dplyr::summarise(hit = length(ACC[Matching == "Matching" & ACC == 1]),
+                     fa = length(ACC[Matching == "Nonmatching" & ACC == 0]),
+                     miss = length(ACC[Matching == "Matching" & ACC == 0]),
+                     cr = length(ACC[Matching == "Nonmatching" & ACC == 1]),
                      Dprime = qnorm(
                        ifelse(hit / (hit + miss) < 1,
                               hit / (hit + miss),

@@ -1,7 +1,7 @@
 Package: batch
 Type: Package
 Title: a batch processor for my project
-Version: 0.0.1
+Version: 0.0.2
 Author: yuki <hmz1969a@gmail.com>
 Maintainer: yuki <hmz1969a@gmail.com>
 Description: a batch processor for my project

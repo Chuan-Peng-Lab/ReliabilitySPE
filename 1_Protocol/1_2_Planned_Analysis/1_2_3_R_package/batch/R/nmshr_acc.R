@@ -10,7 +10,7 @@ nmshr_acc <- function(list, Target) {
   values <- data.frame(matrix(nrow = length(list), ncol = 3))
   for(j in 1:length(list)) {
     SPE_half_1 <- list[[j]][[1]] %>%
-      dplyr::filter(.,Match == "Match") %>%
+      dplyr::filter(.,Matching == "Matching") %>%
       dplyr::group_by(Subject,Session,Identity)%>%
       dplyr::summarise(acc = mean(ACC))%>%
       dplyr::ungroup() %>%
@@ -20,7 +20,7 @@ nmshr_acc <- function(list, Target) {
       dplyr::select(acc_SPE)
 
     SPE_half_2 <- list[[j]][[2]] %>%
-      dplyr::filter(.,Match == "Match") %>%
+      dplyr::filter(.,Matching == "Matching") %>%
       dplyr::group_by(Subject,Session,Identity)%>%
       dplyr::summarise(acc = mean(ACC))%>%
       dplyr::ungroup() %>%

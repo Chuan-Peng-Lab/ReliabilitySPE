@@ -11,10 +11,10 @@ library(batch)
 icc_rt <- function(df, Target) {
   df <- df %>%
     dplyr::filter(ACC == "1") %>%
-    dplyr::group_by(Subject, Session, Match, Identity) %>%
+    dplyr::group_by(Subject, Session, Matching, Identity) %>%
     dplyr::summarise(mean_rt = mean(RT_ms)) %>% # Calculation Formula
     dplyr::ungroup() %>%
-    dplyr::filter(Match == "Match") %>% 
+    dplyr::filter(Matching == "Matching") %>% 
     dplyr::group_by(Subject, Session) %>%
     tidyr::pivot_wider(names_from = Identity,
                        values_from = mean_rt) %>%
@@ -29,10 +29,10 @@ icc_rt <- function(df, Target) {
 ```{r ICC of ACC}
 icc_acc <- function(df, Target) {
   df <- df %>%
-    dplyr::group_by(Subject, Session, Match, Identity)%>% 
+    dplyr::group_by(Subject, Session, Matching, Identity)%>% 
     dplyr::summarise(acc = mean(ACC))%>% # Calculation Formula
     dplyr::ungroup() %>%
-    dplyr::filter(Match == "Match") %>% 
+    dplyr::filter(Matching == "Matching") %>% 
     dplyr::group_by(Subject,Session) %>%
     tidyr::pivot_wider(names_from = Identity, 
                                     values_from = acc) %>%
@@ -48,10 +48,10 @@ icc_acc <- function(df, Target) {
 icc_dp <- function(df, Target) {
   df <- df %>%
     dplyr::group_by(Subject,Session,Identity) %>% 
-    dplyr::summarise(hit = length(ACC[Match == "Match" & ACC == 1]),
-                     fa = length(ACC[Match == "Nonmatch" & ACC == 0]),
-                     miss = length(ACC[Match == "Match" & ACC == 0]),
-                     cr = length(ACC[Match == "Nonmatch" & ACC == 1]),
+    dplyr::summarise(hit = length(ACC[Matching == "Matching" & ACC == 1]),
+                     fa = length(ACC[Matching == "Nonmatching" & ACC == 0]),
+                     miss = length(ACC[Matching == "Matching" & ACC == 0]),
+                     cr = length(ACC[Matching == "Nonmatching" & ACC == 1]),
                      Dprime = qnorm(
                                     ifelse(hit / (hit + miss) < 1,
                                            hit / (hit + miss),
@@ -79,10 +79,10 @@ icc_dp <- function(df, Target) {
 ```{r ICC of Efficiency}
 icc_eff <- function(df, Target) {
   df <- df %>%
-    dplyr::group_by(Subject, Identity, Match, Session) %>% 
+    dplyr::group_by(Subject, Identity, Matching, Session) %>% 
     dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% # Calculation Formula
     dplyr::ungroup() %>%
-    dplyr::filter(Match == "Match") %>% 
+    dplyr::filter(Matching == "Matching") %>% 
     dplyr::group_by(Subject, Session) %>%
     tidyr::pivot_wider(names_from = Identity,
                        values_from = Eff) %>%
@@ -97,11 +97,11 @@ icc_eff <- function(df, Target) {
 ```{r ICC of ezDDM: v}
 icc_ddmv <- function(df, Target) {
   df <- df %>%
-    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
     dplyr::mutate(z = a/v) %>%
-    dplyr::select(Subject, Session, Match, Identity, v, z) %>%
+    dplyr::select(Subject, Session, Matching, Identity, v, z) %>%
     dplyr::select(-z) %>%
-    dplyr::filter(Match == "Match") %>% 
+    dplyr::filter(Matching == "Matching") %>% 
     dplyr::group_by(Subject, Session) %>% 
     tidyr::pivot_wider(names_from = Identity,
                        values_from = v) %>% 
@@ -116,11 +116,11 @@ icc_ddmv <- function(df, Target) {
 ```{r ICC of ezDDM: z}
 icc_ddmz <- function(df, Target) {
   df <- df %>%
-    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
     dplyr::mutate(z = a/v) %>%
-    dplyr::select(Subject, Session, Match, Identity, v, z) %>%
+    dplyr::select(Subject, Session, Matching, Identity, v, z) %>%
     dplyr::select(-v) %>%
-    dplyr::filter(Match == "Match") %>% 
+    dplyr::filter(Matching == "Matching") %>% 
     dplyr::group_by(Subject, Session) %>% 
     tidyr::pivot_wider(names_from = Identity,
                        values_from = z) %>% 
@@ -153,32 +153,28 @@ icc <- function(df, indice, Target) {
 }
 ```
 
-# ICC calculation
-```{r ICC_calculation}
-ICC_batch <- function(SPE_ICC) {
-  ICC_output <- lapply(SPE_ICC, function(x) {psych::ICC(x, lmer = FALSE)})
-  ICC_result <- list()
-  for (i in 1:length(ICC_output)){
-    ICC_result[[i]] <- ICC_output[[i]][[1]]
+# Get ICC Output DataFrame
+```{r icc_output}
+icc_output <- function(list) {
+  output <- lapply(list, function(x) {psych::ICC(x, lmer = FALSE)})
+  result <- list()
+  for (i in 1:length(output)){
+    result[[i]] <- output[[i]][[1]]
   }
-  ICC_result_final <- rbindlist(ICC_result) 
-  colnames(ICC_result_final)[7] <- "LLCI"
-  colnames(ICC_result_final)[8] <- "ULCI"
-  ICC_result_final$ICC_type <- rep(c("RT","ACC",
-                                     "Dprime","Efficiency",
-                                     "ezDDM_v","ezDDM_z"), 
-                                     each = nrow(ICC_result_final)/6)
+  final <- rbindlist(result) 
+  colnames(final)[7] <- "LLCI"
+  colnames(final)[8] <- "ULCI"
+  final$ICC_type <- rep(c("RT","ACC","Dprime","Efficiency","ezDDM_v","ezDDM_z"), 
+                        each = nrow(final)/6)
   
-  colnames(ICC_result_final)[7] <- "LLCI"
-  colnames(ICC_result_final)[8] <- "ULCI"
-  ICC_result_final <- ICC_result_final %>%
+  colnames(final)[7] <- "LLCI"
+  colnames(final)[8] <- "ULCI"
+  final <- final %>%
     dplyr::mutate(.,ICC_type = factor(ICC_type, 
-                                      levels = c("RT","ACC",
-                                                 "Dprime","Efficiency",
-                                                 "ezDDM_v","ezDDM_z")) ) %>%
+                                      levels = c("RT","ACC","Dprime","Efficiency","ezDDM_v","ezDDM_z")) ) %>%
     dplyr::arrange(.,type) %>%
     dplyr::select(type, ICC_type, ICC, LLCI, ULCI) 
-  return(ICC_result_final)
+  return(final)
 }
 ```
 

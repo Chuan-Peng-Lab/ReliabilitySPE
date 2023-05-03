@@ -15,7 +15,7 @@ mcshr_eff <- function(list, nc, Target) {
   r_values <- foreach(j = 1:length(list), .packages = c("dplyr", "tidyr")) %dopar% {
 
     SPE_half_1 <- list[[j]][[1]] %>%
-      dplyr::group_by(Subject, Identity, Match, Session) %>%
+      dplyr::group_by(Subject, Identity, Matching, Session) %>%
       dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>%
       dplyr::ungroup() %>%
       tidyr::pivot_wider(names_from = Identity,
@@ -24,7 +24,7 @@ mcshr_eff <- function(list, nc, Target) {
       dplyr::select(eff_SPE)
 
     SPE_half_2 <- list[[j]][[2]] %>%
-      dplyr::group_by(Subject, Identity, Match, Session) %>%
+      dplyr::group_by(Subject, Identity, Matching, Session) %>%
       dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>%
       dplyr::ungroup() %>%
       tidyr::pivot_wider(names_from = Identity,

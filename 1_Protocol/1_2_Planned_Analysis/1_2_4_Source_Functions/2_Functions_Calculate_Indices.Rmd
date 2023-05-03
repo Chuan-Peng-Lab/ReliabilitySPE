@@ -14,7 +14,7 @@ mcshr_rt <- function(list, nc, Target) {
   r_values <- foreach(j = 1:length(list), .packages = c("dplyr", "tidyr")) %dopar% {
     
     SPE_half_1 <- list[[j]][[1]] %>%
-      dplyr::filter(., Match == "Match", ACC == "1") %>%
+      dplyr::filter(., Matching == "Matching", ACC == "1") %>%
       dplyr::group_by(Subject, Session, Identity) %>%
       dplyr::summarise(mean_rt = mean(RT_ms)) %>%
       dplyr::ungroup() %>%
@@ -24,7 +24,7 @@ mcshr_rt <- function(list, nc, Target) {
       dplyr::select(rt_1_SPE)
     
     SPE_half_2 <- list[[j]][[2]] %>%
-      dplyr::filter(., Match == "Match", ACC == "1") %>%
+      dplyr::filter(., Matching == "Matching", ACC == "1") %>%
       dplyr::group_by(Subject, Session, Identity) %>%
       dplyr::summarise(mean_rt = mean(RT_ms)) %>%
       dplyr::ungroup() %>%
@@ -58,7 +58,7 @@ mcshr_acc <- function(list, nc, Target) {
   r_values <- foreach(j = 1:length(list), .packages = c("dplyr", "tidyr")) %dopar% {
     
     SPE_half_1 <- list[[j]][[1]] %>%
-      dplyr::filter(.,Match == "Match") %>%   
+      dplyr::filter(.,Matching == "Matching") %>%   
       dplyr::group_by(Subject,Session,Identity)%>% 
       dplyr::summarise(acc = mean(ACC))%>% 
       dplyr::ungroup() %>% 
@@ -68,7 +68,7 @@ mcshr_acc <- function(list, nc, Target) {
       dplyr::select(acc_SPE)
     
   SPE_half_2 <- list[[j]][[2]] %>%
-      dplyr::filter(.,Match == "Match") %>%   
+      dplyr::filter(.,Matching == "Matching") %>%   
       dplyr::group_by(Subject,Session,Identity)%>% 
       dplyr::summarise(acc = mean(ACC))%>% 
       dplyr::ungroup() %>% 
@@ -104,10 +104,10 @@ mcshr_dp <- function(list, nc, Target) {
     SPE_half_1 <- list[[j]][[1]] %>%
     dplyr::group_by(Subject,Session,Identity) %>% 
     dplyr::summarise(
-      hit = length(ACC[Match == "Match" & ACC == 1]),
-      fa = length(ACC[Match == "Nonmatch" & ACC == 0]),
-      miss = length(ACC[Match == "Match" & ACC == 0]),
-      cr = length(ACC[Match == "Nonmatch" & ACC == 1]),
+      hit = length(ACC[Matching == "Matching" & ACC == 1]),
+      fa = length(ACC[Matching == "Nonmatching" & ACC == 0]),
+      miss = length(ACC[Matching == "Matching" & ACC == 0]),
+      cr = length(ACC[Matching == "Nonmatching" & ACC == 1]),
       Dprime = qnorm(
         ifelse(hit / (hit + miss) < 1,
                hit / (hit + miss),
@@ -129,10 +129,10 @@ mcshr_dp <- function(list, nc, Target) {
   SPE_half_2 <- list[[j]][[2]] %>%
     dplyr::group_by(Subject,Session,Identity) %>% 
     dplyr::summarise(
-      hit = length(ACC[Match == "Match" & ACC == 1]),
-      fa = length(ACC[Match == "Nonmatch" & ACC == 0]),
-      miss = length(ACC[Match == "Match" & ACC == 0]),
-      cr = length(ACC[Match == "Nonmatch" & ACC == 1]),
+      hit = length(ACC[Matching == "Matching" & ACC == 1]),
+      fa = length(ACC[Matching == "Nonmatching" & ACC == 0]),
+      miss = length(ACC[Matching == "Matching" & ACC == 0]),
+      cr = length(ACC[Matching == "Nonmatching" & ACC == 1]),
       Dprime = qnorm(
         ifelse(hit / (hit + miss) < 1,
                hit / (hit + miss),
@@ -176,7 +176,7 @@ mcshr_eff <- function(list, nc, Target) {
   r_values <- foreach(j = 1:length(list), .packages = c("dplyr", "tidyr")) %dopar% {
     
   SPE_half_1 <- list[[j]][[1]] %>%
-    dplyr::group_by(Subject, Identity, Match, Session) %>% 
+    dplyr::group_by(Subject, Identity, Matching, Session) %>% 
     dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% 
     dplyr::ungroup() %>%
     tidyr::pivot_wider(names_from = Identity,
@@ -185,7 +185,7 @@ mcshr_eff <- function(list, nc, Target) {
     dplyr::select(eff_SPE)
     
   SPE_half_2 <- list[[j]][[2]] %>%
-    dplyr::group_by(Subject, Identity, Match, Session) %>% 
+    dplyr::group_by(Subject, Identity, Matching, Session) %>% 
     dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% 
     dplyr::ungroup() %>%
     tidyr::pivot_wider(names_from = Identity,
@@ -218,18 +218,18 @@ mcshr_ddmv <- function(list, nc, Target) {
   r_values <- foreach(j = 1:length(list), .packages = c("dplyr", "tidyr", "hausekeep")) %dopar% {
     
   SPE_half_1 <- list[[j]][[1]] %>%
-    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
-    dplyr::select(Subject, Session, Match, Identity, v) %>%
-    dplyr::filter(Match == "Match") %>% 
+    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
+    dplyr::select(Subject, Session, Matching, Identity, v) %>%
+    dplyr::filter(Matching == "Matching") %>% 
     tidyr::pivot_wider(names_from = Identity,
                        values_from = v) %>%
     dplyr::mutate(v_SPE = Self - !!sym(Target)) %>%
     dplyr::select(v_SPE)
     
   SPE_half_2 <- list[[j]][[2]] %>%
-    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
-    dplyr::select(Subject, Session, Match, Identity, v) %>%
-    dplyr::filter(Match == "Match") %>% 
+    hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
+    dplyr::select(Subject, Session, Matching, Identity, v) %>%
+    dplyr::filter(Matching == "Matching") %>% 
     tidyr::pivot_wider(names_from = Identity,
                        values_from = v) %>%
     dplyr::mutate(v_SPE = Self - !!sym(Target)) %>%
@@ -260,20 +260,20 @@ mcshr_ddmz <- function(list, nc, Target) {
   r_values <- foreach(j = 1:length(list), .packages = c("dplyr", "tidyr", "hausekeep")) %dopar% {
     
     SPE_half_1 <- list[[j]][[1]] %>%
-      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
       dplyr::mutate(., z = a/v) %>%
-      dplyr::select(Subject, Session, Match, Identity, z) %>%
-      dplyr::filter(Match == "Match") %>% 
+      dplyr::select(Subject, Session, Matching, Identity, z) %>%
+      dplyr::filter(Matching == "Matching") %>% 
       tidyr::pivot_wider(names_from = Identity,
                          values_from = z) %>%
       dplyr::mutate(z_SPE = Self - !!sym(Target)) %>%
       dplyr::select(z_SPE)
     
   SPE_half_2 <- list[[j]][[2]] %>%
-      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
       dplyr::mutate(., z = a/v) %>%
-      dplyr::select(Subject, Session, Match, Identity, z) %>%
-      dplyr::filter(Match == "Match") %>% 
+      dplyr::select(Subject, Session, Matching, Identity, z) %>%
+      dplyr::filter(Matching == "Matching") %>% 
       tidyr::pivot_wider(names_from = Identity,
                          values_from = z) %>%
       dplyr::mutate(z_SPE = Self - !!sym(Target)) %>%
@@ -323,7 +323,7 @@ shr_rt <- function(list, Target) {
   values <- data.frame(matrix(nrow = length(list), ncol = 3))
   for(j in 1:length(list)) {  
     SPE_half_1 <- list[[j]][[1]] %>%
-      dplyr::filter(.,Match == "Match", ACC == "1") %>%
+      dplyr::filter(.,Matching == "Matching", ACC == "1") %>%
       dplyr::group_by(Subject, Session, Identity) %>%
       dplyr::summarise(mean_rt = mean(RT_ms)) %>%
       dplyr::ungroup() %>%
@@ -333,7 +333,7 @@ shr_rt <- function(list, Target) {
       dplyr::select(rt_1_SPE)
     
     SPE_half_2 <- list[[j]][[2]] %>%
-      dplyr::filter(.,Match == "Match", ACC == "1") %>%
+      dplyr::filter(.,Matching == "Matching", ACC == "1") %>%
       dplyr::group_by(Subject, Session, Identity) %>%
       dplyr::summarise(mean_rt = mean(RT_ms)) %>%
       dplyr::ungroup() %>%
@@ -357,7 +357,7 @@ shr_acc <- function(list, Target) {
   values <- data.frame(matrix(nrow = length(list), ncol = 3))
   for(j in 1:length(list)) {  
       SPE_half_1 <- list[[j]][[1]] %>%
-        dplyr::filter(.,Match == "Match") %>%   
+        dplyr::filter(.,Matching == "Matching") %>%   
         dplyr::group_by(Subject,Session,Identity)%>% 
         dplyr::summarise(acc = mean(ACC))%>% 
         dplyr::ungroup() %>% 
@@ -367,7 +367,7 @@ shr_acc <- function(list, Target) {
         dplyr::select(acc_SPE)
     
     SPE_half_2 <- list[[j]][[2]] %>%
-        dplyr::filter(.,Match == "Match") %>%   
+        dplyr::filter(.,Matching == "Matching") %>%   
         dplyr::group_by(Subject,Session,Identity)%>% 
         dplyr::summarise(acc = mean(ACC))%>% 
         dplyr::ungroup() %>% 
@@ -393,10 +393,10 @@ shr_dp <- function(list, Target) {
     SPE_half_1 <- list[[j]][[1]] %>%
     dplyr::group_by(Subject,Session,Identity) %>% 
     dplyr::summarise(
-      hit = length(ACC[Match == "Match" & ACC == 1]),
-      fa = length(ACC[Match == "Nonmatch" & ACC == 0]),
-      miss = length(ACC[Match == "Match" & ACC == 0]),
-      cr = length(ACC[Match == "Nonmatch" & ACC == 1]),
+      hit = length(ACC[Matching == "Matching" & ACC == 1]),
+      fa = length(ACC[Matching == "Nonmatching" & ACC == 0]),
+      miss = length(ACC[Matching == "Matching" & ACC == 0]),
+      cr = length(ACC[Matching == "Nonmatching" & ACC == 1]),
       Dprime = qnorm(
         ifelse(hit / (hit + miss) < 1,
                hit / (hit + miss),
@@ -418,10 +418,10 @@ shr_dp <- function(list, Target) {
   SPE_half_2 <- list[[j]][[2]] %>%
     dplyr::group_by(Subject,Session,Identity) %>% 
     dplyr::summarise(
-      hit = length(ACC[Match == "Match" & ACC == 1]),
-      fa = length(ACC[Match == "Nonmatch" & ACC == 0]),
-      miss = length(ACC[Match == "Match" & ACC == 0]),
-      cr = length(ACC[Match == "Nonmatch" & ACC == 1]),
+      hit = length(ACC[Matching == "Matching" & ACC == 1]),
+      fa = length(ACC[Matching == "Nonmatching" & ACC == 0]),
+      miss = length(ACC[Matching == "Matching" & ACC == 0]),
+      cr = length(ACC[Matching == "Nonmatching" & ACC == 1]),
       Dprime = qnorm(
         ifelse(hit / (hit + miss) < 1,
                hit / (hit + miss),
@@ -455,7 +455,7 @@ shr_eff <- function(list, Target) {
   values <- data.frame(matrix(nrow = length(list), ncol = 3))
   for(j in 1:length(list)) {  
       SPE_half_1 <- list[[j]][[1]] %>%
-      dplyr::group_by(Subject, Identity, Match, Session) %>% 
+      dplyr::group_by(Subject, Identity, Matching, Session) %>% 
       dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% 
       dplyr::ungroup() %>%
       tidyr::pivot_wider(names_from = Identity,
@@ -464,7 +464,7 @@ shr_eff <- function(list, Target) {
       dplyr::select(eff_SPE)
     
     SPE_half_2 <- list[[j]][[2]] %>%
-      dplyr::group_by(Subject, Identity, Match, Session) %>% 
+      dplyr::group_by(Subject, Identity, Matching, Session) %>% 
       dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>% 
       dplyr::ungroup() %>%
       tidyr::pivot_wider(names_from = Identity,
@@ -487,18 +487,18 @@ shr_ddmv <- function(list, Target) {
   values <- data.frame(matrix(nrow = length(list), ncol = 3))
   for(j in 1:length(list)) {  
     SPE_half_1 <- list[[j]][[1]] %>%
-      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
-      dplyr::select(Subject, Session, Match, Identity, v) %>%
-      dplyr::filter(Match == "Match") %>% 
+      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
+      dplyr::select(Subject, Session, Matching, Identity, v) %>%
+      dplyr::filter(Matching == "Matching") %>% 
       tidyr::pivot_wider(names_from = Identity,
                          values_from = v) %>%
       dplyr::mutate(v_SPE = Self - !!sym(Target)) %>%
       dplyr::select(v_SPE)
     
     SPE_half_2 <- list[[j]][[2]] %>%
-      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
-      dplyr::select(Subject, Session, Match, Identity, v) %>%
-      dplyr::filter(Match == "Match") %>% 
+      hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
+      dplyr::select(Subject, Session, Matching, Identity, v) %>%
+      dplyr::filter(Matching == "Matching") %>% 
       tidyr::pivot_wider(names_from = Identity,
                          values_from = v) %>%
       dplyr::mutate(v_SPE = Self - !!sym(Target)) %>%
@@ -519,20 +519,20 @@ shr_ddmz <- function(list, Target) {
   values <- data.frame(matrix(nrow = length(list), ncol = 3))
   for(j in 1:length(list)) {  
     SPE_half_1 <- list[[j]][[1]] %>%
-        hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+        hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
         dplyr::mutate(., z = a/v) %>%
-        dplyr::select(Subject, Session, Match, Identity, z) %>%
-        dplyr::filter(Match == "Match") %>% 
+        dplyr::select(Subject, Session, Matching, Identity, z) %>%
+        dplyr::filter(Matching == "Matching") %>% 
         tidyr::pivot_wider(names_from = Identity,
                            values_from = z) %>%
         dplyr::mutate(z_SPE = Self - !!sym(Target)) %>%
         dplyr::select(z_SPE)
     
     SPE_half_2 <- list[[j]][[2]] %>%
-        hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Match", "Identity")) %>%
+        hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
         dplyr::mutate(., z = a/v) %>%
-        dplyr::select(Subject, Session, Match, Identity, z) %>%
-        dplyr::filter(Match == "Match") %>% 
+        dplyr::select(Subject, Session, Matching, Identity, z) %>%
+        dplyr::filter(Matching == "Matching") %>% 
         tidyr::pivot_wider(names_from = Identity,
                            values_from = z) %>%
         dplyr::mutate(z_SPE = Self - !!sym(Target)) %>%

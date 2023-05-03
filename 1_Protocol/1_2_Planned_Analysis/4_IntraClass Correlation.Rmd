@@ -4,39 +4,54 @@ author: "yuki"
 date: "2023-04-30"
 output: html_document
 ---
+# Get ICC Output DataFrame
+```{r icc_output}
+icc_output <- function(list) {
+  output <- lapply(list, function(x) {psych::ICC(x, lmer = FALSE)})
+  result <- list()
+  for (i in 1:length(output)){
+    result[[i]] <- output[[i]][[1]]
+  }
+  final <- rbindlist(result) 
+  colnames(final)[7] <- "LLCI"
+  colnames(final)[8] <- "ULCI"
+  final$ICC_type <- rep(c("RT","ACC","Dprime","Efficiency","ezDDM_v","ezDDM_z"), 
+                        each = nrow(final)/6)
+  
+  colnames(final)[7] <- "LLCI"
+  colnames(final)[8] <- "ULCI"
+  final <- final %>%
+    dplyr::mutate(.,ICC_type = factor(ICC_type, 
+                                      levels = c("RT","ACC","Dprime","Efficiency","ezDDM_v","ezDDM_z")) ) %>%
+    dplyr::arrange(.,type) %>%
+    dplyr::select(type, ICC_type, ICC, LLCI, ULCI) 
+  return(final)
+}
+```
+
 # Create NULL list
 ```{r ICC List}
 iccl <- list(list(), list())
-names(icc)[1] <- "Self - Friend"
-names(icc)[2] <- "Self - Stranger"
+names(iccl)[1] <- "Self - Friend"
+names(iccl)[2] <- "Self - Stranger"
 
 res[[3]] <- list()
 names(res)[3] <- "ICC"
 ```
 
 # ICC: Self - Friend
-```{r ICC of RT, message= FALSE}
-df.rt <- icc(df = df[[2]], indice = "rt", Target = "Friend")
-```
+```{r Self - Friend}
+df.rt <- batch::icc(df = df[[2]], indice = "rt", Target = "Friend")
 
-```{r ICC of ACC, message= FALSE}
-df.acc <- icc(df = df[[2]],indice = "acc", Target = "Friend")
-```
+df.acc <- batch::icc(df = df[[2]],indice = "acc", Target = "Friend")
 
-```{r ICC of Dprime, message= FALSE}
-df.dp <- icc(df = df[[2]],indice = "dp", Target = "Friend")
-```
+df.dp <- batch::icc(df = df[[2]],indice = "dp", Target = "Friend")
 
-```{r ICC of Efficiency, message= FALSE}
-df.eff <- icc(df = df[[2]],indice = "eff", Target = "Friend")
-```
+df.eff <- batch::icc(df = df[[2]],indice = "eff", Target = "Friend")
 
-```{r ICC of ezDDM: v, message= FALSE}
-df.ddmv <- icc(df = df[[2]],indice = "ddmv", Target = "Friend")
-```
+df.ddmv <- batch::icc(df = df[[2]],indice = "ddmv", Target = "Friend")
 
-```{r ICC of ezDDM: z, message= FALSE}
-df.ddmz <- icc(df = df[[2]],indice = "ddmz", Target = "Friend")
+df.ddmz <- batch::icc(df = df[[2]],indice = "ddmz", Target = "Friend")
 ```
 
 ```{r DF for Plot ICC}
@@ -46,7 +61,7 @@ rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
 ```
 
 ```{r DF for Plot ICC}
-res[[3]][[1]] <- ICC_batch(SPE_ICC = iccl[[1]]) %>%
+res[[3]][[1]] <- icc_output(list = iccl[[1]]) %>%
   dplyr::filter(type == "ICC2" | type == "ICC2k")
 names(res[[3]])[1] <- "Self - Friend"
 ```
@@ -54,27 +69,17 @@ names(res[[3]])[1] <- "Self - Friend"
 --------------------------------------------------------------------------------
 
 # ICC: Self - Stranger
-```{r ICC of RT, message= FALSE}
+```{r Self - Stranger}
 df.rt <- icc(df = df[[2]], indice = "rt", Target = "Stranger")
-```
 
-```{r ICC of ACC, message= FALSE}
 df.acc <- icc(df = df[[2]],indice = "acc", Target = "Stranger")
-```
 
-```{r ICC of Dprime, message= FALSE}
 df.dp <- icc(df = df[[2]],indice = "dp", Target = "Stranger")
-```
 
-```{r ICC of Efficiency, message= FALSE}
 df.eff <- icc(df = df[[2]],indice = "eff", Target = "Stranger")
-```
 
-```{r ICC of ezDDM: v, message= FALSE}
 df.ddmv <- icc(df = df[[2]],indice = "ddmv", Target = "Stranger")
-```
 
-```{r ICC of ezDDM: z, message= FALSE}
 df.ddmz <- icc(df = df[[2]],indice = "ddmz", Target = "Stranger")
 ```
 
@@ -85,7 +90,7 @@ rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
 ```
 
 ```{r DF for Plot ICC}
-res[[3]][[2]] <- ICC_batch(SPE_ICC = iccl[[2]]) %>%
+res[[3]][[2]] <- icc_output(list = iccl[[2]]) %>%
   dplyr::filter(type == "ICC2" | type == "ICC2k")
 names(res[[3]])[2] <- "Self - Stranger"
 ```

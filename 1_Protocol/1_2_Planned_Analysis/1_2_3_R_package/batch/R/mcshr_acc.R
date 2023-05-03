@@ -15,7 +15,7 @@ mcshr_acc <- function(list, nc, Target) {
   r_values <- foreach(j = 1:length(list), .packages = c("dplyr", "tidyr")) %dopar% {
 
     SPE_half_1 <- list[[j]][[1]] %>%
-      dplyr::filter(.,Match == "Match") %>%
+      dplyr::filter(.,Matching == "Matching") %>%
       dplyr::group_by(Subject,Session,Identity)%>%
       dplyr::summarise(acc = mean(ACC))%>%
       dplyr::ungroup() %>%
@@ -25,7 +25,7 @@ mcshr_acc <- function(list, nc, Target) {
       dplyr::select(acc_SPE)
 
     SPE_half_2 <- list[[j]][[2]] %>%
-      dplyr::filter(.,Match == "Match") %>%
+      dplyr::filter(.,Matching == "Matching") %>%
       dplyr::group_by(Subject,Session,Identity)%>%
       dplyr::summarise(acc = mean(ACC))%>%
       dplyr::ungroup() %>%

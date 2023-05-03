@@ -8,10 +8,10 @@
 #'
 icc_acc <- function(df, Target) {
   df <- df %>%
-    dplyr::group_by(Subject, Session, Match, Identity)%>%
+    dplyr::group_by(Subject, Session, Matching, Identity)%>%
     dplyr::summarise(acc = mean(ACC))%>% # Calculation Formula
     dplyr::ungroup() %>%
-    dplyr::filter(Match == "Match") %>%
+    dplyr::filter(Matching == "Matching") %>%
     dplyr::group_by(Subject,Session) %>%
     tidyr::pivot_wider(names_from = Identity,
                        values_from = acc) %>%
