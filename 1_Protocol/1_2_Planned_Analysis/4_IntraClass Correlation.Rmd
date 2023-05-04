@@ -15,14 +15,14 @@ icc_output <- function(list) {
   final <- rbindlist(result) 
   colnames(final)[7] <- "LLCI"
   colnames(final)[8] <- "ULCI"
-  final$ICC_type <- rep(c("RT","ACC","Dprime","Efficiency","ezDDM_v","ezDDM_z"), 
+  final$ICC_type <- rep(c("RT","ACC","Dprime","Efficiency","ezDDM: v","ezDDM: z"), 
                         each = nrow(final)/6)
   
   colnames(final)[7] <- "LLCI"
   colnames(final)[8] <- "ULCI"
   final <- final %>%
     dplyr::mutate(.,ICC_type = factor(ICC_type, 
-                                      levels = c("RT","ACC","Dprime","Efficiency","ezDDM_v","ezDDM_z")) ) %>%
+                                      levels = c("RT","ACC","Dprime","Efficiency","ezDDM: v","ezDDM: z")) ) %>%
     dplyr::arrange(.,type) %>%
     dplyr::select(type, ICC_type, ICC, LLCI, ULCI) 
   return(final)

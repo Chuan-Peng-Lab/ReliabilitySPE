@@ -1,17 +1,12 @@
 ---
 title: "5_Plot"
 author: "yuki"
-date: "2023-04-30"
+date: "2023-05-04"
 output: html_document
 ---
 # Create NULL List
 ```{r Create NULL List}
 plot <- list()
-```
-
-```{r Create NULL List}
-df[[3]] <- list()
-names(df)[3] <- "Plot"
 ```
 
 # Palette
@@ -22,38 +17,21 @@ palette <- list(warm = warm, cold = cold)
 rm(warm, cold)
 ```
 
-# Plot SHR
-```{r DataFrame for Plot SHR}
-# Add a Column for Target
-df.friend <- res[[2]][[1]] %>%
-  dplyr::mutate(Target = "Friend")
-df.stranger <- res[[2]][[2]] %>%
-  dplyr::mutate(Target = "Stranger")
-
-# Rbind two Data Frame
-df[[3]][[1]] <- rbind(df.friend, df.stranger) %>%
-  dplyr::mutate(Indice = factor(Indice, levels = c("ezDDM: z", "ezDDM: v", "Efficiency", "Dprime", "ACC", "RT"))) 
-names(df[[3]])[[1]] <- "Plot SHR"
-
-# Clean Intermediate Variables
-rm(df.friend, df.stranger)
-```
-
-```{r Plot SHR for Simulated Data, message= FALSE, warning = FALSE}
-plot[[1]] <- ggplot(df[[3]][[1]], aes(x = Indice, y = r, color = interaction(Indice, Target))) +
-  ggplot2::geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1, size = 2) +
-  #geom_line() +
-  ggplot2::geom_point(size = 5) +
+# SHR
+```{r Plot SHR, message= FALSE, warning = FALSE}
+plot[[1]] <- ggplot2::ggplot(plot.SHR.MC_fake, aes(x = SPE_type, y = SH_r, fill = interaction(SPE_type, Target))) +
+  ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), color = "grey", alpha = 0.5, outlier.color = NA,) + 
+  ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA) +
+  ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
-  ggplot2::scale_y_continuous(limits = c(-0.2, 1), 
-                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
-                                                  labels = c("unacceptable", "poor","acceptable", "excellent")),
-                              breaks = seq(0,1,by = 0.1)) +
-  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + #add dotted line
-  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::scale_y_continuous(limits = c(0.3, 1), 
+                     sec.axis = sec_axis(~., breaks = c(0.5, 0.7, 1), 
+                                             labels = c( "poor", "acceptable", "excellent")),
+                                             breaks = seq(0,1,by = 0.1)) +
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + #add dotted line
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
-  ggplot2::theme_bw() +
+  ggplot2::theme_bw() + #background white
   ggplot2::theme(legend.position = "none",
                  text = element_text(size = 20),
                  axis.text.x = element_text(size = 20),
@@ -66,40 +44,24 @@ plot[[1]] <- ggplot(df[[3]][[1]], aes(x = Indice, y = r, color = interaction(Ind
                  strip.background = element_rect(color = "black", fill = "white", size = 1)
                  ) +
   ggplot2::labs(y = "Monte Carlo-based Split-Half Reliability", x = "Indices") +
-  ggplot2::scale_color_manual(values = c(palette$warm, palette$cold)) + 
+  ggplot2::scale_fill_manual(values = c(palette$warm, palette$cold)) + 
   ggplot2::facet_wrap(~Target, ncol = 1) 
 
 names(plot)[1] <- "Monte Carlo"
 
-ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure1_SPE_SHR.png", width = 15, height = 10)
+rm(plot.SHR.MC_fake)
+
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure1_SPE_SHR.png", width = 15, height = 10, dpi = 300)
 ```
 
---------------------------------------------------------------------------------
-
-## Plot ICC
-```{r DataFrame for Plot ICC}
-# Add a Column for Target
-df.friend <- res[[3]][[1]] %>%
-  dplyr::mutate(Target = "Friend")
-df.stranger <- res[[3]][[2]] %>%
-  dplyr::mutate(Target = "Stranger")
-
-# Rbind two Data Frame
-df[[3]][[2]] <- rbind(df.friend, df.stranger) %>%
-  dplyr::mutate(ICC_type = factor(ICC_type, levels = c("ezDDM: z", "ezDDM: v", "Efficiency", "Dprime", "ACC", "RT"))) 
-names(df[[3]])[[2]] <- "Plot ICC"
-
-# Clean Intermediate Variables
-rm(df.friend, df.stranger)
-```
-
+# ICC
 ```{r Plot ICC, message= FALSE, warning = FALSE}
-plot[[2]] <- ggplot2::ggplot(df[[3]][[2]], aes(x = ICC_type, y = ICC, color = interaction(ICC_type, Target))) +
+plot[[2]] <- ggplot2::ggplot(plot.ICC_fake, aes(x = ICC_type, y = ICC, color = interaction(ICC_type, Target))) +
   ggplot2::geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1, size = 2) +
   ggplot2::geom_point(size = 5) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
-  ggplot2::scale_y_continuous(limits = c(-1, 1), 
+  ggplot2::scale_y_continuous(limits = c(0, 1), 
                      sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
                                              labels = c("unacceptable", "poor", "acceptable", "excellent")),
                                              breaks = seq(0,1,by = 0.1)) +

@@ -43,6 +43,6 @@ mcshr_eff <- function(list, nc, Target) {
   r <- mean(r_values_vector)
   CI <- quantile(r_values_vector, c(0.025, 0.975))
 
-  values <- data.frame("Indece" = "Efficiency", "r" = r, "LLCI" = CI[1], "ULCI" = CI[2])
+  values <- data.frame("Indice" = "Efficiency", "r" = r, "LLCI" = CI[1], "ULCI" = CI[2])
   return(values)
 }
