@@ -1,19 +1,19 @@
-"Indices","Method","r"
-"RT","First-Second",-0.0160086741380251
-"RT","Odd-Even",-0.0720906632794703
-"RT","Permuted",0.087254473316917
-"ACC","First-Second",0.0857333213745631
-"ACC","Odd-Even",-0.0194521360996635
-"ACC","Permuted",0.0157405236315436
-"Dprime","First-Second",0.0443910163961023
-"Dprime","Odd-Even",-0.0318500890571297
-"Dprime","Permuted",-0.0678723002277717
-"Efficiency","First-Second",0.101257752266981
-"Efficiency","Odd-Even",-0.0384574556717017
-"Efficiency","Permuted",0.0613007722148168
-"ezDDM: v","First-Second",0.107740556281191
-"ezDDM: v","Odd-Even",-0.0294176958373136
-"ezDDM: v","Permuted",0.0394340837345941
-"ezDDM: z","First-Second",0.137764629463889
-"ezDDM: z","Odd-Even",-0.015697769980174
-"ezDDM: z","Permuted",0.0667427063284371
+"Indice","Method","r","Target","Paper_ID"
+"RT","First-Second",-0.0160086741380251,"Friend","Simulated"
+"RT","Odd-Even",-0.0720906632794703,"Friend","Simulated"
+"RT","Permuted",0.087254473316917,"Friend","Simulated"
+"ACC","First-Second",0.0857333213745631,"Friend","Simulated"
+"ACC","Odd-Even",-0.0194521360996635,"Friend","Simulated"
+"ACC","Permuted",0.0157405236315436,"Friend","Simulated"
+"Dprime","First-Second",0.0443910163961023,"Friend","Simulated"
+"Dprime","Odd-Even",-0.0318500890571297,"Friend","Simulated"
+"Dprime","Permuted",-0.0678723002277717,"Friend","Simulated"
+"Efficiency","First-Second",0.101257752266981,"Friend","Simulated"
+"Efficiency","Odd-Even",-0.0384574556717017,"Friend","Simulated"
+"Efficiency","Permuted",0.0613007722148168,"Friend","Simulated"
+"ezDDM: v","First-Second",0.107740556281191,"Friend","Simulated"
+"ezDDM: v","Odd-Even",-0.0294176958373136,"Friend","Simulated"
+"ezDDM: v","Permuted",0.0394340837345941,"Friend","Simulated"
+"ezDDM: z","First-Second",0.137764629463889,"Friend","Simulated"
+"ezDDM: z","Odd-Even",-0.015697769980174,"Friend","Simulated"
+"ezDDM: z","Permuted",0.0667427063284371,"Friend","Simulated"

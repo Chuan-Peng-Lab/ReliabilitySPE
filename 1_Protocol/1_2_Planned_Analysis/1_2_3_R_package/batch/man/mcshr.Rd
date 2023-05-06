@@ -4,7 +4,7 @@
 \alias{mcshr}
 \title{Title}
 \usage{
-mcshr(list, nc, indice, Target)
+mcshr(list, nc, indice, Target, Paper_ID)
 }
 \arguments{
 \item{list}{list}
@@ -14,6 +14,8 @@ mcshr(list, nc, indice, Target)
 \item{indice}{indice ("rc", "acc", "dp", "eff", "ddmv", "ddmz")}
 
 \item{Target}{target}
+
+\item{Paper_ID}{Paper_ID}
 }
 \value{
 结果

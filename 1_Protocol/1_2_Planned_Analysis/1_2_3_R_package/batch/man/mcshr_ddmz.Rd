@@ -4,7 +4,7 @@
 \alias{mcshr_ddmz}
 \title{Title}
 \usage{
-mcshr_ddmz(list, nc, Target)
+mcshr_ddmz(list, nc, Target, Paper_ID)
 }
 \arguments{
 \item{list}{list}
@@ -12,6 +12,8 @@ mcshr_ddmz(list, nc, Target)
 \item{nc}{number of core}
 
 \item{Target}{target}
+
+\item{Paper_ID}{Paper_ID}
 }
 \value{
 结果

@@ -4,7 +4,7 @@
 \alias{nmshr}
 \title{Title}
 \usage{
-nmshr(list, indice, Target)
+nmshr(list, indice, Target, Paper_ID)
 }
 \arguments{
 \item{list}{list}
@@ -12,6 +12,8 @@ nmshr(list, indice, Target)
 \item{indice}{indice ("rc", "acc", "dp", "eff", "ddmv", "ddmz")}
 
 \item{Target}{target}
+
+\item{Paper_ID}{Paper_ID}
 }
 \value{
 结果

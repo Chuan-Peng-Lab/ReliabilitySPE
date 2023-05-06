@@ -3,11 +3,12 @@
 #' @param list list
 #' @param nc number of core
 #' @param Target target
+#' @param Paper_ID Paper_ID
 #'
 #' @return 结果
 #' @export 结果
 #'
-mcshr_acc <- function(list, nc, Target) {
+mcshr_acc <- function(list, nc, Target, Paper_ID) {
 
   # Initialize the parallel backend
   registerDoParallel(nc)
@@ -45,6 +46,6 @@ mcshr_acc <- function(list, nc, Target) {
   r <- mean(r_values_vector)
   CI <- quantile(r_values_vector, c(0.025, 0.975))
 
-  values <- data.frame("Indice" = "ACC", "r" = r, "LLCI" = CI[1], "ULCI" = CI[2])
+  values <- data.frame("Indice" = "ACC", "r" = r, "LLCI" = CI[1], "ULCI" = CI[2], "Target" = Target, "Paper_ID" = Paper_ID)
   return(values)
 }

@@ -4,7 +4,7 @@
 \alias{mcshr_acc}
 \title{Title}
 \usage{
-mcshr_acc(list, nc, Target)
+mcshr_acc(list, nc, Target, Paper_ID)
 }
 \arguments{
 \item{list}{list}
@@ -12,6 +12,8 @@ mcshr_acc(list, nc, Target)
 \item{nc}{number of core}
 
 \item{Target}{target}
+
+\item{Paper_ID}{Paper_ID}
 }
 \value{
 结果

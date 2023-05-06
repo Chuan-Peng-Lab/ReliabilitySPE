@@ -4,7 +4,7 @@
 \alias{shr}
 \title{Title}
 \usage{
-shr(list, indice, Target, mc = FALSE, nc = NULL)
+shr(list, indice, Target, Paper_ID, mc = FALSE, nc = NULL)
 }
 \arguments{
 \item{list}{list}
@@ -12,6 +12,8 @@ shr(list, indice, Target, mc = FALSE, nc = NULL)
 \item{indice}{indice ("rc", "acc", "dp", "eff", "ddmv", "ddmz")}
 
 \item{Target}{target}
+
+\item{Paper_ID}{Paper_ID}
 
 \item{mc}{Monte Carlo or not}
 

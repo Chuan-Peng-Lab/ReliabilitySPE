@@ -22,13 +22,14 @@ library(ggplot2)
 # Parallel Computing
 library(foreach)
 library(parallel)
+library(iterators)
 library(doParallel)
 
 # myfunction: splithalf, batch
 # install.packages("./1_2_3_R_package/splithalf_0.0.1.tar.gz")
 library(splithalf)
 
-# install.packages("./1_2_3_R_package/batch_0.0.2.tar.gz")
+# install.packages("./1_2_3_R_package/batch_0.0.3.tar.gz")
 library(batch)
 ```
 

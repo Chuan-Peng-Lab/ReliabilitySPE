@@ -4,12 +4,14 @@
 \alias{nmshr_ddmz}
 \title{Title}
 \usage{
-nmshr_ddmz(list, Target)
+nmshr_ddmz(list, Target, Paper_ID)
 }
 \arguments{
 \item{list}{list}
 
 \item{Target}{target}
+
+\item{Paper_ID}{Paper_ID}
 }
 \value{
 结果

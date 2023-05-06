@@ -23,24 +23,41 @@ rm(warm, cold)
 ```
 
 # Plot SHR
-```{r DataFrame for Plot SHR}
+```{r DataFrame for Plot NM SHR}
 # Add a Column for Target
-df.friend <- res[[2]][[1]] %>%
-  dplyr::mutate(Target = "Friend")
-df.stranger <- res[[2]][[2]] %>%
-  dplyr::mutate(Target = "Stranger")
+df.friend <- res[[1]][[1]] 
+df.stranger <- res[[1]][[2]] 
 
 # Rbind two Data Frame
 df[[3]][[1]] <- rbind(df.friend, df.stranger) %>%
   dplyr::mutate(Indice = factor(Indice, levels = c("ezDDM: z", "ezDDM: v", "Efficiency", "Dprime", "ACC", "RT"))) 
-names(df[[3]])[[1]] <- "Plot SHR"
+names(df[[3]])[[1]] <- "Plot NM SHR"
 
 # Clean Intermediate Variables
 rm(df.friend, df.stranger)
 ```
 
 ```{r Plot SHR for Simulated Data, message= FALSE, warning = FALSE}
-plot[[1]] <- ggplot(df[[3]][[1]], aes(x = Indice, y = r, color = interaction(Indice, Target))) +
+plot[[1]] <- list()
+names(plot)[1] <- "First-Second, Odd-Even, Permuted"
+```
+
+```{r DataFrame for Plot MC SHR}
+# Add a Column for Target
+df.friend <- res[[2]][[1]] 
+df.stranger <- res[[2]][[2]] 
+
+# Rbind two Data Frame
+df[[3]][[2]] <- rbind(df.friend, df.stranger) %>%
+  dplyr::mutate(Indice = factor(Indice, levels = c("ezDDM: z", "ezDDM: v", "Efficiency", "Dprime", "ACC", "RT"))) 
+names(df[[3]])[[2]] <- "Plot MC SHR"
+
+# Clean Intermediate Variables
+rm(df.friend, df.stranger)
+```
+
+```{r Plot SHR for Simulated Data, message= FALSE, warning = FALSE}
+plot[[2]] <- ggplot(df[[3]][[2]], aes(x = Indice, y = r, color = interaction(Indice, Target))) +
   ggplot2::geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1, size = 2) +
   #geom_line() +
   ggplot2::geom_point(size = 5) +
@@ -69,9 +86,9 @@ plot[[1]] <- ggplot(df[[3]][[1]], aes(x = Indice, y = r, color = interaction(Ind
   ggplot2::scale_color_manual(values = c(palette$warm, palette$cold)) + 
   ggplot2::facet_wrap(~Target, ncol = 1) 
 
-names(plot)[1] <- "Monte Carlo"
+names(plot)[2] <- "Monte Carlo"
 
-ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure1_SPE_SHR.png", width = 15, height = 10)
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Fig4_SPE_SHR.png", width = 15, height = 10)
 ```
 
 --------------------------------------------------------------------------------
@@ -85,16 +102,16 @@ df.stranger <- res[[3]][[2]] %>%
   dplyr::mutate(Target = "Stranger")
 
 # Rbind two Data Frame
-df[[3]][[2]] <- rbind(df.friend, df.stranger) %>%
+df[[3]][[3]] <- rbind(df.friend, df.stranger) %>%
   dplyr::mutate(ICC_type = factor(ICC_type, levels = c("ezDDM: z", "ezDDM: v", "Efficiency", "Dprime", "ACC", "RT"))) 
-names(df[[3]])[[2]] <- "Plot ICC"
+names(df[[3]])[[3]] <- "Plot ICC"
 
 # Clean Intermediate Variables
 rm(df.friend, df.stranger)
 ```
 
 ```{r Plot ICC, message= FALSE, warning = FALSE}
-plot[[2]] <- ggplot2::ggplot(df[[3]][[2]], aes(x = ICC_type, y = ICC, color = interaction(ICC_type, Target))) +
+plot[[3]] <- ggplot2::ggplot(df[[3]][[3]], aes(x = ICC_type, y = ICC, color = interaction(ICC_type, Target))) +
   ggplot2::geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1, size = 2) +
   ggplot2::geom_point(size = 5) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
@@ -129,9 +146,9 @@ plot[[2]] <- ggplot2::ggplot(df[[3]][[2]], aes(x = ICC_type, y = ICC, color = in
   ggplot2::scale_color_manual(values = c(palette$warm, palette$cold)) + 
   ggplot2::facet_wrap(~ type + Target, ncol = 1) 
 
-names(plot)[2] <- "ICC"
+names(plot)[3] <- "ICC"
 
 rm(plot.ICC_fake)
 
-ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure2_SPE_ICC.png", width = 15, height = 20, dpi = 300)
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Fig5_SPE_ICC.png", width = 15, height = 20, dpi = 300)
 ```

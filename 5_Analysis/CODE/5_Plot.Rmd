@@ -19,15 +19,19 @@ rm(warm, cold)
 
 # SHR
 ```{r Plot SHR, message= FALSE, warning = FALSE}
-plot[[1]] <- ggplot2::ggplot(plot.SHR.MC_fake, aes(x = SPE_type, y = SH_r, fill = interaction(SPE_type, Target))) +
+# only for testing codes
+nmshr.fake <- read.csv("../OUTPUT/plot_nmshr_fake.csv")
+
+plot[[1]] <- ggplot2::ggplot(nmshr.fake, aes(x = Indice, y = r, fill = interaction(Indice, Target))) +
   ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), color = "grey", alpha = 0.5, outlier.color = NA,) + 
   ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA) +
   ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
-  ggplot2::scale_y_continuous(limits = c(0.3, 1), 
-                     sec.axis = sec_axis(~., breaks = c(0.5, 0.7, 1), 
-                                             labels = c( "poor", "acceptable", "excellent")),
+  ggplot2::scale_y_continuous(limits = c(0, 1), 
+                     sec.axis = sec_axis(~., breaks = c(0.3, 0.5, 0.7, 1), 
+                                             labels = c("unacceptable", "poor", "acceptable", "excellent")),
                                              breaks = seq(0,1,by = 0.1)) +
+  ggplot2::geom_hline(yintercept = 0.3, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + #add dotted line
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
@@ -43,29 +47,78 @@ plot[[1]] <- ggplot2::ggplot(plot.SHR.MC_fake, aes(x = SPE_type, y = SH_r, fill 
                  panel.grid = element_blank(),#hide the line in background
                  strip.background = element_rect(color = "black", fill = "white", size = 1)
                  ) +
-  ggplot2::labs(y = "Monte Carlo-based Split-Half Reliability", x = "Indices") +
+  ggplot2::labs(y = "Split-Half Reliability", x = "Indices") +
   ggplot2::scale_fill_manual(values = c(palette$warm, palette$cold)) + 
-  ggplot2::facet_wrap(~Target, ncol = 1) 
+  ggplot2::facet_wrap(~Target + Method, ncol = 3) 
 
-names(plot)[1] <- "Monte Carlo"
+names(plot)[1] <- "First-Second, Odd-Even, Permuted"
 
-rm(plot.SHR.MC_fake)
+rm(nmshr.fake)
 
-ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure1_SPE_SHR.png", width = 15, height = 10, dpi = 300)
+ggsave(filename="../FIGURE/Fig1_NM_SHR.png", width = 30, height = 10, dpi = 300)
+```
+
+```{r Plot SHR for Simulated Data, message= FALSE, warning = FALSE}
+# only for testing codes
+mcshr.fake <- read.csv("../OUTPUT/plot_mcshr_fake.csv") %>%
+  dplyr::group_by(Indice, Target) %>%
+  dplyr::arrange(r) %>%
+  dplyr::mutate(Order = row_number()) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(Indice = factor(Indice, levels = c("ezDDM: z", "ezDDM: v", "Efficiency", "Dprime", "ACC", "RT"))) %>%
+  dplyr::arrange(Indice, Target, r)
+
+plot[[2]] <- ggplot(mcshr.fake, aes(x = Indice, y = r, group = Order, color = interaction(Indice, Target))) +
+  ggplot2::geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1, size = 2, position = position_dodge(width = 1)) +
+  #geom_line() +
+  ggplot2::geom_point(size = 5, position = position_dodge(width = 1)) +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_y_continuous(limits = c(0, 1), 
+                              sec.axis = sec_axis(~., breaks = c(0.3, 0.5, 0.7, 1), 
+                                                  labels = c("unacceptable", "poor","acceptable", "excellent")),
+                              breaks = seq(0,1,by = 0.1)) +
+  ggplot2::geom_hline(yintercept = 0.3, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(legend.position = "none",
+                 text = element_text(size = 20),
+                 axis.text.x = element_text(size = 20),
+                 axis.text.y = element_text(size = 20),
+                 axis.title = element_text(size = 25),
+                 axis.title.x = element_text(margin = margin(t = 20)),
+                 axis.title.y = element_text(margin = margin(t = 10)),
+                 plot.margin = unit(c(1,1,1,1), "cm"),
+                 panel.grid = element_blank(),#hide the line in background
+                 strip.background = element_rect(color = "black", fill = "white", size = 1)
+                 ) +
+  ggplot2::labs(y = "Monte Carlo-based Split-Half Reliability", x = "Indices") +
+  ggplot2::scale_color_manual(values = c(palette$warm, palette$cold)) + 
+  ggplot2::facet_wrap(~Target, ncol = 2) 
+
+names(plot)[2] <- "Monte Carlo"
+
+rm(mcshr.fake)
+
+ggsave(filename="../FIGURE/Fig2_MC_SHR.png", width = 20, height = 15)
 ```
 
 # ICC
 ```{r Plot ICC, message= FALSE, warning = FALSE}
-plot[[2]] <- ggplot2::ggplot(plot.ICC_fake, aes(x = ICC_type, y = ICC, color = interaction(ICC_type, Target))) +
+# only for testing codes
+icc.fake <- read.csv("../OUTPUT/plot_icc_fake.csv")
+
+plot[[3]] <- ggplot2::ggplot(icc.fake, aes(x = ICC_type, y = ICC, color = interaction(ICC_type, Target))) +
   ggplot2::geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1, size = 2) +
   ggplot2::geom_point(size = 5) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
   ggplot2::scale_y_continuous(limits = c(0, 1), 
-                     sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
+                     sec.axis = sec_axis(~., breaks = c(0.3, 0.5, 0.7, 1), 
                                              labels = c("unacceptable", "poor", "acceptable", "excellent")),
                                              breaks = seq(0,1,by = 0.1)) +
-  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + #add dotted line
+  ggplot2::geom_hline(yintercept = 0.3, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + #add dotted line
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
@@ -91,9 +144,9 @@ plot[[2]] <- ggplot2::ggplot(plot.ICC_fake, aes(x = ICC_type, y = ICC, color = i
   ggplot2::scale_color_manual(values = c(palette$warm, palette$cold)) + 
   ggplot2::facet_wrap(~ type + Target, ncol = 1) 
 
-names(plot)[2] <- "ICC"
+names(plot)[3] <- "ICC"
 
-rm(plot.ICC_fake)
+rm(icc.fake)
 
-ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Figure2_SPE_ICC.png", width = 15, height = 20, dpi = 300)
+ggsave(filename="../FIGURE/Fig3_ICC.png", width = 15, height = 20, dpi = 300)
 ```
