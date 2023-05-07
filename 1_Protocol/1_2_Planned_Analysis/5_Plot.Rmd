@@ -84,11 +84,11 @@ plot[[2]] <- ggplot(df[[3]][[2]], aes(x = Indice, y = r, color = interaction(Ind
                  ) +
   ggplot2::labs(y = "Monte Carlo-based Split-Half Reliability", x = "Indices") +
   ggplot2::scale_color_manual(values = c(palette$warm, palette$cold)) + 
-  ggplot2::facet_wrap(~Target, ncol = 1) 
+  ggplot2::facet_wrap(~Target, ncol = 2) 
 
 names(plot)[2] <- "Monte Carlo"
 
-ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Fig4_SPE_SHR.png", width = 15, height = 10)
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Fig4_SPE_SHR.png", width = 20, height = 10)
 ```
 
 --------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ plot[[3]] <- ggplot2::ggplot(df[[3]][[3]], aes(x = ICC_type, y = ICC, color = in
   ggplot2::geom_point(size = 5) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
-  ggplot2::scale_y_continuous(limits = c(-1, 1), 
+  ggplot2::scale_y_continuous(limits = c(-0.2, 1), 
                      sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
                                              labels = c("unacceptable", "poor", "acceptable", "excellent")),
                                              breaks = seq(0,1,by = 0.1)) +
@@ -144,11 +144,11 @@ plot[[3]] <- ggplot2::ggplot(df[[3]][[3]], aes(x = ICC_type, y = ICC, color = in
                  ) +
   ggplot2::labs(y = "Intraclass Correlation Coefficient", x = "Indices") +
   ggplot2::scale_color_manual(values = c(palette$warm, palette$cold)) + 
-  ggplot2::facet_wrap(~ type + Target, ncol = 1) 
+  ggplot2::facet_wrap(~ type + Target, ncol = 2) 
 
 names(plot)[3] <- "ICC"
 
 rm(plot.ICC_fake)
 
-ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Fig5_SPE_ICC.png", width = 15, height = 20, dpi = 300)
+ggsave(filename="../1_2_Planned_Analysis/1_2_2_OUTPUT/Fig5_SPE_ICC.png", width = 20, height = 20, dpi = 300)
 ```

@@ -94,7 +94,7 @@ plot[[2]] <- ggplot(mcshr.fake, aes(x = Indice, y = r, group = Order, color = in
                  strip.background = element_rect(color = "black", fill = "white", size = 1)
                  ) +
   ggplot2::labs(y = "Monte Carlo-based Split-Half Reliability", x = "Indices") +
-  ggplot2::scale_color_manual(values = c(palette$warm, palette$cold)) + 
+  ggplot2::scale_color_manual(values = c("black","black","black","black","black","black","grey","grey","grey","grey","grey","grey")) + 
   ggplot2::facet_wrap(~Target, ncol = 2) 
 
 names(plot)[2] <- "Monte Carlo"
