@@ -16,8 +16,8 @@ nmshr_ddmv <- function(list, Target, Paper_ID) {
       dplyr::filter(Matching == "Matching") %>%
       tidyr::pivot_wider(names_from = Identity,
                          values_from = v) %>%
-      dplyr::mutate(v_SPE = Self - !!sym(Target)) %>%
-      dplyr::select(v_SPE)
+      dplyr::mutate(v_SPE_1 = Self - !!sym(Target)) %>%
+      dplyr::select(Subject, Session, v_SPE_1)
 
     SPE_half_2 <- list[[j]][[2]] %>%
       hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
@@ -25,10 +25,15 @@ nmshr_ddmv <- function(list, Target, Paper_ID) {
       dplyr::filter(Matching == "Matching") %>%
       tidyr::pivot_wider(names_from = Identity,
                          values_from = v) %>%
-      dplyr::mutate(v_SPE = Self - !!sym(Target)) %>%
-      dplyr::select(v_SPE)
+      dplyr::mutate(v_SPE_2 = Self - !!sym(Target)) %>%
+      dplyr::select(Subject, Session, v_SPE_2)
 
-    r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
+    df.cor <- SPE_half_1 %>%
+      dplyr::left_join(SPE_half_2, by = c("Subject", "Session")) %>%
+      dplyr::filter(!is.na(v_SPE_1) & !is.na(v_SPE_2)) %>%
+      dplyr::filter(is.finite(v_SPE_1) & is.finite(v_SPE_2))
+
+    r_value <- cor(df.cor[,3], df.cor[,4], method = "pearson")
 
     values[j,1] <- "ezDDM: v"
     values[j,2] <- j

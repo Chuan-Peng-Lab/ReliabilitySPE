@@ -16,8 +16,8 @@ nmshr_eff <- function(list, Target, Paper_ID) {
       dplyr::ungroup() %>%
       tidyr::pivot_wider(names_from = Identity,
                          values_from = Eff) %>%
-      dplyr::mutate(eff_SPE = Self - !!sym(Target)) %>%
-      dplyr::select(eff_SPE)
+      dplyr::mutate(eff_SPE_1 = Self - !!sym(Target)) %>%
+      dplyr::select(Subject, Session, eff_SPE_1)
 
     SPE_half_2 <- list[[j]][[2]] %>%
       dplyr::group_by(Subject, Identity, Matching, Session) %>%
@@ -25,10 +25,15 @@ nmshr_eff <- function(list, Target, Paper_ID) {
       dplyr::ungroup() %>%
       tidyr::pivot_wider(names_from = Identity,
                          values_from = Eff) %>%
-      dplyr::mutate(eff_SPE = Self - !!sym(Target)) %>%
-      dplyr::select(eff_SPE)
+      dplyr::mutate(eff_SPE_2 = Self - !!sym(Target)) %>%
+      dplyr::select(Subject, Session, eff_SPE_2)
 
-    r_value <- cor(SPE_half_1, SPE_half_2, method = "pearson")
+    df.cor <- SPE_half_1 %>%
+      dplyr::left_join(SPE_half_2, by = c("Subject", "Session")) %>%
+      dplyr::filter(!is.na(eff_SPE_1) & !is.na(eff_SPE_2)) %>%
+      dplyr::filter(is.finite(eff_SPE_1) & is.finite(eff_SPE_2))
+
+    r_value <- cor(df.cor[,3], df.cor[,4], method = "pearson")
 
     values[j,1] <- "Efficiency"
     values[j,2] <- j

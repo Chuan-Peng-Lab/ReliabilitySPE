@@ -37,8 +37,8 @@ mcshr_dp <- function(list, nc, Target, Paper_ID) {
       select(-"hit",-"fa",-"miss",-"cr") %>%
       tidyr::pivot_wider(names_from = Identity,
                          values_from = Dprime) %>%
-      dplyr::mutate(dprime_SPE = Self - !!sym(Target)) %>%
-      dplyr::select(dprime_SPE)
+      dplyr::mutate(dprime_SPE_1 = Self - !!sym(Target)) %>%
+      dplyr::select(Subject, Session, dprime_SPE_1)
 
     SPE_half_2 <- list[[j]][[2]] %>%
       dplyr::group_by(Subject,Session,Identity) %>%
@@ -62,10 +62,15 @@ mcshr_dp <- function(list, nc, Target, Paper_ID) {
       select(-"hit",-"fa",-"miss",-"cr") %>%
       tidyr::pivot_wider(names_from = Identity,
                          values_from = Dprime) %>%
-      dplyr::mutate(dprime_SPE = Self - !!sym(Target)) %>%
-      dplyr::select(dprime_SPE)
+      dplyr::mutate(dprime_SPE_2 = Self - !!sym(Target)) %>%
+      dplyr::select(Subject, Session, dprime_SPE_2)
 
-    cor(SPE_half_1, SPE_half_2, method = "pearson")
+    df.cor <- SPE_half_1 %>%
+      dplyr::left_join(SPE_half_2, by = c("Subject", "Session")) %>%
+      dplyr::filter(!is.na(dprime_SPE_1) & !is.na(dprime_SPE_2)) %>%
+      dplyr::filter(is.finite(dprime_SPE_1) & is.finite(dprime_SPE_2))
+
+    cor(df.cor[,3], df.cor[,4], method = "pearson")
   }
 
   # Stop the parallel backend
