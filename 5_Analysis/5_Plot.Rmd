@@ -18,44 +18,44 @@ rm(warm, cold)
 ```
 
 # SHR
-```{r Plot SHR, message= FALSE, warning = FALSE}
-# only for testing codes
-nmshr.fake <- read.csv("../OUTPUT/plot_nmshr_fake.csv")
+```{r}
+res[[1]][[3]] <- read.csv("./OUTPUT/formal_nmshr.csv") %>%
+  dplyr::mutate(Target = case_when(Target == "Friend" ~ "Close",
+                                   Target == "Partner" ~ "Close",
+                                   Target == "Mother" ~ "Close",
+                                   Target == "Father" ~ "Close",
+                                   Target == "Acquaintance" ~ "Close",
+                                   Target == "Stranger" ~ "Stranger",
+                                   Target == "Celebrity" ~ "Celebrity",
+                                   Target == "none" ~ "NonPerson",)) %>%
+  dplyr::mutate(Target = factor(Target, levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
+                Indice = factor(Indice, levels = c("ezDDM: z", "ezDDM: v", "Efficiency", "Dprime", "ACC", "RT"))) 
+names(res[[1]])[3] <- "plot"
+```
 
-plot[[1]] <- ggplot2::ggplot(nmshr.fake, aes(x = Indice, y = r, fill = interaction(Indice, Target))) +
+```{r Plot nmshr, }
+plot[[1]] <- ggplot2::ggplot(res[[1]][[3]], aes(x = Indice, y = r, fill = interaction(Indice, Target))) +
   ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), color = "grey", alpha = 0.5, outlier.color = NA,) + 
-  ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA) +
-  ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5) +
+  see::geom_violinhalf(color = "grey", alpha = 0.5, position = position_nudge(x = 0.1)) +
+  ggdist::stat_dots(side = "left",justification = 1.2, alpha = 0.5) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
-  ggplot2::scale_y_continuous(limits = c(0, 1), 
-                     sec.axis = sec_axis(~., breaks = c(0.3, 0.5, 0.7, 1), 
+  ggplot2::scale_y_continuous(limits = c(-0.5, 1.2), 
+                     sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
                                              labels = c("unacceptable", "poor", "acceptable", "excellent")),
-                                             breaks = seq(0,1,by = 0.1)) +
-  ggplot2::geom_hline(yintercept = 0.3, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+                                             breaks = seq(-0.4, 1,by = 0.2)) +
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + #add dotted line
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
-  ggplot2::theme_bw() + #background white
-  ggplot2::theme(legend.position = "none",
-                 text = element_text(size = 20),
-                 axis.text.x = element_text(size = 20),
-                 axis.text.y = element_text(size = 20),
-                 axis.title = element_text(size = 25),
-                 axis.title.x = element_text(margin = margin(t = 20)),
-                 axis.title.y = element_text(margin = margin(t = 10)),
-                 plot.margin = unit(c(1,1,1,1), "cm"),
-                 panel.grid = element_blank(),#hide the line in background
-                 strip.background = element_rect(color = "black", fill = "white", size = 1)
-                 ) +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none") +
   ggplot2::labs(y = "Split-Half Reliability", x = "Indices") +
-  ggplot2::scale_fill_manual(values = c(palette$warm, palette$cold)) + 
+  #ggplot2::scale_fill_manual(values = c(palette$warm, palette$cold)) + 
   ggplot2::facet_wrap(~Target + Method, ncol = 3) 
 
 names(plot)[1] <- "First-Second, Odd-Even, Permuted"
 
-rm(nmshr.fake)
-
-ggsave(filename="../FIGURE/Fig1_NM_SHR.png", width = 30, height = 10, dpi = 300)
+ggsave(filename="./FIGURE/Fig1_nmshr.png", width = 15, height = 15, dpi = 300)
 ```
 
 ```{r Plot SHR for Simulated Data, message= FALSE, warning = FALSE}
@@ -104,49 +104,39 @@ rm(mcshr.fake)
 ggsave(filename="../FIGURE/Fig2_MC_SHR.png", width = 20, height = 15)
 ```
 
+
+```{r}
+res[[3]][[1]] <- res[[3]][[1]] %>%
+  dplyr::mutate(Target = "Friend")
+res[[3]][[2]] <- res[[3]][[2]] %>%
+  dplyr::mutate(Target = "Stranger")
+res[[3]][[3]] <- rbind(res[[3]][[1]], res[[3]][[2]]) %>%
+  dplyr::mutate(ICC_type = factor(ICC_type, levels = c("ezDDM: z", "ezDDM: v", "Efficiency", "Dprime", "ACC", "RT"))) 
+names(res[[3]])[3] <- "plot"
+```
+
 # ICC
 ```{r Plot ICC, message= FALSE, warning = FALSE}
-# only for testing codes
-icc.fake <- read.csv("../OUTPUT/plot_icc_fake.csv")
-
-plot[[3]] <- ggplot2::ggplot(icc.fake, aes(x = ICC_type, y = ICC, color = interaction(ICC_type, Target))) +
+plot[[3]] <- ggplot2::ggplot(res[[3]][[3]], aes(x = ICC_type, y = ICC, color = interaction(ICC_type, Target))) +
   ggplot2::geom_errorbar(aes(ymin = LLCI, ymax = ULCI), width = 0.1, size = 2) +
   ggplot2::geom_point(size = 5) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
-  ggplot2::scale_y_continuous(limits = c(0, 1), 
-                     sec.axis = sec_axis(~., breaks = c(0.3, 0.5, 0.7, 1), 
+  ggplot2::scale_y_continuous(limits = c(-0.5, 1), 
+                     sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1), 
                                              labels = c("unacceptable", "poor", "acceptable", "excellent")),
-                                             breaks = seq(0,1,by = 0.1)) +
-  ggplot2::geom_hline(yintercept = 0.3, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + #add dotted line
+                                             breaks = seq(-0.5, 1,by = 0.1)) +
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + #add dotted line
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
-  ggplot2::theme_bw() +
-  ggplot2::theme(text = element_text(size = 20),
-                 axis.text.x = element_text(size = 20),
-                 axis.text.y = element_text(size = 20),
-                 axis.title = element_text(size = 25),
-                 axis.title.x = element_text(margin = margin(t = 20)),
-                 axis.title.y = element_text(margin = margin(t = 10)),
-                 plot.title = element_text(size = 25),
-                 plot.margin = unit(c(1,1,1,1), "cm"),
-                 legend.key.size = unit(2, "cm"), 
-                 legend.text = element_text(size = 20),
-                 legend.title = element_blank(),
-                 legend.position = "none",
-                 panel.spacing = unit(4, "lines"),
-                 panel.grid = element_blank(),#hide the line in background
-                 strip.text = element_text(size = 20),
-                 strip.background = element_rect(color="black", fill="white", size=1)
-                 ) +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none") +
   ggplot2::labs(y = "Intraclass Correlation Coefficient", x = "Indices") +
   ggplot2::scale_color_manual(values = c(palette$warm, palette$cold)) + 
   ggplot2::facet_wrap(~ type + Target, ncol = 1) 
 
 names(plot)[3] <- "ICC"
 
-rm(icc.fake)
-
-ggsave(filename="../FIGURE/Fig3_ICC.png", width = 15, height = 20, dpi = 300)
+ggsave(filename="./FIGURE/Fig3_ICC.png", width = 9, height = 12, dpi = 300)
 ```

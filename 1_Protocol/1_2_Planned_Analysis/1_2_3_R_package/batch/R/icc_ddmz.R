@@ -9,7 +9,7 @@
 icc_ddmz <- function(df, Target) {
   df <- df %>%
     hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
-    dplyr::mutate(z = n1/n) %>%
+    dplyr::mutate(z = a/2) %>%
     dplyr::select(Subject, Session, Matching, Identity, v, z) %>%
     dplyr::select(-v) %>%
     dplyr::filter(Matching == "Matching") %>%

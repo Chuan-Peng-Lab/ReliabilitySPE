@@ -12,7 +12,7 @@ nmshr_ddmz <- function(list, Target, Paper_ID) {
   for(j in 1:length(list)) {
     SPE_half_1 <- list[[j]][[1]] %>%
       hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
-      dplyr::mutate(., z = n1/n) %>%
+      dplyr::mutate(., z = a/2) %>%
       dplyr::select(Subject, Session, Matching, Identity, z) %>%
       dplyr::filter(Matching == "Matching") %>%
       tidyr::pivot_wider(names_from = Identity,
@@ -22,7 +22,7 @@ nmshr_ddmz <- function(list, Target, Paper_ID) {
 
     SPE_half_2 <- list[[j]][[2]] %>%
       hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
-      dplyr::mutate(., z = n1/n) %>%
+      dplyr::mutate(., z = a/2) %>%
       dplyr::select(Subject, Session, Matching, Identity, z) %>%
       dplyr::filter(Matching == "Matching") %>%
       tidyr::pivot_wider(names_from = Identity,

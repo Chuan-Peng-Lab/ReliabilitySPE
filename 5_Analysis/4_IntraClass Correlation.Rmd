@@ -41,17 +41,17 @@ names(res)[3] <- "ICC"
 
 # ICC: Self - Friend
 ```{r Self - Friend}
-df.rt <- batch::icc(df = df[[2]], indice = "rt", Target = "Friend")
+df.rt <- batch::icc(df = df[[1]], indice = "rt", Target = "Friend")
 
-df.acc <- batch::icc(df = df[[2]],indice = "acc", Target = "Friend")
+df.acc <- batch::icc(df = df[[1]],indice = "acc", Target = "Friend")
 
-df.dp <- batch::icc(df = df[[2]],indice = "dp", Target = "Friend")
+df.dp <- batch::icc(df = df[[1]],indice = "dp", Target = "Friend")
 
-df.eff <- batch::icc(df = df[[2]],indice = "eff", Target = "Friend")
+df.eff <- batch::icc(df = df[[1]],indice = "eff", Target = "Friend")
 
-df.ddmv <- batch::icc(df = df[[2]],indice = "ddmv", Target = "Friend")
+df.ddmv <- batch::icc(df = df[[1]],indice = "ddmv", Target = "Friend")
 
-df.ddmz <- batch::icc(df = df[[2]],indice = "ddmz", Target = "Friend")
+df.ddmz <- batch::icc(df = df[[1]],indice = "ddmz", Target = "Friend")
 ```
 
 ```{r DF for Plot ICC}
@@ -66,6 +66,9 @@ res[[3]][[1]] <- icc_output(list = iccl[[1]]) %>%
 names(res[[3]])[1] <- "Self - Friend"
 ```
 
+```{r Save icc_friend}
+write.csv(res[[3]][[1]], "./OUTPUT/icc_friend.csv", row.names = FALSE)
+```
 --------------------------------------------------------------------------------
 
 # ICC: Self - Stranger
@@ -93,4 +96,8 @@ rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
 res[[3]][[2]] <- icc_output(list = iccl[[2]]) %>%
   dplyr::filter(type == "ICC2" | type == "ICC2k")
 names(res[[3]])[2] <- "Self - Stranger"
+```
+
+```{r Save icc_stranger}
+write.csv(res[[3]][[1]], "./OUTPUT/icc_stranger.csv", row.names = FALSE)
 ```

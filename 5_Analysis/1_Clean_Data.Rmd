@@ -19,6 +19,7 @@ library(psych)
 library(hausekeep) 
 # plot
 library(ggplot2)
+library(see)
 # Parallel Computing
 library(foreach)
 library(parallel)
@@ -29,7 +30,7 @@ library(doParallel)
 # install.packages("../1_Protocol/1_2_Planned_Analysis/1_2_3_R_package/splithalf_0.0.1.tar.gz")
 library(splithalf)
 
-# install.packages("../1_Protocol/1_2_Planned_Analysis/1_2_3_R_package/batch_0.0.4.tar.gz")
+# install.packages("../1_Protocol/1_2_Planned_Analysis/1_2_3_R_package/batch_0.0.5.tar.gz")
 library(batch)
 ```
 
@@ -196,9 +197,9 @@ df[[6]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_54/P54_Exp1_raw.cs
                 Matching = case_when(FLbed == "comp" ~ "Matching",
                                      FLbed == "incomp" ~ "Nonmatching"),
                 Identity = case_when(flanker == "Ich" ~ "Self",
-                                  flanker == "Mutter" ~ "Mother",
-                                  flanker == "none" ~ "none",
-                                  flanker == "Bekannter" ~ "Acquaintance"),
+                                     flanker == "Mutter" ~ "Mother",
+                                     flanker == "none" ~ "none",
+                                     flanker == "Bekannter" ~ "Acquaintance"),
                 Session = 1,  
                 RT_ms = fl.RT,
                 RT_sec = fl.RT/1000,
@@ -220,7 +221,7 @@ df[[7]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_54/P54_Exp3_raw.cs
                 ACC == 1 | ACC == 0) %>%
   dplyr::mutate(Subject = as.numeric(Subject),
                 Matching = case_when(Match == "comp" ~ "Matching",
-                                  Match == "incomp" ~ "Nonmatching"),
+                                     Match == "incomp" ~ "Nonmatching"),
                 Identity = case_when(Identity == "Ich" ~ "Self",
                                      Identity == "Mutter" ~ "Mother",
                                      Identity == "Bekannter" ~ "Acquaintance"),
@@ -468,7 +469,7 @@ df[[16]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_95/P95_Exp1_raw.c
 names(df)[16] <- "Paper 95 Exp 1"
 ```
 
-## Experiment 1 (Identtiy = 3)
+## Experiment 2 (Identtiy = 3)
 "Self", "Friend", "Stranger"
 ```{r Paper 95 Experiment 2}
 df[[17]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_95/P95_Exp2_raw.csv") %>%

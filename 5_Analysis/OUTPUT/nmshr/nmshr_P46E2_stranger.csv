@@ -1,0 +1,19 @@
+Indice,Method,r,Target,Paper_ID
+RT,First-Second,0.528303723,Stranger,P46E2
+RT,Odd-Even,0.677545163,Stranger,P46E2
+RT,Permuted,0.570006824,Stranger,P46E2
+ACC,First-Second,0.363484457,Stranger,P46E2
+ACC,Odd-Even,0.314707815,Stranger,P46E2
+ACC,Permuted,0.374240084,Stranger,P46E2
+Dprime,First-Second,0.083825088,Stranger,P46E2
+Dprime,Odd-Even,0.147020998,Stranger,P46E2
+Dprime,Permuted,0.212275943,Stranger,P46E2
+Efficiency,First-Second,0.068972857,Stranger,P46E2
+Efficiency,Odd-Even,0.065779467,Stranger,P46E2
+Efficiency,Permuted,0.011129309,Stranger,P46E2
+ezDDM: v,First-Second,0.231249752,Stranger,P46E2
+ezDDM: v,Odd-Even,0.205809836,Stranger,P46E2
+ezDDM: v,Permuted,0.296166486,Stranger,P46E2
+ezDDM: z,First-Second,0.050929623,Stranger,P46E2
+ezDDM: z,Odd-Even,0.244407602,Stranger,P46E2
+ezDDM: z,Permuted,0.189919421,Stranger,P46E2

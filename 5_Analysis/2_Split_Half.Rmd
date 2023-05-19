@@ -14,22 +14,22 @@ names(shl)[4] <- "Monte Carlo"
 ```
 
 # First-Second
-```{r list.SHR.Others <- list.SHR.FS, list.SHR.OD, list.SHR.Per}
-shl[[1]] <- splithalf::sh_tool(df.split = df[[1]], method = "fs", 
+```{r First-Second SHR}
+shl[[1]] <- splithalf::sh_tool(df.split = df[[18]], method = "fs", 
                                sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session")
 ```
 # Odd-Even
-```{r list.SHR.Others <- list.SHR.FS, list.SHR.OD, list.SHR.Per}
-shl[[2]] <- splithalf::sh_tool(df.split = df[[1]], method = "od", 
+```{r Odd-Even SHR}
+shl[[2]] <- splithalf::sh_tool(df.split = df[[18]], method = "od", 
                                sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session")
 ```
 # Permuted
-```{r list.SHR.Others <- list.SHR.FS, list.SHR.OD, list.SHR.Per}
-shl[[3]] <- splithalf::sh_tool(df.split = df[[1]], method = "permuted", 
+```{r Permuted SHR}
+shl[[3]] <- splithalf::sh_tool(df.split = df[[18]], method = "permuted", 
                                sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session")
 ```
 # Monte Carlo
-```{r Monte Carlo Split Generator multiple thread}
-shl[[4]] <- splithalf::sh_tool(df.split = df[[1]], iteration = 10, nc = 16, method = "mc",
+```{r Monte Carlo SHR}
+shl[[4]] <- splithalf::sh_tool(df.split = df[[1]], iteration = 5000, nc = 16, method = "mc",
                                sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session")
 ```
