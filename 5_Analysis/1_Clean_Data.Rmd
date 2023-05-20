@@ -30,7 +30,7 @@ library(doParallel)
 # install.packages("../1_Protocol/1_2_Planned_Analysis/1_2_3_R_package/splithalf_0.0.1.tar.gz")
 library(splithalf)
 
-# install.packages("../1_Protocol/1_2_Planned_Analysis/1_2_3_R_package/batch_0.0.5.tar.gz")
+# install.packages("../1_Protocol/1_2_Planned_Analysis/1_2_3_R_package/batch_0.0.6.tar.gz")
 library(batch)
 ```
 

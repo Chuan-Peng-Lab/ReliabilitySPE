@@ -4,12 +4,10 @@
 \alias{mcshr_dp}
 \title{Title}
 \usage{
-mcshr_dp(list, nc, Target, Paper_ID)
+mcshr_dp(list, Target, Paper_ID)
 }
 \arguments{
 \item{list}{list}
-
-\item{nc}{number of core}
 
 \item{Target}{target}
 

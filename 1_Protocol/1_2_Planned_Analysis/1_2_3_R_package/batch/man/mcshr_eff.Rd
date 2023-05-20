@@ -4,12 +4,10 @@
 \alias{mcshr_eff}
 \title{Title}
 \usage{
-mcshr_eff(list, nc, Target, Paper_ID)
+mcshr_eff(list, Target, Paper_ID)
 }
 \arguments{
 \item{list}{list}
-
-\item{nc}{number of core}
 
 \item{Target}{target}
 

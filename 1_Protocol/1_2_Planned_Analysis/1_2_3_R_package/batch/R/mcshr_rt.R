@@ -1,19 +1,17 @@
 #' Title
 #'
 #' @param list list
-#' @param nc number of core
 #' @param Target target
 #' @param Paper_ID Paper_ID
 #'
 #' @return 结果
 #' @export 结果
 #'
-mcshr_rt <- function(list, nc, Target, Paper_ID) {
+mcshr_rt <- function(list, Target, Paper_ID) {
 
-  # Initialize the parallel backend
-  registerDoParallel(nc)
+  r_values <- list()
 
-  r_values <- foreach(j = 1:length(list), .packages = c("dplyr", "tidyr")) %dopar% {
+  for(j in 1:length(list)) {
 
     SPE_half_1 <- list[[j]][[1]] %>%
       dplyr::filter(., Matching == "Matching", ACC == "1") %>%
@@ -41,10 +39,9 @@ mcshr_rt <- function(list, nc, Target, Paper_ID) {
       dplyr::filter(is.finite(rt_1_SPE_1) & is.finite(rt_1_SPE_2))
 
     cor(df.cor[,3], df.cor[,4], method = "pearson")
-  }
 
-  # Stop the parallel backend
-  stopImplicitCluster()
+    r_values[j] <- cor(df.cor[,3], df.cor[,4], method = "pearson")
+  }
 
   # Calculate the mean of the Pearson correlation coefficients
   r_values_vector <- unlist(r_values)

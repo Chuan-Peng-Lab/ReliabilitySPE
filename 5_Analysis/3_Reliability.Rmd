@@ -86,17 +86,17 @@ names(res)[2] <- "Monte Carlo"
 
 ## Self - Friend
 ```{r RT, message=FALSE, warning=FALSE}
-df.rt <- batch::shr(list = shl[[4]], indice = "rt", Target = "Friend", Paper_ID = "P0E1", mc = TRUE, nc = 16)
+df.rt <- batch::shr(list = shl[[4]], indice = "rt", Target = "Friend", Paper_ID = "P0E1", mc = TRUE)
 
-df.acc <- batch::shr(list = shl[[4]], indice = "acc", Target = "Friend", Paper_ID = "P0E1", mc = TRUE, nc = 16)
+df.acc <- batch::shr(list = shl[[4]], indice = "acc", Target = "Friend", Paper_ID = "P0E1", mc = TRUE)
 
-df.dp <- batch::shr(list = shl[[4]], indice = "dp", Target = "Friend", Paper_ID = "P0E1", mc = TRUE, nc = 16)
+df.dp <- batch::shr(list = shl[[4]], indice = "dp", Target = "Friend", Paper_ID = "P0E1", mc = TRUE)
 
-df.eff <- batch::shr(list = shl[[4]], indice = "eff", Target = "Friend", Paper_ID = "P0E1", mc = TRUE, nc = 16)
+df.eff <- batch::shr(list = shl[[4]], indice = "eff", Target = "Friend", Paper_ID = "P0E1", mc = TRUE)
 
-df.ddmv <- batch::shr(list = shl[[4]], indice = "ddmv", Target = "Friend", Paper_ID = "P0E1", mc = TRUE, nc = 16)
+df.ddmv <- batch::shr(list = shl[[4]], indice = "ddmv", Target = "Friend", Paper_ID = "P0E1", mc = TRUE)
 
-df.ddmz <- batch::shr(list = shl[[4]], indice = "ddmz", Target = "Friend", Paper_ID = "P0E1", mc = TRUE, nc = 16)
+df.ddmz <- batch::shr(list = shl[[4]], indice = "ddmz", Target = "Friend", Paper_ID = "P0E1", mc = TRUE)
 ```
 
 ```{r Rbind 6 Indices}

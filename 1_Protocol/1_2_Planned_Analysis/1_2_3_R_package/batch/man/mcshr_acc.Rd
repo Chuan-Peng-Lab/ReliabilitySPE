@@ -4,12 +4,10 @@
 \alias{mcshr_acc}
 \title{Title}
 \usage{
-mcshr_acc(list, nc, Target, Paper_ID)
+mcshr_acc(list, Target, Paper_ID)
 }
 \arguments{
 \item{list}{list}
-
-\item{nc}{number of core}
 
 \item{Target}{target}
 

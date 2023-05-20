@@ -1,19 +1,17 @@
 #' Title
 #'
 #' @param list list
-#' @param nc number of core
 #' @param Target target
 #' @param Paper_ID Paper_ID
 #'
 #' @return 结果
 #' @export 结果
 #'
-mcshr_ddmz <- function(list, nc, Target, Paper_ID) {
+mcshr_ddmz <- function(list, Target, Paper_ID) {
 
-  # Initialize the parallel backend
-  registerDoParallel(nc)
+  r_values <- list()
 
-  r_values <- foreach(j = 1:length(list), .packages = c("dplyr", "tidyr", "hausekeep")) %dopar% {
+  for(j in 1:length(list)) {
 
     SPE_half_1 <- list[[j]][[1]] %>%
       hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC", id = "Subject", group = c("Session", "Matching", "Identity")) %>%
@@ -41,10 +39,9 @@ mcshr_ddmz <- function(list, nc, Target, Paper_ID) {
       dplyr::filter(is.finite(z_SPE_1) & is.finite(z_SPE_2))
 
     cor(df.cor[,3], df.cor[,4], method = "pearson")
-  }
 
-  # Stop the parallel backend
-  stopImplicitCluster()
+    r_values[j] <- cor(df.cor[,3], df.cor[,4], method = "pearson")
+  }
 
   # Calculate the mean of the Pearson correlation coefficients
   r_values_vector <- unlist(r_values)

@@ -4,12 +4,10 @@
 \alias{mcshr_ddmv}
 \title{Title}
 \usage{
-mcshr_ddmv(list, nc, Target, Paper_ID)
+mcshr_ddmv(list, Target, Paper_ID)
 }
 \arguments{
 \item{list}{list}
-
-\item{nc}{number of core}
 
 \item{Target}{target}
 

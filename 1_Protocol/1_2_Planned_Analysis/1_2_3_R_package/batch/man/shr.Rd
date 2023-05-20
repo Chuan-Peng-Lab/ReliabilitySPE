@@ -4,7 +4,7 @@
 \alias{shr}
 \title{Title}
 \usage{
-shr(list, indice, Target, Paper_ID, mc = FALSE, nc = NULL)
+shr(list, indice, Target, Paper_ID, mc = FALSE)
 }
 \arguments{
 \item{list}{list}
@@ -16,8 +16,6 @@ shr(list, indice, Target, Paper_ID, mc = FALSE, nc = NULL)
 \item{Paper_ID}{Paper_ID}
 
 \item{mc}{Monte Carlo or not}
-
-\item{nc}{number of core}
 }
 \value{
 结果

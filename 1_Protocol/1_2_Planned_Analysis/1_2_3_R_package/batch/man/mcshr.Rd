@@ -4,12 +4,10 @@
 \alias{mcshr}
 \title{Title}
 \usage{
-mcshr(list, nc, indice, Target, Paper_ID)
+mcshr(list, indice, Target, Paper_ID)
 }
 \arguments{
 \item{list}{list}
-
-\item{nc}{number of core}
 
 \item{indice}{indice ("rc", "acc", "dp", "eff", "ddmv", "ddmz")}
 
