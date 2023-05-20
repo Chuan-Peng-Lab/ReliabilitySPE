@@ -15,14 +15,14 @@ icc_output <- function(list) {
   final <- rbindlist(result) 
   colnames(final)[7] <- "LLCI"
   colnames(final)[8] <- "ULCI"
-  final$ICC_type <- rep(c("RT","ACC","Dprime","Efficiency","ezDDM: v","ezDDM: z"), 
-                        each = nrow(final)/6)
+  final$ICC_type <- rep(c("RT","ACC","Dprime","Efficiency"), 
+                        each = nrow(final)/4)
   
   colnames(final)[7] <- "LLCI"
   colnames(final)[8] <- "ULCI"
   final <- final %>%
     dplyr::mutate(.,ICC_type = factor(ICC_type, 
-                                      levels = c("RT","ACC","Dprime","Efficiency","ezDDM: v","ezDDM: z")) ) %>%
+                                      levels = c("RT","ACC","Dprime","Efficiency")) ) %>%
     dplyr::arrange(.,type) %>%
     dplyr::select(type, ICC_type, ICC, LLCI, ULCI) 
   return(final)
@@ -48,16 +48,12 @@ df.acc <- batch::icc(df = df[[1]],indice = "acc", Target = "Friend")
 df.dp <- batch::icc(df = df[[1]],indice = "dp", Target = "Friend")
 
 df.eff <- batch::icc(df = df[[1]],indice = "eff", Target = "Friend")
-
-df.ddmv <- batch::icc(df = df[[1]],indice = "ddmv", Target = "Friend")
-
-df.ddmz <- batch::icc(df = df[[1]],indice = "ddmz", Target = "Friend")
 ```
 
 ```{r DF for Plot ICC}
-iccl[[1]] <- list(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz) 
+iccl[[1]] <- list(df.rt, df.acc, df.dp, df.eff) 
 
-rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+rm(df.rt, df.acc, df.dp, df.eff)
 ```
 
 ```{r DF for Plot ICC}
@@ -80,16 +76,12 @@ df.acc <- icc(df = df[[2]],indice = "acc", Target = "Stranger")
 df.dp <- icc(df = df[[2]],indice = "dp", Target = "Stranger")
 
 df.eff <- icc(df = df[[2]],indice = "eff", Target = "Stranger")
-
-df.ddmv <- icc(df = df[[2]],indice = "ddmv", Target = "Stranger")
-
-df.ddmz <- icc(df = df[[2]],indice = "ddmz", Target = "Stranger")
 ```
 
 ```{r DF for Plot ICC}
-iccl[[2]] <- list(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz) 
+iccl[[2]] <- list(df.rt, df.acc, df.dp, df.eff) 
 
-rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+rm(df.rt, df.acc, df.dp, df.eff)
 ```
 
 ```{r DF for Plot ICC}

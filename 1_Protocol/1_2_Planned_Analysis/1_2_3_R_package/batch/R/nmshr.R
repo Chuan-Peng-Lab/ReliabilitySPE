@@ -14,8 +14,6 @@ nmshr <- function(list, indice, Target, Paper_ID) {
                    "acc" = nmshr_acc(list, Target, Paper_ID),
                    "dp" = nmshr_dp(list, Target, Paper_ID),
                    "eff" = nmshr_eff(list, Target, Paper_ID),
-                   "ddmv" = nmshr_ddmv(list, Target, Paper_ID),
-                   "ddmz" = nmshr_ddmz(list, Target, Paper_ID),
                    stop("Invalid indice argument")
   )
   return(result)

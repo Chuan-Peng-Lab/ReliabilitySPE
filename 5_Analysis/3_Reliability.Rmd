@@ -24,14 +24,10 @@ df.acc <-batch::shr(list = shl[1:3], indice = "acc", Target = "Friend", Paper_ID
 df.dp <- batch::shr(list = shl[1:3], indice = "dp", Target = "Friend", Paper_ID = "P95E2", mc = FALSE, nc = NULL)
 
 df.eff <- batch::shr(list = shl[1:3], indice = "eff", Target = "Friend", Paper_ID = "P95E2", mc = FALSE, nc = NULL)
-
-df.ddmv <- batch::shr(list = shl[1:3], indice = "ddmv", Target = "Friend", Paper_ID = "P95E2", mc = FALSE, nc = NULL)
-
-df.ddmz <- batch::shr(list = shl[1:3], indice = "ddmz", Target = "Friend", Paper_ID = "P95E2", mc = FALSE, nc = NULL)
 ```
 
 ```{r Rbind 6 Indices}
-res[[1]][[1]] <- rbind(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+res[[1]][[1]] <- rbind(df.rt, df.acc, df.dp, df.eff)
 res[[1]][[1]] <- res[[1]][[1]] %>%
   dplyr::mutate(Indice = .$X1, Method = .$X2, r = .$X3, Target = .$V4, Paper_ID = .$V5) %>%
   dplyr::mutate(Method = case_when(Method == 1 ~ "First-Second", Method == 2 ~ "Odd-Even", Method == 3 ~ "Permuted")) %>%
@@ -39,7 +35,7 @@ res[[1]][[1]] <- res[[1]][[1]] %>%
 
 rownames(res[[1]][[1]]) <- NULL
 names(res[[1]])[1] <- "Self - Partner"
-rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+rm(df.rt, df.acc, df.dp, df.eff)
 ```
 
 ```{r Save nmshr_friend}
@@ -55,14 +51,10 @@ df.acc <-batch::shr(list = shl[1:3], indice = "acc", Target = "Stranger", Paper_
 df.dp <- batch::shr(list = shl[1:3], indice = "dp", Target = "Stranger", Paper_ID = "Ps1E1", mc = FALSE, nc = NULL)
 
 df.eff <- batch::shr(list = shl[1:3], indice = "eff", Target = "Stranger", Paper_ID = "Ps1E1", mc = FALSE, nc = NULL)
-
-df.ddmv <- batch::shr(list = shl[1:3], indice = "ddmv", Target = "Stranger", Paper_ID = "Ps1E1", mc = FALSE, nc = NULL)
-
-df.ddmz <- batch::shr(list = shl[1:3], indice = "ddmz", Target = "Stranger", Paper_ID = "Ps1E1", mc = FALSE, nc = NULL)
 ```
 
 ```{r Rbind 6 Indices}
-res[[1]][[2]] <- rbind(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+res[[1]][[2]] <- rbind(df.rt, df.acc, df.dp, df.eff)
 res[[1]][[2]] <- res[[1]][[2]] %>%
   dplyr::mutate(Indice = .$X1, Method = .$X2, r = .$X3, Target = .$V4, Paper_ID = .$V5) %>%
   dplyr::mutate(Method = case_when(Method == 1 ~ "First-Second", Method == 2 ~ "Odd-Even", Method == 3 ~ "Permuted")) %>%
@@ -70,7 +62,7 @@ res[[1]][[2]] <- res[[1]][[2]] %>%
 
 rownames(res[[1]][[2]]) <- NULL
 names(res[[1]])[2] <- "Self - Stranger"
-rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+rm(df.rt, df.acc, df.dp, df.eff)
 ```
 
 ```{r Save nmshr_stranger}
@@ -93,17 +85,13 @@ df.acc <- batch::shr(list = shl[[4]], indice = "acc", Target = "Friend", Paper_I
 df.dp <- batch::shr(list = shl[[4]], indice = "dp", Target = "Friend", Paper_ID = "P0E1", mc = TRUE)
 
 df.eff <- batch::shr(list = shl[[4]], indice = "eff", Target = "Friend", Paper_ID = "P0E1", mc = TRUE)
-
-df.ddmv <- batch::shr(list = shl[[4]], indice = "ddmv", Target = "Friend", Paper_ID = "P0E1", mc = TRUE)
-
-df.ddmz <- batch::shr(list = shl[[4]], indice = "ddmz", Target = "Friend", Paper_ID = "P0E1", mc = TRUE)
 ```
 
 ```{r Rbind 6 Indices}
-res[[2]][[1]] <- rbind(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+res[[2]][[1]] <- rbind(df.rt, df.acc, df.dp, df.eff)
 rownames(res[[2]][[1]]) <- NULL
 names(res[[2]])[1] <- "Self - Friend"
-rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+rm(df.rt, df.acc, df.dp, df.eff)
 ```
 
 ```{r Save mcshr_friend}
@@ -119,17 +107,13 @@ df.acc <- batch::shr(list = shl[[4]], indice = "acc", Target = "Stranger", Paper
 df.dp <- batch::shr(list = shl[[4]], indice = "dp", Target = "Stranger", Paper_ID = "P0E1", mc = TRUE, nc = 16)
 
 df.eff <- batch::shr(list = shl[[4]], indice = "eff", Target = "Stranger", Paper_ID = "P0E1", mc = TRUE, nc = 16)
-
-df.ddmv <- batch::shr(list = shl[[4]], indice = "ddmv", Target = "Stranger", Paper_ID = "P0E1", mc = TRUE, nc = 16)
-
-df.ddmz <- batch::shr(list = shl[[4]], indice = "ddmz", Target = "Stranger", Paper_ID = "P0E1", mc = TRUE, nc = 16)
 ```
 
 ```{r Rbind 6 Indices}
-res[[2]][[2]] <- rbind(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+res[[2]][[2]] <- rbind(df.rt, df.acc, df.dp, df.eff)
 rownames(res[[2]][[2]]) <- NULL
 names(res[[2]])[2] <- "Self - Stranger"
-rm(df.rt, df.acc, df.dp, df.eff, df.ddmv, df.ddmz)
+rm(df.rt, df.acc, df.dp, df.eff)
 ```
 
 ```{r Save mcshr_stranger}
