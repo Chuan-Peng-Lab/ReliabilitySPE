@@ -10,6 +10,10 @@
 2_Literature_Search/
 3_Article_Screen/Reliability_SPMT.Data/
 4_Data_Extraction/4_2_Open_Data/
+5_Analysis/DATA
 
 # Office temp Files
 ~$*
+
+# Python
+.ipynb_checkpoints/

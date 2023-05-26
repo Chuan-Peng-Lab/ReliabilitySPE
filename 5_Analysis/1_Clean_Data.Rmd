@@ -26,10 +26,10 @@ library(doParallel)
 
 # local packages: splithalf, batch
 
-# install.packages("../1_Protocol/1_2_Planned_Analysis/1_2_3_R_package/splithalf_0.0.1.tar.gz")
+# install.packages("./PACKAGES/splithalf_0.0.1.tar.gz")
 library(splithalf)
 
-# install.packages("../1_Protocol/1_2_Planned_Analysis/1_2_3_R_package/batch_0.0.7.tar.gz")
+# install.packages("./PACKAGES/batch_0.0.7.tar.gz")
 library(batch)
 ```
 
@@ -44,22 +44,25 @@ df <- list()
 ```{r Paper 0}
 df[[1]] <- read.csv("../4_Data_Extraction/4_1_Raw_Data/SPMT_raw.csv") %>%
   dplyr::filter(Emotion == "control",
-                !(RT_sec <= 0.2 & RT_sec >= 1.5 ),
+                !(RT_sec <= 0.2 & RT_sec >= 1.5),
                 ACC == 1 | ACC == 0,
                 !is.na(BlockList.Sample),
-                !(Subject %in% c(6008, 6015, 6031)),) %>%
+                !(Subject %in% c(6008, 6015, 6031)),
+                ) %>%
   dplyr::mutate(Matching = case_when(Match == "Match" ~ "Matching",
                                      Match == "Nonmatch" ~ "Nonmatching")) %>%
   dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
   dplyr::mutate(Subject = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
-                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger")),
+                Matching = factor(Matching,
+                                  levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity,
+                                  levels = c("Self", "Friend", "Stranger")),
                 Session = as.character(Session),
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = as.numeric(RT_sec),
                 ACC = as.numeric(ACC),
                 ) %>%
-  dplyr::arrange(Subject, Matching, Identity, Session) 
+  dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[1] <- "Paper 0 Exp 1"
 ```

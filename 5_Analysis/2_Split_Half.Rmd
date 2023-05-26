@@ -30,6 +30,6 @@ shl[[3]] <- splithalf::sh_tool(df.split = df[[18]], method = "permuted",
 ```
 # Monte Carlo
 ```{r Monte Carlo SHR}
-shl[[4]] <- splithalf::sh_tool(df.split = df[[1]], iteration = 10, nc = 16, method = "mc",
+shl[[4]] <- splithalf::sh_tool(df.split = df[[4]], iteration = 5000, nc = 15, method = "mc",
                                sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session")
 ```
