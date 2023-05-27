@@ -16,6 +16,10 @@ icc <- function(df, indice, Target) {
     result <- icc_dp(df, Target)
   } else if (indice == "eff") {
     result <- icc_eff(df, Target)
+  } else if (indice == "ddmv") {
+    result <- icc_ddmv(df, Target)
+  } else if (indice == "ddmz") {
+    result <- icc_ddmz(df, Target)
   } else {
     stop("Invalid indice argument")
   }

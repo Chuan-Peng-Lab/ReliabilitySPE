@@ -15,58 +15,157 @@ res[[1]] <- list()
 names(res)[1] <- "First-Second, Odd-Even, Permuted"
 ```
 
+```{r function: lazy_nmshr}
+lazy_nmshr <- function(Target, Paper_ID) {
+  df_rt <<- batch::shr(list = shl[1:3], indice = "rt", Target = Target, Paper_ID = Paper_ID, mc = FALSE)
+  df_acc <<-batch::shr(list = shl[1:3], indice = "acc", Target = Target, Paper_ID = Paper_ID, mc = FALSE)
+  df_dp <<- batch::shr(list = shl[1:3], indice = "dp", Target = Target, Paper_ID = Paper_ID, mc = FALSE)
+  df_eff <<- batch::shr(list = shl[1:3], indice = "eff", Target = Target, Paper_ID = Paper_ID, mc = FALSE)
+  df_ddmv <<- batch::shr(list = shl[1:3], indice = "ddmv", Target = Target, Paper_ID = Paper_ID, mc = FALSE)
+  df_ddmz <<- batch::shr(list = shl[1:3], indice = "ddmz", Target = Target, Paper_ID = Paper_ID, mc = FALSE)
+}
+```
+
 ## Self - Friend
-```{r RT, message=FALSE, warning=FALSE}
-df.rt <- batch::shr(list = shl[1:3], indice = "rt", Target = "Friend", Paper_ID = "P95E2", mc = FALSE, nc = NULL)
+```{r nmshr one by one, message=FALSE, warning=FALSE}
+df_rt <- batch::shr(list = shl[1:3],
+                    indice = "rt",
+                    Target = "Friend",
+                    Paper_ID = "P95E2",
+                    mc = FALSE
+                    )
+df_acc <- batch::shr(list = shl[1:3],
+                    indice = "acc",
+                    Target = "Friend",
+                    Paper_ID = "P95E2",
+                    mc = FALSE
+                    )
+df_dp <- batch::shr(list = shl[1:3],
+                    indice = "dp",
+                    Target = "Friend",
+                    Paper_ID = "P95E2",
+                    mc = FALSE
+                    )
+df_eff <- batch::shr(list = shl[1:3],
+                     indice = "eff",
+                     Target = "Friend",
+                     Paper_ID = "P95E2",
+                     mc = FALSE
+                     )
+df_ddmv <- batch::shr(list = shl[1:3],
+                      indice = "ddmv",
+                      Target = "Friend",
+                      Paper_ID = "P95E2",
+                      mc = FALSE
+                      )
+df_ddmz <- batch::shr(list = shl[1:3],
+                      indice = "ddmz",
+                      Target = "Friend",
+                      Paper_ID = "P95E2",
+                      mc = FALSE
+                      )
+```
 
-df.acc <-batch::shr(list = shl[1:3], indice = "acc", Target = "Friend", Paper_ID = "P95E2", mc = FALSE, nc = NULL)
-
-df.dp <- batch::shr(list = shl[1:3], indice = "dp", Target = "Friend", Paper_ID = "P95E2", mc = FALSE, nc = NULL)
-
-df.eff <- batch::shr(list = shl[1:3], indice = "eff", Target = "Friend", Paper_ID = "P95E2", mc = FALSE, nc = NULL)
+```{r laze_nmshr: Friend, message=FALSE, warning=FALSE}
+lazy_nmshr(Target = "Friend", Paper_ID = "P0S1")
 ```
 
 ```{r Rbind 6 Indices}
-res[[1]][[1]] <- rbind(df.rt, df.acc, df.dp, df.eff)
+res[[1]][[1]] <- rbind(df_rt, df_acc, df_dp, df_eff, df_ddmv, df_ddmz)
 res[[1]][[1]] <- res[[1]][[1]] %>%
-  dplyr::mutate(Indice = .$X1, Method = .$X2, r = .$X3, Target = .$V4, Paper_ID = .$V5) %>%
-  dplyr::mutate(Method = case_when(Method == 1 ~ "First-Second", Method == 2 ~ "Odd-Even", Method == 3 ~ "Permuted")) %>%
+  dplyr::mutate(Indice = .$X1,
+                Method = .$X2,
+                r = .$X3,
+                Target = .$V4,
+                Paper_ID = .$V5,
+                ) %>%
+  dplyr::mutate(Method = case_when(Method == 1 ~ "First-Second",
+                                   Method == 2 ~ "Odd-Even",
+                                   Method == 3 ~ "Permuted"),
+                                   ) %>%
   dplyr::select(Indice, Method, r, Target, Paper_ID)
 
 rownames(res[[1]][[1]]) <- NULL
 names(res[[1]])[1] <- "Self - Partner"
-rm(df.rt, df.acc, df.dp, df.eff)
+rm(df_rt, df_acc, df_dp, df_eff, df_ddmv, df_ddmz)
 ```
 
 ```{r Save nmshr_friend}
-write.csv(res[[1]][[1]], "./OUTPUT/nmshr_P95E2_friend.csv", row.names = FALSE)
+write.csv(x = res[[1]][[1]],
+          file = "./OUTPUT/nmshr_P95E2_friend.csv",
+          row.names = FALSE,
+          )
 ```
 
 ## Self - Stranger
-```{r RT, message=FALSE, warning=FALSE}
-df.rt <- batch::shr(list = shl[1:3], indice = "rt", Target = "Stranger", Paper_ID = "Ps1E1", mc = FALSE, nc = NULL)
+```{r nmshr one by one, message=FALSE, warning=FALSE}
+df_rt <- batch::shr(list = shl[1:3],
+                    indice = "rt",
+                    Target = "Stranger",
+                    Paper_ID = "Ps1E1",
+                    mc = FALSE
+                    )
+df_acc <- batch::shr(list = shl[1:3],
+                    indice = "acc",
+                    Target = "Stranger",
+                    Paper_ID = "Ps1E1",
+                    mc = FALSE
+                    )
+df_dp <- batch::shr(list = shl[1:3],
+                    indice = "dp",
+                    Target = "Stranger",
+                    Paper_ID = "Ps1E1",
+                    mc = FALSE
+                    )
+df_eff <- batch::shr(list = shl[1:3],
+                     indice = "eff",
+                     Target = "Stranger",
+                     Paper_ID = "Ps1E1",
+                     mc = FALSE
+                     )
+df_ddmv <- batch::shr(list = shl[1:3],
+                      indice = "ddmv",
+                      Target = "Stranger",
+                      Paper_ID = "P95E2",
+                      mc = FALSE
+                      )
+df_ddmz <- batch::shr(list = shl[1:3],
+                      indice = "ddmz",
+                      Target = "Stranger",
+                      Paper_ID = "P95E2",
+                      mc = FALSE
+                      )
+```
 
-df.acc <-batch::shr(list = shl[1:3], indice = "acc", Target = "Stranger", Paper_ID = "Ps1E1", mc = FALSE, nc = NULL)
-
-df.dp <- batch::shr(list = shl[1:3], indice = "dp", Target = "Stranger", Paper_ID = "Ps1E1", mc = FALSE, nc = NULL)
-
-df.eff <- batch::shr(list = shl[1:3], indice = "eff", Target = "Stranger", Paper_ID = "Ps1E1", mc = FALSE, nc = NULL)
+```{r laze_nmshr: Stranger, message=FALSE, warning=FALSE}
+lazy_nmshr(Target = "Stranger", Paper_ID = "P0S1")
 ```
 
 ```{r Rbind 6 Indices}
-res[[1]][[2]] <- rbind(df.rt, df.acc, df.dp, df.eff)
+res[[1]][[2]] <- rbind(df_rt, df_acc, df_dp, df_eff, df_ddmv, df_ddmz)
 res[[1]][[2]] <- res[[1]][[2]] %>%
-  dplyr::mutate(Indice = .$X1, Method = .$X2, r = .$X3, Target = .$V4, Paper_ID = .$V5) %>%
-  dplyr::mutate(Method = case_when(Method == 1 ~ "First-Second", Method == 2 ~ "Odd-Even", Method == 3 ~ "Permuted")) %>%
+  dplyr::mutate(Indice = .$X1,
+                Method = .$X2,
+                r = .$X3,
+                Target = .$V4,
+                Paper_ID = .$V5,
+                ) %>%
+  dplyr::mutate(Method = case_when(Method == 1 ~ "First-Second",
+                                   Method == 2 ~ "Odd-Even",
+                                   Method == 3 ~ "Permuted"),
+                                   ) %>%
   dplyr::select(Indice, Method, r, Target, Paper_ID)
 
 rownames(res[[1]][[2]]) <- NULL
 names(res[[1]])[2] <- "Self - Stranger"
-rm(df.rt, df.acc, df.dp, df.eff)
+rm(df_rt, df_acc, df_dp, df_eff, df_ddmv, df_ddmz)
 ```
 
 ```{r Save nmshr_stranger}
-write.csv(res[[1]][[2]], "./OUTPUT/nmshr_Ps1E1_stranger.csv", row.names = FALSE)
+write.csv(x = res[[1]][[2]],
+          file = "./OUTPUT/nmshr_Ps1E1_stranger.csv",
+          row.names = FALSE,
+          )
 ```
 
 
@@ -76,46 +175,132 @@ res[[2]] <- list()
 names(res)[2] <- "Monte Carlo"
 ```
 
+```{r function: lazy_mcshr}
+lazy_mcshr <- function(Target, Paper_ID) {
+  df_rt <<- batch::shr(list = shl[[4]], indice = "rt", Target = Target, Paper_ID = Paper_ID, mc = TRUE)
+  df_acc <<-batch::shr(list = shl[[4]], indice = "acc", Target = Target, Paper_ID = Paper_ID, mc = TRUE)
+  df_dp <<- batch::shr(list = shl[[4]], indice = "dp", Target = Target, Paper_ID = Paper_ID, mc = TRUE)
+  df_eff <<- batch::shr(list = shl[[4]], indice = "eff", Target = Target, Paper_ID = Paper_ID, mc = TRUE)
+  df_ddmv <<- batch::shr(list = shl[[4]], indice = "ddmv", Target = Target, Paper_ID = Paper_ID, mc = TRUE)
+  df_ddmz <<- batch::shr(list = shl[[4]], indice = "ddmz", Target = Target, Paper_ID = Paper_ID, mc = TRUE)
+}
+```
+
 ## Self - Friend
-```{r RT, message=FALSE, warning=FALSE}
-df.rt <- batch::shr(list = shl[[4]], indice = "rt", Target = "Celebrity", Paper_ID = "P51E1", mc = TRUE)
+```{r mcshr one by one, message=FALSE, warning=FALSE}
+df_rt <- batch::shr(list = shl[[4]],
+                    indice = "rt",
+                    Target = "Friend",
+                    Paper_ID = "P51E1",
+                    mc = TRUE
+                    )
 
-df.acc <- batch::shr(list = shl[[4]], indice = "acc", Target = "Celebrity", Paper_ID = "P51E1", mc = TRUE)
+df_acc <- batch::shr(list = shl[[4]],
+                     indice = "acc",
+                     Target = "Friend",
+                     Paper_ID = "P51E1",
+                     mc = TRUE
+                     )
 
-df.dp <- batch::shr(list = shl[[4]], indice = "dp", Target = "Celebrity", Paper_ID = "P51E1", mc = TRUE)
+df_dp <- batch::shr(list = shl[[4]],
+                    indice = "dp",
+                    Target = "Friend",
+                    Paper_ID = "P51E1",
+                    mc = TRUE
+                    )
 
-df.eff <- batch::shr(list = shl[[4]], indice = "eff", Target = "Celebrity", Paper_ID = "P51E1", mc = TRUE)
+df_eff <- batch::shr(list = shl[[4]],
+                     indice = "eff",
+                     Target = "Friend",
+                     Paper_ID = "P51E1",
+                     mc = TRUE
+                     )
+df_ddmv <- batch::shr(list = shl[[4]],
+                      indice = "ddmv",
+                      Target = "Friend",
+                      Paper_ID = "P51E1",
+                      mc = TRUE
+                      )
+df_ddmz <- batch::shr(list = shl[[4]],
+                      indice = "ddmz",
+                      Target = "Friend",
+                      Paper_ID = "P51E1",
+                      mc = TRUE
+                      )
+```
+
+```{r laze_mcshr: Friend, message=FALSE, warning=FALSE}
+lazy_mcshr(Target = "Friend", Paper_ID = "P0S1")
 ```
 
 ```{r Rbind 6 Indices}
-res[[2]][[1]] <- rbind(df.rt, df.acc, df.dp, df.eff)
+res[[2]][[1]] <- rbind(df_rt, df_acc, df_dp, df_eff, df_ddmv, df_ddmz)
 rownames(res[[2]][[1]]) <- NULL
 names(res[[2]])[1] <- "Self - Friend"
-rm(df.rt, df.acc, df.dp, df.eff)
+rm(df_rt, df_acc, df_dp, df_eff, df_ddmv, df_ddmz)
 ```
 
 ```{r Save mcshr_friend}
-write.csv(res[[2]][[1]], "./OUTPUT/mcshr_P51E1_celebrity.csv", row.names = FALSE)
+write.csv(x = res[[2]][[1]],
+          file = "./OUTPUT/mcshr_P51E1_celebrity.csv",
+          row.names = FALSE,
+          )
 ```
 
 ## Self - Stranger
-```{r RT, message=FALSE, warning=FALSE}
-df.rt <- batch::shr(list = shl[[4]], indice = "rt", Target = "Stranger", Paper_ID = "P51E1", mc = TRUE)
+```{r mcshr one by one, message=FALSE, warning=FALSE}
+df_rt <- batch::shr(list = shl[[4]],
+                    indice = "rt",
+                    Target = "Stranger",
+                    Paper_ID = "P51E1",
+                    mc = TRUE
+                    )
+df_acc <- batch::shr(list = shl[[4]],
+                     indice = "acc",
+                     Target = "Stranger",
+                     Paper_ID = "P51E1",
+                     mc = TRUE
+                     )
+df_dp <- batch::shr(list = shl[[4]],
+                    indice = "dp",
+                    Target = "Stranger",
+                    Paper_ID = "P51E1",
+                    mc = TRUE
+                    )
+df_eff <- batch::shr(list = shl[[4]],
+                     indice = "eff",
+                     Target = "Stranger",
+                     Paper_ID = "P51E1",
+                     mc = TRUE
+                     )
+df_ddmv <- batch::shr(list = shl[[4]],
+                      indice = "ddmv",
+                      Target = "Stranger",
+                      Paper_ID = "P51E1",
+                      mc = TRUE
+                      )
+df_ddmz <- batch::shr(list = shl[[4]],
+                      indice = "ddmz",
+                      Target = "Stranger",
+                      Paper_ID = "P51E1",
+                      mc = TRUE
+                      )
+```
 
-df.acc <- batch::shr(list = shl[[4]], indice = "acc", Target = "Stranger", Paper_ID = "P51E1", mc = TRUE)
-
-df.dp <- batch::shr(list = shl[[4]], indice = "dp", Target = "Stranger", Paper_ID = "P51E1", mc = TRUE)
-
-df.eff <- batch::shr(list = shl[[4]], indice = "eff", Target = "Stranger", Paper_ID = "P51E1", mc = TRUE)
+```{r laze_mcshr: Stranger, message=FALSE, warning=FALSE}
+lazy_mcshr(Target = "Stranger", Paper_ID = "P0S1")
 ```
 
 ```{r Rbind 6 Indices}
-res[[2]][[2]] <- rbind(df.rt, df.acc, df.dp, df.eff)
+res[[2]][[2]] <- rbind(df_rt, df_acc, df_dp, df_eff, df_ddmv, df_ddmz)
 rownames(res[[2]][[2]]) <- NULL
 names(res[[2]])[2] <- "Self - Stranger"
-rm(df.rt, df.acc, df.dp, df.eff)
+rm(df_rt, df_acc, df_dp, df_eff, df_ddmv, df_ddmz)
 ```
 
 ```{r Save mcshr_stranger}
-write.csv(res[[2]][[2]], "./OUTPUT/mcshr_P51E1_stranger.csv", row.names = FALSE)
+write.csv(x = res[[2]][[2]],
+          file = "./OUTPUT/mcshr_P51E1_stranger.csv",
+          row.names = FALSE,
+          )
 ```

@@ -6,7 +6,7 @@ output: html_document
 ---
 # Create NULL list
 ```{r Split Half List}
-shl <- list(list(),list(),list(),list())
+shl <- list(list(), list(), list(), list())
 names(shl)[1] <- "First-Second"
 names(shl)[2] <- "Odd-Even"
 names(shl)[3] <- "Permuted"
@@ -15,21 +15,38 @@ names(shl)[4] <- "Monte Carlo"
 
 # First-Second
 ```{r First-Second SHR}
-shl[[1]] <- splithalf::sh_tool(df.split = df[[18]], method = "fs", 
-                               sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session")
+shl[[1]] <- splithalf::sh_tool(df.split = df[[1]], method = "fs",
+                               sub = "Subject",
+                               var1 = "Matching",
+                               var2 = "Identity",
+                               var3 = "Session",
+                               )
 ```
 # Odd-Even
 ```{r Odd-Even SHR}
-shl[[2]] <- splithalf::sh_tool(df.split = df[[18]], method = "od", 
-                               sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session")
+shl[[2]] <- splithalf::sh_tool(df.split = df[[1]], method = "od",
+                               sub = "Subject",
+                               var1 = "Matching",
+                               var2 = "Identity",
+                               var3 = "Session",
+                               )
 ```
 # Permuted
 ```{r Permuted SHR}
-shl[[3]] <- splithalf::sh_tool(df.split = df[[18]], method = "permuted", 
-                               sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session")
+shl[[3]] <- splithalf::sh_tool(df.split = df[[1]], method = "permuted",
+                               sub = "Subject",
+                               var1 = "Matching",
+                               var2 = "Identity",
+                               var3 = "Session",
+                               )
 ```
 # Monte Carlo
 ```{r Monte Carlo SHR}
-shl[[4]] <- splithalf::sh_tool(df.split = df[[4]], iteration = 5000, nc = 15, method = "mc",
-                               sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session")
+shl[[4]] <- splithalf::sh_tool(df.split = df[[1]], method = "mc",
+                               sub = "Subject",
+                               var1 = "Matching",
+                               var2 = "Identity",
+                               var3 = "Session",
+                               iteration = 10, nc = 16
+                               )
 ```
