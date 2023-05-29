@@ -1,0 +1,89 @@
+---
+title: "Untitled"
+author: "yuki"
+date: "2023-05-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# install.packages("EZ2", repos="http://R-Forge.R-project.org")
+library(EZ2)
+# devtools::install_github("cran/RWiener")
+library(RWiener)
+```
+
+```{r}
+data = df[[1]]
+data <- data %>%
+  dplyr::group_by(Subject, Matching, Identity, Session) %>%
+  dplyr::summarise(vrt0 = sd(RT_sec[ACC == 0]), # ACC = 0 sd(RT_sec)
+                   pe0 = mean(ACC), 
+                   vrt1 = sd(RT_sec[ACC == 1]), # ACC = 1 sd(RT_sec)
+                   pe1 = 1 - mean(ACC)
+                   ) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(vrt0 = ifelse(is.na(vrt0), vrt1, vrt0)) %>%
+  dplyr::select(vrt0, pe0, vrt1, pe1)
+```
+
+```{r}
+data <- df[[1]] %>%
+  dplyr::mutate(ACC = case_when(ACC == 0 ~ "lower",
+                                ACC == 1 ~ "upper")) %>%
+  dplyr::group_by(Subject, Matching, Identity, Session) 
+
+```
+
+
+```{r}
+rw_output <- df[[1]] %>%
+  dplyr::mutate(ACC = case_when(ACC == 0 ~ "lower",
+                                ACC == 1 ~ "upper")) %>%
+  dplyr::group_by(Subject, Matching, Identity, Session) %>%
+  wdm(., yvar=c("RT_sec", "ACC"))
+# alpha: a, tau: t, beta: z, delta: v
+# ACC -> upper lower
+```
+
+```{r}
+rw_output$coefficients
+
+```
+
+
+```{r}
+ez_output <- hausekeep::fit_ezddm(data = df[[1]], rts = "RT_sec", responses = "ACC", group = c("Subject", "Matching", "Identity", "Session")) %>%
+  dplyr::select(a, v, t = t0_Ter) %>%
+  dplyr::mutate(z = a / 2)
+```
+
+```{r}
+options(scipen = 999)
+
+ez2_output <- EZ2::EZ2batch(c(v = 0.3, z = 0.5, a = 1.035, Ter = 0.32), 
+                            vrt0 ~ EZ2.vrt(v, z, a), 
+                            pe0 ~ EZ2.pe(v, z, a), 
+                            vrt1 ~ EZ2.vrt(v, a-z, a), 
+                            pe1 ~ EZ2.pe(v, a-z, a), 
+                            data = data
+                            ) %>%
+  data.frame(.) %>%
+  dplyr::select(v = par.v,
+                z = par.z,
+                a = par.a,
+                t = par.Ter,)
+```
+
+```{r}
+cor_v <- cor(ez_output$v, ez2_output$v)
+cor_a <- cor(ez_output$a, ez2_output$a)
+cor_z <- cor(ez_output$z, ez2_output$z)
+cor_t <- cor(ez_output$t, ez2_output$t)
+```
+
+```{r}
+df_r <- data.frame(ez_output$v, ez2_output$v) %>%
+  dplyr::mutate(dif = ez_output.v - ez2_output.v)
+mean(df_r$dif)
+```
+
