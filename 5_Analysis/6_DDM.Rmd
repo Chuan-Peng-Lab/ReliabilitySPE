@@ -30,24 +30,56 @@ data <- data %>%
 data <- df[[1]] %>%
   dplyr::mutate(ACC = case_when(ACC == 0 ~ "lower",
                                 ACC == 1 ~ "upper")) %>%
-  dplyr::group_by(Subject, Matching, Identity, Session) 
+  dplyr::group_by(Subject, Matching, Identity, Session) %>%
+  dplyr::filter(Subject == 6001)
+
+```
+
+```{r}
+options(scipen = 999)
+temp <- wdm(data, yvar = c("RT_sec", "ACC"))
+#temp <- data.frame(temp$coefficients)
+result <- data.frame(data$Subject[1],data$Matching[1], data$Identity[1], data$Session[1],  temp$coefficients[1], temp$coefficients[2], temp$coefficients[3], temp$coefficients[4])
+colnames(result) <- c("Subject", "Matching", "Identity", "Session", "a", "t", "z", "v")
+rownames(result) <- NULL
 
 ```
 
 
 ```{r}
+rwddm <- function(df) {
+  wdm(df, yvar = c("RT_sec", "ACC"))
+}
+```
+
+
+```{r}
+start_time <- Sys.time()
+rw_output <- list()
 rw_output <- df[[1]] %>%
   dplyr::mutate(ACC = case_when(ACC == 0 ~ "lower",
                                 ACC == 1 ~ "upper")) %>%
   dplyr::group_by(Subject, Matching, Identity, Session) %>%
-  wdm(., yvar=c("RT_sec", "ACC"))
+  dplyr::group_split() %>%
+  base::lapply(., function(df) { 
+      temp <- wdm(df, yvar = c("RT_sec", "ACC"))
+      #temp <- data.frame(temp$coefficients)
+      result <- data.frame(df$Subject[1], df$Matching[1], df$Identity[1], df$Session[1], 
+                           temp$coefficients[1], temp$coefficients[2], temp$coefficients[3], temp$coefficients[4])
+      colnames(result) <- c("Subject", "Matching", "Identity", "Session", 
+                            "a", "t", "z", "v")
+      rownames(result) <- NULL
+    return(result)
+  }) %>%
+  base::do.call(rbind, .)
+end_time <- Sys.time()
+total_time <- end_time - start_time
 # alpha: a, tau: t, beta: z, delta: v
 # ACC -> upper lower
 ```
 
 ```{r}
-rw_output$coefficients
-
+rw_output1 <- do.call(whate = rbind, args = rw_output)
 ```
 
 
@@ -75,10 +107,10 @@ ez2_output <- EZ2::EZ2batch(c(v = 0.3, z = 0.5, a = 1.035, Ter = 0.32),
 ```
 
 ```{r}
-cor_v <- cor(ez_output$v, ez2_output$v)
-cor_a <- cor(ez_output$a, ez2_output$a)
-cor_z <- cor(ez_output$z, ez2_output$z)
-cor_t <- cor(ez_output$t, ez2_output$t)
+cor_v <- cor(rw_output$v, ez2_output$v)
+cor_a <- cor(rw_output$a, ez2_output$a)
+cor_z <- cor(rw_output$z, ez2_output$z)
+cor_t <- cor(rw_output$t, ez2_output$t)
 ```
 
 ```{r}
