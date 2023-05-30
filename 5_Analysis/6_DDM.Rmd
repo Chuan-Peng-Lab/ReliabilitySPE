@@ -10,7 +10,60 @@ output: html_document
 library(EZ2)
 # devtools::install_github("cran/RWiener")
 library(RWiener)
+library(FastDMinR)
 ```
+
+```{r}
+dat_rw <- rbind(cbind(rwiener(100, 2,.3,.5,1), group=factor("A", c("A","B"))),
+                cbind(rwiener(100,2,.3,.5,-1), group=factor("B", c("A", "B"))))
+```
+
+```{r}
+dat_rw_1 <- rwiener(100, 2,.3,.5,1)
+```
+
+```{r}
+wdm(dat_rw_1, yvar = c("q", "resp"))
+```
+
+
+```{r}
+dat_fd_1 <- dat_rw_1 %>%
+  dplyr::mutate(resp = case_when(resp == "upper" ~ 1,
+                                 resp == "lower" ~ 0),
+                sub = 1,
+                cnd = 1,
+                ) 
+  
+```
+
+```{r}
+FastDMinR::fast_dm(data = dat_fd_1,            
+                                Subject = "sub",
+                                Conditions = "cnd",
+                                TIME = "q",
+                                RESPONSE = "resp",
+                                precision = 5.0,
+                                method = "ks",
+                                fix_to = list(p = 0, d = 0, sv = 0, st0 = 0, szr = 0),
+                                depend_on_condition = list(a = "cnd"),
+                                invariant = c("zr", "v", "t0"))
+```
+
+
+```{r}
+raw <- read.csv("./DATA/simulated_data.csv") %>%
+  dplyr::filter(ACC != -1 & ACC != 2) %>%         # exclude no response/wrong response
+  dplyr::filter(Trialtype == "exp") %>%           # filter experiment trials
+  dplyr::filter(!(RT <= 0.2 & RT >= 1.5 )) %>%    # only need 1500ms >RT >200ms
+  dplyr::mutate(RT_sec = RT, RT_ms = RT*1000, Matching = Matchness) %>%
+  dplyr::mutate(Matching = case_when(Matching == "Match" ~ "Matching",
+                                     Matching == "Nonmatch" ~ "Nonmatching")) %>%
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate_at(vars(Matching, Identity, Session), as.factor) %>%
+  dplyr::mutate(Identity = factor(Identity, levels = c("Self", "Friend", "Stranger"))) 
+```
+
 
 ```{r}
 data = df[[1]]
@@ -27,11 +80,58 @@ data <- data %>%
 ```
 
 ```{r}
-data <- df[[1]] %>%
+data <- raw %>%
+  dplyr::filter(Subject == 1) %>%
+  dplyr::mutate(ID = paste(Subject, Matching, Identity, Session, sep = "_")) %>%
+  dplyr::mutate(sub = ID,
+                cnd = 1, 
+                TIME = RT_sec,
+                RESPONSE = ACC)
+```
+
+```{r}
+fd_output <- FastDMinR::fast_dm(data = data,            
+                                Subject = "sub",
+                                Conditions = "cnd",
+                                TIME = "TIME",
+                                RESPONSE = "RESPONSE",
+                                precision = 5.0,
+                                method = "ks",
+                                fix_to = list(p = 0, d = 0, sv = 0, st0 = 0, szr = 0),
+                                depend_on_condition = list(a = "cnd"),
+                                invariant = c("zr", "v", "t0"))
+```
+
+```{r}
+fd_output1 <- fd_output$indiv_estimates %>%
+  dplyr::filter(method == "CS") %>%
+  dplyr::mutate(ID = Subject, 
+                a_fd = a_1,
+                v_fd = v,
+                z_fd = zr,
+                t_fd = t0) %>%
+  dplyr::select(ID, a_fd, v_fd, z_fd, t_fd)
+```
+
+```{r}
+rw_fd <- rw_output1 %>%
+  dplyr::left_join(fd_output1, by = "ID")
+```
+
+```{r}
+cor_rw_fd_a <- cor(rw_fd$a_rw, rw_fd$a_fd)
+cor_rw_fd_v <- cor(rw_fd$v_rw, rw_fd$v_fd)
+cor_rw_fd_z <- cor(rw_fd$z_rw, rw_fd$z_fd)
+cor_rw_fd_t <- cor(rw_fd$t_rw, rw_fd$t_fd)
+```
+
+
+```{r}
+data <- raw %>%
   dplyr::mutate(ACC = case_when(ACC == 0 ~ "lower",
                                 ACC == 1 ~ "upper")) %>%
   dplyr::group_by(Subject, Matching, Identity, Session) %>%
-  dplyr::filter(Subject == 6001)
+  dplyr::filter(Subject == 1)
 
 ```
 
@@ -47,18 +147,18 @@ rownames(result) <- NULL
 
 
 ```{r}
-rwddm <- function(df) {
-  wdm(df, yvar = c("RT_sec", "ACC"))
-}
+
+  wdm(data, yvar = c("RT_sec", "ACC"), start = c(1.035, 0.32, 0.5, 0.3), )
+
 ```
 
 
 ```{r}
 start_time <- Sys.time()
-rw_output <- list()
-rw_output <- df[[1]] %>%
-  dplyr::mutate(ACC = case_when(ACC == 0 ~ "lower",
-                                ACC == 1 ~ "upper")) %>%
+#rw_output <- list()
+rw_output <- dat_rw %>%
+  #dplyr::mutate(ACC = case_when(ACC == 0 ~ "lower",
+                                #ACC == 1 ~ "upper")) %>%
   dplyr::group_by(Subject, Matching, Identity, Session) %>%
   dplyr::group_split() %>%
   base::lapply(., function(df) { 
@@ -79,7 +179,44 @@ total_time <- end_time - start_time
 ```
 
 ```{r}
-rw_output1 <- do.call(whate = rbind, args = rw_output)
+start_time <- Sys.time()
+#rw_output <- list()
+rw_output <- dat_rw %>%
+  #dplyr::mutate(ACC = case_when(ACC == 0 ~ "lower",
+                                #ACC == 1 ~ "upper")) %>%
+  dplyr::group_by(group) %>%
+  dplyr::group_split() %>%
+  base::lapply(., function(df) { 
+      temp <- wdm(df, yvar = c("q", "resp"))
+      #temp <- data.frame(temp$coefficients)
+      result <- data.frame(df$group, 
+                           temp$coefficients[1], temp$coefficients[2], temp$coefficients[3], temp$coefficients[4])
+      colnames(result) <- c("group", 
+                            "a", "t", "z", "v")
+      rownames(result) <- NULL
+    return(result)
+  }) %>%
+  base::do.call(rbind, .)
+end_time <- Sys.time()
+total_time <- end_time - start_time
+# alpha: a, tau: t, beta: z, delta: v
+# ACC -> upper lower
+```
+
+```{r}
+
+```
+
+```{r}
+rw_output1 <- rw_output %>%
+  dplyr::arrange(Subject, Session, Matching, Identity) %>%
+  dplyr::mutate(ID = paste(Subject, Matching, Identity, Session, sep = "_")) %>%
+  dplyr::mutate(a_rw = a, v_rw = v, z_rw = z, t_rw = t) %>%
+  dplyr::select(ID, a_rw, v_rw, z_rw, t_rw)
+```
+
+```{r}
+
 ```
 
 
