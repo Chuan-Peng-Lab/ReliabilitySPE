@@ -4,28 +4,48 @@ author: "yuki"
 date: "2023-05-31"
 output: html_document
 ---
+# Get HDDM Generated Data
+```{python}
+import hddm
+import ssms
+import pandas
+import random
+```
+
+```{python}
+a = 2
+t = 0.3
+z = 0.7
+v = 1
+
+# Simulate Data
+data = ssms.basic_simulators.simulator(model = 'ddm',
+                                       theta = [v, a, z, t],
+                                       n_samples = 30)
+
+df = pandas.DataFrame({'q': data['rts'][:, 0], 
+                       'resp': data['choices'][:, 0]})
+
+df.to_csv('./data/data500.csv', index=False)
+```
+
+--------------------------------------------------------------------------------
+################################################################################
+--------------------------------------------------------------------------------
+
 # Read Data from HDDM Generator
 ```{r}
-raw <- read.csv("../DATA/data.csv") %>%
-  dplyr::mutate(resprw = case_when(resp ==  1 ~  "upper",
-                                   resp ==  -1 ~  "lower"),
-                resp = case_when(resp ==  1 ~  1,
-                                 resp ==  -1 ~  0),
-                sub = 1,
-                cnd = 1,
-                )
-# 创建一个空的列表
-sml <- list()
-
-# 获取数据框的round列中的唯一值
-rounds <- unique(raw$round)
-
-# 根据每个round的值进行拆分并存储到列表中
-for (round_val in rounds) {
-  subset_df <- raw[raw$round == round_val, ]  # 按照round值筛选子数据集
-  sml[[as.character(round_val)]] <- subset_df  # 将子数据集存储到列表中
-}
-rm(subset_df)
+# import data, plot, and ...
+library(tidyverse)
+library(tinylabels) # papaja needs
+library(papaja)
+library(patchwork)
+# EZ DDM, devtools::install_github("hauselin/hausekeep")
+library(hausekeep)
+# RWiener, devtools::install_github("cran/RWiener")
+library(RWiener)
+# fast_dm, devtools::install_github("AdrianJusepeitis/FastDMinR")
+library(FastDMinR)
 ```
 
 ```{r}
@@ -48,15 +68,15 @@ for (i in 1:500) {
   # 将数据添加到列表 sml
   sml <- append(sml, list(data))
 }
-rm(data)
+rm(data, file_name, i)
 ```
-
 
 ```{r}
 res_ddm <- list()
 out_ddm <- list()
 ```
 
+# Run 3 DDM Packages
 ```{r, message=FALSE, include=FALSE, warning=FALSE}
 start_time <- Sys.time()
 for (i in 1:500) {
@@ -195,6 +215,7 @@ for (i in 1:500) {
 }
 end_time <- Sys.time()
 ```
+
 # Plot
 ```{r}
 plot <- do.call(rbind, Map(cbind, round = names(out_ddm), out_ddm)) %>%
@@ -209,23 +230,93 @@ rownames(plot) <- NULL
 ```
 
 ```{r}
-ggplot2::ggplot(aes(x = Package, y = value, fill = indice), data = plot) +
-  ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + 
-  ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
-  ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5,) + 
-  ggplot2::coord_flip() +
-  ggplot2::scale_y_continuous(limits = c(-0.5, 2.5),
-                     sec.axis = sec_axis(~., breaks = c(0.3, 0.7, 1, 2),
-                                             labels = c("t", "z", "v", "a")), # nolint
-                                breaks = seq(0, 2, by = 0.5)
-                                ) +
-  ggplot2::geom_hline(yintercept = 0.3, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 2, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
-  papaja::theme_apa() +
-  ggplot2::theme(legend.position = "none") +
-  ggplot2::facet_wrap(~indice, ncol = 2) 
+plot_a <- plot %>%
+  dplyr::filter(indice == "a") %>%
+  ggplot2::ggplot(aes(x = Package, y = value, fill = indice), data = .) +
+    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + 
+    ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5,) + 
+    ggplot2::coord_flip() +
+    ggplot2::scale_y_continuous(limits = c(1, 11),
+                       sec.axis = sec_axis(~., breaks = 2,
+                                               labels = "a"), # nolint
+                                  breaks = seq(1, 11, by = 1)
+                                  ) +
+    ggplot2::geom_hline(yintercept = 2, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+    papaja::theme_apa() +
+    ggplot2::theme(legend.position = "none") +
+    ggplot2::scale_fill_manual(values = "#F3533A") 
+plot_a
+```
+
+```{r}
+plot_t <- plot %>%
+  dplyr::filter(indice == "t") %>%
+  ggplot2::ggplot(aes(x = Package, y = value, fill = indice), data = .) +
+    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + 
+    ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5,) + 
+    ggplot2::coord_flip() +
+    ggplot2::scale_y_continuous(limits = c(-1.5, 1),
+                       sec.axis = sec_axis(~., breaks = 0.3,
+                                               labels = "t"), # nolint
+                                  breaks = seq(-1.5, 1, by = 0.3)
+                                  ) +
+    ggplot2::geom_hline(yintercept = 0.3, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+    papaja::theme_apa() +
+    ggplot2::theme(legend.position = "none") +
+    ggplot2::scale_fill_manual(values = "#FA9F42") 
+plot_t
+```
+
+```{r}
+plot_v <- plot %>%
+  dplyr::filter(indice == "v") %>%
+  ggplot2::ggplot(aes(x = Package, y = value, fill = indice), data = .) +
+    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + 
+    ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5,) + 
+    ggplot2::coord_flip() +
+    ggplot2::scale_y_continuous(limits = c(0, 6),
+                       sec.axis = sec_axis(~., breaks = 1,
+                                               labels = "v"), # nolint
+                                  breaks = seq(0, 6, by = 1)
+                                  ) +
+    ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+    papaja::theme_apa() +
+    ggplot2::theme(legend.position = "none") +
+    ggplot2::scale_fill_manual(values = "#8AD879") 
+plot_v
+```
+
+```{r}
+plot_z <- plot %>%
+  dplyr::filter(indice == "z") %>%
+  ggplot2::ggplot(aes(x = Package, y = value, fill = indice), data = .) +
+    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + 
+    ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5,) + 
+    ggplot2::coord_flip() +
+    ggplot2::scale_y_continuous(limits = c(0, 3),
+                       sec.axis = sec_axis(~., breaks = 0.7,
+                                               labels = "z"), # nolint
+                                  breaks = seq(0, 3, by = 0.7)
+                                  ) +
+    ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+    papaja::theme_apa() +
+    ggplot2::theme(legend.position = "none") +
+    ggplot2::scale_fill_manual(values = "#5ACFC9") 
+plot_z
+```
+
+
+```{r}
+plot_atvz <- plot_a +
+  plot_t +
+  plot_v +
+  plot_z +
+  plot_layout(guides = 'collect')
+plot_atvz
 ggsave("Pack_Com.png", width = 20, height = 10)
 ```
 
