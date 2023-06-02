@@ -31,7 +31,7 @@ library(doParallel)
 # install.packages("./PACKAGES/yukiSH_0.0.1.tar.gz") # nolint
 library(yukiSH)
 
-# install.packages("./PACKAGES/yukiBP_0.0.9.tar.gz") # nolint
+# install.packages("./PACKAGES/yukiBP_0.1.0.tar.gz") # nolint
 library(yukiBP)
 ```
 
