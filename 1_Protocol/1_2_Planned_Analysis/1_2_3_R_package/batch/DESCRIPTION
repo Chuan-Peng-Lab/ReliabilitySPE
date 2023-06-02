@@ -1,12 +1,12 @@
-Package: batch
+Package: yukiBP
 Type: Package
 Title: a batch processor for my project
-Version: 0.0.6
+Version: 0.0.9
 Author: yuki <hmz1969a@gmail.com>
 Maintainer: yuki <hmz1969a@gmail.com>
-Description: a batch processor for my project
+Description: a batch processor for my project: Reliability_SPMT
 License: FALSE
 Encoding: UTF-8
 LazyData: TRUE
-Imports: dplyr, tidyr, hausekeep
+Imports: dplyr, tidyr, hausekeep, RWiener
 RoxygenNote: 7.2.3

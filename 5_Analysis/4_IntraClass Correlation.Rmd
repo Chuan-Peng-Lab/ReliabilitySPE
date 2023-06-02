@@ -52,36 +52,22 @@ names(res)[3] <- "ICC"
 
 # ICC: Self - Friend
 ```{r Self - Friend}
-df_rt <- batch::icc(df = df[[1]],
-                    indice = "rt",
-                    Target = "Friend"
-                    )
-df_acc <- batch::icc(df = df[[1]],
-                     indice = "acc",
-                     Target = "Friend"
-                     )
-df_dp <- batch::icc(df = df[[1]],
-                    indice = "dp",
-                    Target = "Friend"
-                    )
-df_eff <- batch::icc(df = df[[1]],
-                     indice = "eff",
-                     Target = "Friend"
-                     )
-df_ddmv <- batch::icc(df = df[[1]],
-                      indice = "ddmv",
-                      Target = "Friend"
-                      )
-df_ddmz <- batch::icc(df = df[[1]],
-                     indice = "ddmz",
-                     Target = "Friend"
-                     )
+df_rt <- yukiBP::icc(df = df[[1]], indice = "rt", Target = "Friend")
+df_acc <- yukiBP::icc(df = df[[1]], indice = "acc", Target = "Friend")
+df_dp <- yukiBP::icc(df = df[[1]], indice = "dp", Target = "Friend")
+df_eff <- yukiBP::icc(df = df[[1]], indice = "eff", Target = "Friend")
+#df_ddmv <- yukiBP::icc(df = df[[1]], indice = "ddmv", Target = "Friend")
+#df_ddmz <- yukiBP::icc(df = df[[1]], indice = "ddmz", Target = "Friend")
+df_rwddm <- yukiBP::icc(df = df[[1]], indice = "rwddm", Target = "Friend")
+df_rwddmv <- df_rwddm[[1]]
+df_rwddmz <- df_rwddm[[2]]
+#rm(df_rwddm)
 ```
 
 ```{r DF for Plot ICC}
-iccl[[1]] <- list(df_rt, df_acc, df_dp, df_eff, df_ddmv, df_ddmz)
+iccl[[1]] <- list(df_rt, df_acc, df_dp, df_eff, df_rwddmv, df_rwddmz)
 
-rm(df_rt, df_acc, df_dp, df_eff, df_ddmv, df_ddmz)
+rm(df_rt, df_acc, df_dp, df_eff, df_rwddmv, df_rwddmz)
 ```
 
 ```{r DF for Plot ICC}

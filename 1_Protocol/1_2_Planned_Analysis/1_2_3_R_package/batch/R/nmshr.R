@@ -1,7 +1,7 @@
 #' Title
 #'
 #' @param list list
-#' @param indice indice ("rc", "acc", "dp", "eff", "ddmv", "ddmz")
+#' @param indice indice ("rc", "acc", "dp", "eff", "ddmv", "ddmz", "rwddm")
 #' @param Target target
 #' @param Paper_ID Paper_ID
 #'
@@ -16,6 +16,7 @@ nmshr <- function(list, indice, Target, Paper_ID) {
                    "eff" = nmshr_eff(list, Target, Paper_ID),
                    "ddmv" = nmshr_ddmv(list, Target, Paper_ID),
                    "ddmz" = nmshr_ddmz(list, Target, Paper_ID),
+                   "rwddm" = nmshr_rwddm(list, Target, Paper_ID),
                    stop("Invalid indice argument")
   )
   return(result)

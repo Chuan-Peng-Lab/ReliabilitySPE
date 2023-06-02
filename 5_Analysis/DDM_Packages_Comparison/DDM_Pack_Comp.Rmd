@@ -233,9 +233,9 @@ rownames(plot) <- NULL
 plot_a <- plot %>%
   dplyr::filter(indice == "a") %>%
   ggplot2::ggplot(aes(x = Package, y = value, fill = indice), data = .) +
-    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + 
-    ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
-    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5,) + 
+    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "#F3533A") + 
+    ggdist::stat_halfeye(adjust = 0.2,justification = -0.1, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5, color = "#F3533A") + 
     ggplot2::coord_flip() +
     ggplot2::scale_y_continuous(limits = c(1, 11),
                        sec.axis = sec_axis(~., breaks = 2,
@@ -253,9 +253,9 @@ plot_a
 plot_t <- plot %>%
   dplyr::filter(indice == "t") %>%
   ggplot2::ggplot(aes(x = Package, y = value, fill = indice), data = .) +
-    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + 
-    ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
-    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5,) + 
+    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "#FA9F42") + 
+    ggdist::stat_halfeye(adjust = 0.2,justification = -0.1, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5, color = "#FA9F42") + 
     ggplot2::coord_flip() +
     ggplot2::scale_y_continuous(limits = c(-1.5, 1),
                        sec.axis = sec_axis(~., breaks = 0.3,
@@ -273,9 +273,9 @@ plot_t
 plot_v <- plot %>%
   dplyr::filter(indice == "v") %>%
   ggplot2::ggplot(aes(x = Package, y = value, fill = indice), data = .) +
-    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + 
-    ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
-    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5,) + 
+    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "#8AD879") + 
+    ggdist::stat_halfeye(adjust = 0.2,justification = -0.1, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5, color = "#8AD879") + 
     ggplot2::coord_flip() +
     ggplot2::scale_y_continuous(limits = c(0, 6),
                        sec.axis = sec_axis(~., breaks = 1,
@@ -293,9 +293,9 @@ plot_v
 plot_z <- plot %>%
   dplyr::filter(indice == "z") %>%
   ggplot2::ggplot(aes(x = Package, y = value, fill = indice), data = .) +
-    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "grey") + 
-    ggdist::stat_halfeye(adjust = 0.2,justification = -0.05, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
-    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5,) + 
+    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "#5ACFC9") + 
+    ggdist::stat_halfeye(adjust = 0.2,justification = -0.1, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5, color = "#5ACFC9") + 
     ggplot2::coord_flip() +
     ggplot2::scale_y_continuous(limits = c(0, 3),
                        sec.axis = sec_axis(~., breaks = 0.7,
@@ -314,9 +314,8 @@ plot_z
 plot_atvz <- plot_a +
   plot_t +
   plot_v +
-  plot_z +
-  plot_layout(guides = 'collect')
+  plot_z 
 plot_atvz
-ggsave("Pack_Com.png", width = 20, height = 10)
+ggsave(plot = plot_atvz, filename = "./Pack_Com.png", width = 14, height = 7)
 ```
 

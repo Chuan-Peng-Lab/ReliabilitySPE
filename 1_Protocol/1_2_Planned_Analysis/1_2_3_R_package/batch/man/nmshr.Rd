@@ -9,7 +9,7 @@ nmshr(list, indice, Target, Paper_ID)
 \arguments{
 \item{list}{list}
 
-\item{indice}{indice ("rc", "acc", "dp", "eff", "ddmv", "ddmz")}
+\item{indice}{indice ("rc", "acc", "dp", "eff", "ddmv", "ddmz", "rwddm")}
 
 \item{Target}{target}
 

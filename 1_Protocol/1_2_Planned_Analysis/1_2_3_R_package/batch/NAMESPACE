@@ -1,4 +1,4 @@
 exportPattern("^[[:alpha:]]+")
-import("dplyr","tidyr", "hausekeep")
+import("dplyr","tidyr", "hausekeep", "RWiener")
 importFrom("stats", "cor", "qnorm", "quantile")
 export("icc", "mcshr", "nmshr", "shr")

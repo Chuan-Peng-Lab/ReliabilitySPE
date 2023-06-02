@@ -8,20 +8,15 @@
 #' @export 结果
 #'
 icc <- function(df, indice, Target) {
-  if (indice == "rt") {
-    result <- icc_rt(df, Target)
-  } else if (indice == "acc") {
-    result <- icc_acc(df, Target)
-  } else if (indice == "dp") {
-    result <- icc_dp(df, Target)
-  } else if (indice == "eff") {
-    result <- icc_eff(df, Target)
-  } else if (indice == "ddmv") {
-    result <- icc_ddmv(df, Target)
-  } else if (indice == "ddmz") {
-    result <- icc_ddmz(df, Target)
-  } else {
-    stop("Invalid indice argument")
-  }
+  result <- switch(indice,
+                   "rt" = icc_rt(df, Target),
+                   "acc" = icc_acc(df, Target),
+                   "dp" = icc_dp(df, Target),
+                   "eff" = icc_eff(df, Target),
+                   "ddmv" = icc_ddmv(df, Target),
+                   "ddmz" = icc_ddmz(df, Target),
+                   "rwddm" = icc_rwddm(df, Target),
+                   stop("Invalid indice argument")
+  )
   return(result)
 }
