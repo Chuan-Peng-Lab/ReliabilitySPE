@@ -11,19 +11,32 @@ icc_rwddm <- function(df, Target) {
     # RWiener::wdm 只识别lower upper
     dplyr::mutate(ACC = case_when(ACC == 0 ~ "lower",
                                   ACC == 1 ~ "upper")) %>%
-    # wdm每次只接受一个实验条件
-    dplyr::group_by(Subject, Matching, Identity, Session) %>%
-    dplyr::group_split() %>%
+    # RWiener::wdm 只接受一个分组变量
+    split(.$Subject) %>%
     # 执行wdm，然后将分割的结果重新组合
     base::lapply(., function(df) {
-      #############################Core Codes#################################
-      temp <- RWiener::wdm(df, yvar = c("RT_sec", "ACC"))
-      #############################Core Codes#################################
-      result <- data.frame(df$Subject[1], df$Matching[1], df$Identity[1], df$Session[1],
-                           temp$coefficients[1], temp$coefficients[2], temp$coefficients[3], temp$coefficients[4])
-      colnames(result) <- c("Subject", "Matching", "Identity", "Session",
-                            "a", "t", "z", "v")
-      rownames(result) <- NULL
+      df <- df %>%
+        tidyr::unite(group, Subject, Matching, Identity, Session, sep = "_") %>%
+        dplyr::mutate(group = factor(group))
+      ###############################Core Codes#################################
+      temp <- RWiener::wdm(df, xvar = "group", yvar = c("RT_sec", "ACC"))
+      ###############################Core Codes#################################
+      result <- data.frame(temp$coefficients) %>%
+        dplyr::mutate(group = rownames(.)) %>%
+        tidyr::separate(group, into = c("Subject", "Matching", "Identity", "Session"), sep = "_") %>%
+        tidyr::separate(Session, into = c("Session", "Indice"), sep = ":") %>%
+        tidyr::pivot_wider(names_from = Indice,
+                           values_from = temp.coefficients) %>%
+        dplyr::mutate(a = alpha, t = tau, z = beta, v = delta,
+                      Subject = as.numeric(Subject),
+                      Matching = factor(Matching,
+                                        levels = c("Matching", "Nonmatching")),
+                      Identity = factor(Identity,
+                                        levels = c("Self", "Friend", "Stranger")),
+                      Session = as.character(Session)
+        ) %>%
+        dplyr::arrange(Subject, Matching, Identity, Session) %>%
+        dplyr::select(Subject, Matching, Identity, Session, a, t, z, v)
       return(result)
     }) %>%
     base::do.call(rbind, .)
