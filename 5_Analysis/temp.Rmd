@@ -20,26 +20,54 @@ shl_test <- yukiSH::sh_tool(df.split = df_test, method = "mc",
 ```
 
 ```{r}
+SPE_half_1 <- shl_test[[1]][[1]] %>%
+  # RWiener::wdm 只识别lower upper
+  dplyr::mutate(ACC = case_when(ACC == 0 ~ "lower",
+                                ACC == 1 ~ "upper")) %>%
+  # RWiener::wdm 只接受一个分组变量
+  split(.$Subject)
+```
+
+```{r}
+SPE_half_2 <- shl_test[[1]][[2]] %>%
+  # RWiener::wdm 只识别lower upper
+  dplyr::mutate(ACC = case_when(ACC == 0 ~ "lower",
+                                ACC == 1 ~ "upper")) %>%
+  # RWiener::wdm 只接受一个分组变量
+  split(.$Subject)
+```
+
+```{r}
 SPE_half_1[[1]] <- SPE_half_1[[1]] %>%
   tidyr::unite(group, Subject, Matching, Identity, Session, sep = "_") %>%
   dplyr::mutate(group = factor(group))
 ```
 
+```{r}
+SPE_half_2[[1]] <- SPE_half_2[[1]] %>%
+  tidyr::unite(group, Subject, Matching, Identity, Session, sep = "_") %>%
+  dplyr::mutate(group = factor(group))
+```
 
 ```{r}
 Start_Time <- Sys.time()
-temp <- RWiener::wdm(SPE_half_1[[1]], xvar = "group", yvar = c("RT_sec", "ACC"))
+temp1 <- RWiener::wdm(SPE_half_1[[1]], xvar = "group", yvar = c("RT_sec", "ACC"))
 End_Time <- Sys.time()
 ```
 
+```{r}
+Start_Time <- Sys.time()
+temp2 <- RWiener::wdm(SPE_half_2[[1]], xvar = "group", yvar = c("RT_sec", "ACC"))
+End_Time <- Sys.time()
+```
 
 ```{r}
-result <- data.frame(temp$coefficients) %>%
+result1 <- data.frame(temp1$coefficients) %>%
   dplyr::mutate(group = rownames(.)) %>%
   tidyr::separate(group, into = c("Subject", "Matching", "Identity", "Session"), sep = "_") %>%
   tidyr::separate(Session, into = c("Session", "Indice"), sep = ":") %>%
   tidyr::pivot_wider(names_from = Indice,
-                     values_from = temp.coefficients) %>%
+                     values_from = temp1.coefficients) %>%
   dplyr::mutate(a = alpha, t = tau, z = beta, v = delta,
                 Subject = as.numeric(Subject),
                 Matching = factor(Matching,
@@ -50,6 +78,30 @@ result <- data.frame(temp$coefficients) %>%
                 ) %>%
   dplyr::arrange(Subject, Matching, Identity, Session) %>%
   dplyr::select(Subject, Matching, Identity, Session, a, t, z, v)
+```
+
+```{r}
+result2 <- data.frame(temp2$coefficients) %>%
+  dplyr::mutate(group = rownames(.)) %>%
+  tidyr::separate(group, into = c("Subject", "Matching", "Identity", "Session"), sep = "_") %>%
+  tidyr::separate(Session, into = c("Session", "Indice"), sep = ":") %>%
+  tidyr::pivot_wider(names_from = Indice,
+                     values_from = temp2.coefficients) %>%
+  dplyr::mutate(a = alpha, t = tau, z = beta, v = delta,
+                Subject = as.numeric(Subject),
+                Matching = factor(Matching,
+                                  levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity,
+                                  levels = c("Self", "Friend", "Stranger")),
+                Session = as.character(Session)
+                ) %>%
+  dplyr::arrange(Subject, Matching, Identity, Session) %>%
+  dplyr::select(Subject, Matching, Identity, Session, a, t, z, v)
+```
+
+```{r}
+cor(result1$z, result2$z)
+cor(result1$v, result2$v)
 ```
 
 ```{r}
@@ -93,7 +145,6 @@ End_Time <- Sys.time()
 ```{r}
 df_rwddm <- nmshr_rwddm(list = shl[1:2], Target = "Friend", Paper_ID = "P0S1")
 ```
-
 
 ```{r}
 Start_Time <- Sys.time()
@@ -169,9 +220,7 @@ SPE_half_2 <- shl_test[[1]][[2]] %>%
 End_Time <- Sys.time()
 ```
 
-```{r}
-cor(SPE_half_1$z, SPE_half_2$z)
-```
+
 
 
 ```{r}
