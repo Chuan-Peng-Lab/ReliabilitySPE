@@ -91,6 +91,11 @@ End_Time <- Sys.time()
 ```
 
 ```{r}
+df_rwddm <- nmshr_rwddm(list = shl[1:2], Target = "Friend", Paper_ID = "P0S1")
+```
+
+
+```{r}
 Start_Time <- Sys.time()
 
 SPE_half_1 <- shl_test[[1]][[1]] %>%

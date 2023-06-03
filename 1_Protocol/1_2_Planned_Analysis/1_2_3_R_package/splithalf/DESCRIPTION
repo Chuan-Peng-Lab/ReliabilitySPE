@@ -1,7 +1,7 @@
 Package: yukiSH
 Type: Package
 Title: R package for split half
-Version: 0.0.1
+Version: 0.0.2
 Author: yuki <hmz1969a@gmail.com>
 Maintainer: yuki <hmz1969a@gmail.com>
 Description: This package is used to split your data by 4 method.

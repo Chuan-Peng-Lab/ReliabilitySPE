@@ -67,6 +67,8 @@ other <- function(df.split, method, sub, var1, var2, var3) {
   # Combine the split-half data sets from all groups
   str_half_split_1 <- do.call(rbind, lapply(str_half_split, "[[", 1))
   str_half_split_2 <- do.call(rbind, lapply(str_half_split, "[[", 2))
+  rownames(str_half_split_1) <- NULL
+  rownames(str_half_split_2) <- NULL
 
   split_list <- list(str_half_split_1, str_half_split_2)
 
