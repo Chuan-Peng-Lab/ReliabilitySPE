@@ -21,29 +21,40 @@ nmshr_rwddm <- function(list, Target, Paper_ID) {
       split(.$Subject) %>%
       # 执行wdm，然后将分割的结果重新组合
       base::lapply(., function(df) {
-        df <- df %>%
-          tidyr::unite(group, Subject, Matching, Identity, Session, sep = "_") %>%
-          dplyr::mutate(group = factor(group))
-        ###############################Core Codes#################################
-        temp <- RWiener::wdm(df, xvar = "group", yvar = c("RT_sec", "ACC"))
-        ###############################Core Codes#################################
-        result <- data.frame(temp$coefficients) %>%
-          dplyr::mutate(group = rownames(.)) %>%
-          tidyr::separate(group, into = c("Subject", "Matching", "Identity", "Session"), sep = "_") %>%
-          tidyr::separate(Session, into = c("Session", "Indice"), sep = ":") %>%
-          tidyr::pivot_wider(names_from = Indice,
-                             values_from = temp.coefficients) %>%
-          dplyr::mutate(a = alpha, t = tau, z = beta, v = delta,
-                        Subject = as.numeric(Subject),
-                        Matching = factor(Matching,
-                                          levels = c("Matching", "Nonmatching")),
-                        Identity = factor(Identity,
-                                          levels = c("Self", "Friend", "Stranger")),
-                        Session = as.character(Session)
-          ) %>%
-          dplyr::arrange(Subject, Matching, Identity, Session) %>%
-          dplyr::select(Subject, Matching, Identity, Session, a, t, z, v)
-        return(result)
+        tryCatch(
+          {df <- df %>%
+            tidyr::unite(group, Subject, Matching, Identity, Session, sep = "_") %>%
+            dplyr::mutate(group = factor(group))
+          ###############################Core Codes#################################
+          temp <- RWiener::wdm(df, xvar = "group", yvar = c("RT_sec", "ACC"))
+          ###############################Core Codes#################################
+          result <- data.frame(temp$coefficients) %>%
+            dplyr::mutate(group = rownames(.)) %>%
+            tidyr::separate(group, into = c("Subject", "Matching", "Identity", "Session"), sep = "_") %>%
+            tidyr::separate(Session, into = c("Session", "Indice"), sep = ":") %>%
+            tidyr::pivot_wider(names_from = Indice,
+                               values_from = temp.coefficients) %>%
+            dplyr::mutate(a = alpha, t = tau, z = beta, v = delta,
+                          Subject = as.numeric(Subject),
+                          Matching = factor(Matching,
+                                            levels = c("Matching", "Nonmatching")),
+                          Identity = factor(Identity,
+                                            levels = c("Self", "Friend", "Stranger")),
+                          Session = as.character(Session)
+            ) %>%
+            dplyr::arrange(Subject, Matching, Identity, Session) %>%
+            dplyr::select(Subject, Matching, Identity, Session, a, t, z, v)
+          return(result)
+          },
+          error = function(e) {
+            # 如果RWiener::wdm找不到解，则输出空值
+            result <- data.frame(Subject = NA, Matching = NA, Identity = NA, Session = NA,
+                                 a = NA, t = NA, z = NA, v = NA,
+                                 stringsAsFactors = FALSE  # 确保字符列不被转换为因子
+                                 )
+            return(result)  # 返回 NULL 或其他标识表示该元素出错
+          }
+        )
       }) %>%
       base::do.call(rbind, .)
 
@@ -55,29 +66,40 @@ nmshr_rwddm <- function(list, Target, Paper_ID) {
       split(.$Subject) %>%
       # 执行wdm，然后将分割的结果重新组合
       base::lapply(., function(df) {
-        df <- df %>%
-          tidyr::unite(group, Subject, Matching, Identity, Session, sep = "_") %>%
-          dplyr::mutate(group = factor(group))
-        ###############################Core Codes#################################
-        temp <- RWiener::wdm(df, xvar = "group", yvar = c("RT_sec", "ACC"))
-        ###############################Core Codes#################################
-        result <- data.frame(temp$coefficients) %>%
-          dplyr::mutate(group = rownames(.)) %>%
-          tidyr::separate(group, into = c("Subject", "Matching", "Identity", "Session"), sep = "_") %>%
-          tidyr::separate(Session, into = c("Session", "Indice"), sep = ":") %>%
-          tidyr::pivot_wider(names_from = Indice,
-                             values_from = temp.coefficients) %>%
-          dplyr::mutate(a = alpha, t = tau, z = beta, v = delta,
-                        Subject = as.numeric(Subject),
-                        Matching = factor(Matching,
-                                          levels = c("Matching", "Nonmatching")),
-                        Identity = factor(Identity,
-                                          levels = c("Self", "Friend", "Stranger")),
-                        Session = as.character(Session)
-          ) %>%
-          dplyr::arrange(Subject, Matching, Identity, Session) %>%
-          dplyr::select(Subject, Matching, Identity, Session, a, t, z, v)
-        return(result)
+        tryCatch(
+          {df <- df %>%
+            tidyr::unite(group, Subject, Matching, Identity, Session, sep = "_") %>%
+            dplyr::mutate(group = factor(group))
+          ###############################Core Codes#################################
+          temp <- RWiener::wdm(df, xvar = "group", yvar = c("RT_sec", "ACC"))
+          ###############################Core Codes#################################
+          result <- data.frame(temp$coefficients) %>%
+            dplyr::mutate(group = rownames(.)) %>%
+            tidyr::separate(group, into = c("Subject", "Matching", "Identity", "Session"), sep = "_") %>%
+            tidyr::separate(Session, into = c("Session", "Indice"), sep = ":") %>%
+            tidyr::pivot_wider(names_from = Indice,
+                               values_from = temp.coefficients) %>%
+            dplyr::mutate(a = alpha, t = tau, z = beta, v = delta,
+                          Subject = as.numeric(Subject),
+                          Matching = factor(Matching,
+                                            levels = c("Matching", "Nonmatching")),
+                          Identity = factor(Identity,
+                                            levels = c("Self", "Friend", "Stranger")),
+                          Session = as.character(Session)
+            ) %>%
+            dplyr::arrange(Subject, Matching, Identity, Session) %>%
+            dplyr::select(Subject, Matching, Identity, Session, a, t, z, v)
+          return(result)
+          },
+          error = function(e) {
+            # 如果RWiener::wdm找不到解，则输出空值
+            result <- data.frame(Subject = NA, Matching = NA, Identity = NA, Session = NA,
+                                 a = NA, t = NA, z = NA, v = NA,
+                                 stringsAsFactors = FALSE  # 确保字符列不被转换为因子
+            )
+            return(result)  # 返回 NULL 或其他标识表示该元素出错
+          }
+        )
       }) %>%
       base::do.call(rbind, .)
 
