@@ -46,14 +46,11 @@ df <- list()
 ```{r Paper 0}
 df[[1]] <- read.csv("../4_Data_Extraction/4_1_Raw_Data/SPMT_raw.csv") %>%
   dplyr::filter(Emotion == "control",
-                !(RT_sec <= 0.2 & RT_sec >= 1.5),
-                ACC == 1 | ACC == 0,
                 !is.na(BlockList.Sample),
                 !(Subject %in% c(6008, 6015, 6031)),
                 ) %>%
   dplyr::mutate(Matching = case_when(Match == "Match" ~ "Matching",
                                      Match == "Nonmatch" ~ "Nonmatching")) %>%
-  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
   dplyr::mutate(Subject = as.numeric(Subject),
                 Matching = factor(Matching,
                                   levels = c("Matching", "Nonmatching")),
@@ -64,7 +61,12 @@ df[[1]] <- read.csv("../4_Data_Extraction/4_1_Raw_Data/SPMT_raw.csv") %>%
                 RT_sec = as.numeric(RT_sec),
                 ACC = as.numeric(ACC),
                 ) %>%
-  dplyr::arrange(Subject, Matching, Identity, Session)
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
+  dplyr::arrange(Subject, Matching, Identity, Session) 
 
 names(df)[1] <- "Paper 0 Exp 1"
 ```
@@ -75,23 +77,20 @@ names(df)[1] <- "Paper 0 Exp 1"
 ```{r Paper 6}
 df[[2]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_6/P6_Exp1_raw.csv") %>% # nolint
   dplyr::filter(Phase == 1,
-                corr == 1 | corr == 0,
-                !(rt <= 0.2 & rt >= 1.5)) %>%
-  dplyr::mutate(Subject = as.numeric(Pair.Number),
-                Match = as.character(Condition),
-                Identity = as.character(Shape),
-                Session = as.character(ShapeLoc),
-                RT_sec = as.numeric(rt),
-                RT_ms = RT_sec * 1000,
-                ACC = as.numeric(corr)) %>%
-  dplyr::mutate(RT_sec = round(RT_sec, 5),
-                RT_ms = round(RT_ms, 2)) %>%
-  dplyr::mutate(Match = ifelse(Match == "Mismatch", "Nonmatch", Match),
+                rt != "None") %>%
+  dplyr::select(Subject = Pair.Number,
+                Matching = Condition,
+                Identity = Shape,
+                Session = ShapeLoc,
+                RT_sec = rt, 
+                ACC = corr) %>%
+  dplyr::mutate(Matching = case_when(Matching == "Match" ~ "Matching",
+                                     Matching == "Nonmatch" ~ "Nonmatching"),
                 Identity = ifelse(Identity == "P1", "Self", ifelse(Identity == "P2", "Partner", Identity)), # nolint
-                Session = ifelse(Session == "Top", 1, ifelse(Session == "Bottom", 2, Session))) %>% # nolint
-  dplyr::mutate(Matching = case_when(Match == "Match" ~ "Matching",
-                                     Match == "Nonmatch" ~ "Nonmatching")) %>%
-  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+                Session = ifelse(Session == "Top", 1, ifelse(Session == "Bottom", 2, Session)),
+                RT_sec = as.numeric(RT_sec),
+                RT_ms = RT_sec * 1000,
+                ) %>% # nolint
   dplyr::mutate(Subject = as.numeric(Subject),
                 Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
                 Identity = factor(Identity, levels = c("Self", "Partner", "Stranger")), # nolint
@@ -100,6 +99,11 @@ df[[2]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_6/P6_Exp1_raw.csv"
                 RT_sec = as.numeric(RT_sec),
                 ACC = as.numeric(ACC),
                 ) %>%
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
   dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[2] <- "Paper 6 Exp 1"
@@ -110,17 +114,21 @@ names(df)[2] <- "Paper 6 Exp 1"
 "Self", "Stranger"
 ```{r Paper 46}
 df[[3]] <- readxl::read_excel("../4_Data_Extraction/4_2_Open_Data/Paper_46/Exp2/P46_Exp2_raw.xlsx")  %>% # nolint
-  dplyr::select(Subject, Match = Condition, Identity = Shape, Session = ShapeLoc, RT_sec = rt, ACC = corr) %>% # nolint
-  dplyr::filter(ACC == 1 | ACC == 0,
-                !(RT_sec <= 0.2 & RT_sec >= 1.5)) %>%
-  dplyr::mutate(Match = ifelse(Match == "Mismatch", "Nonmatch", Match),
+  dplyr::filter(rt != "None") %>%
+  dplyr::select(Subject = Subject,
+                Matching = Condition,
+                Identity = Shape,
+                Session = ShapeLoc,
+                RT_sec = rt,
+                ACC = corr) %>% 
+  # 转化为标准化的名称
+  dplyr::mutate(Matching = case_when(Matching == "Match" ~ "Matching",
+                                     Matching == "Nonmatch" ~ "Nonmatching"),
                 Session = ifelse(Session == "Top", 1, ifelse(Session == "Bottom", 2, Session)), # nolint
                 RT_sec = as.numeric(RT_sec),
                 RT_ms = RT_sec * 1000,
                 ) %>%
-  dplyr::mutate(Matching = case_when(Match == "Match" ~ "Matching",
-                                     Match == "Nonmatch" ~ "Nonmatching")) %>%
-  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  # 统一变量的属性
   dplyr::mutate(Subject = as.numeric(Subject),
                 Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
                 Identity = factor(Identity, levels = c("Self", "Stranger")),
@@ -129,6 +137,11 @@ df[[3]] <- readxl::read_excel("../4_Data_Extraction/4_2_Open_Data/Paper_46/Exp2/
                 RT_sec = as.numeric(RT_sec),
                 ACC = as.numeric(ACC),
                 ) %>%
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
   dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[3] <- "Paper 46 Exp 2"
@@ -139,7 +152,6 @@ names(df)[3] <- "Paper 46 Exp 2"
 "Self", "Celebrity", "Stranger"
 ```{r Paper 51 Experiment 1}
 df[[4]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_51/P51_Exp1_raw.csv") %>% # nolint
-  dplyr::filter(respond3.ACC == 1 | respond3.ACC == 0) %>%
   tidyr::separate(condition, into = c("Identity", "Match"), sep = "-shape_") %>%
   dplyr::mutate(Identity = case_when(Identity == "Self" ~ "Self",
                                      Identity == "Familiar" ~ "Celebrity",
@@ -149,18 +161,24 @@ df[[4]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_51/P51_Exp1_raw.cs
                 Session = case_when(Session == "S1" ~ 1,
                                     Session == "S2" ~ 2,
                                     Session == "S3" ~ 3,
-                                    Session == "S4" ~ 4)
+                                    Session == "S4" ~ 4),
+                RT_ms = as.numeric(respond3.RT),
+                RT_sec = RT_ms / 1000,
+                ACC = as.numeric(respond3.ACC),
                 ) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
                 Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
                 Identity = factor(Identity, levels = c("Self", "Celebrity", "Stranger")), # nolint
                 Session = as.character(Session),
-                RT_ms = as.numeric(respond3.RT),
-                RT_sec = RT_ms / 1000,
-                ACC = as.numeric(respond3.ACC),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
                 ) %>%
   dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
-  dplyr::filter(!(RT_sec <= 0.2 & RT_sec >= 1.5)) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
   dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[4] <- "Paper 51 Exp 1"
@@ -170,24 +188,31 @@ names(df)[4] <- "Paper 51 Exp 1"
 "Self", "Celebrity"
 ```{r Paper 51 Experiment 2}
 df[[5]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_51/P51_Exp2_raw.csv") %>% # nolint
-  dplyr::filter(condition1level == "No cue",
-                respond3.ACC == 1 | respond3.ACC == 0) %>%
+  dplyr::filter(condition1level == "No cue") %>%
   tidyr::separate(condition1correct, into = c("Identity", "Matching"), sep = "-shape_") %>% # nolint
-  dplyr::mutate(Identity = case_when(Identity == "Self" ~ "Self",
+  dplyr::mutate(Subject = Subject,
+                Identity = case_when(Identity == "Self" ~ "Self",
                                      Identity == "Familiar" ~ "Celebrity"),
                 Matching = case_when(Matching == "Matched" ~ "Matching",
-                                     Matching == "Mismatched" ~ "Nonmatching")) %>% # nolint
-  dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = as.character(Matching),
-                Identity = as.character(Identity),
+                                     Matching == "Mismatched" ~ "Nonmatching"),
                 Session = 1,
                 RT_ms = as.numeric(respond3.RT),
                 RT_sec = RT_ms / 1000,
-                ACC = as.numeric(respond3.ACC)) %>%
+                ACC = as.numeric(respond3.ACC)
+                ) %>% 
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
   dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
-  dplyr::filter(!(RT_sec <= 0.2 & RT_sec >= 1.5)) %>%
-  dplyr::mutate(Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                Identity = factor(Identity, levels = c("Self", "Celebrity"))) %>% # nolint
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
   dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[5] <- "Paper 51 Exp 2"
@@ -198,8 +223,7 @@ names(df)[5] <- "Paper 51 Exp 2"
 "Self", "Mother","none", "Acquaintance"
 ```{r Paper 54 Experiment 1}
 df[[6]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_54/P54_Exp1_raw.csv") %>% # nolint
-  dplyr::filter(Procedure.Trial. == "FLproc",
-                fl.ACC == 1 | fl.ACC == 0) %>%
+  dplyr::filter(Procedure.Trial. == "FLproc") %>%
   dplyr::mutate(Subject = as.numeric(Subject),
                 Matching = case_when(FLbed == "comp" ~ "Matching",
                                      FLbed == "incomp" ~ "Nonmatching"),
@@ -211,10 +235,19 @@ df[[6]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_54/P54_Exp1_raw.cs
                 RT_ms = fl.RT,
                 RT_sec = fl.RT / 1000,
                 ACC = as.numeric(fl.ACC)) %>%
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
   dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
-  dplyr::filter(RT_ms >= 200 & RT_ms <= 1500) %>%
-  dplyr::mutate(Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                Identity = factor(Identity, levels = c("Self", "Mother","none", "Acquaintance"))) %>% # nolint
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
   dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[6] <- "Paper 54 Exp 1"
@@ -224,8 +257,7 @@ names(df)[6] <- "Paper 54 Exp 1"
 "Self", "Mother", "Acquaintance"
 ```{r Paper 54 Experiment 3}
 df[[7]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_54/P54_Exp3_raw.csv") %>% # nolint
-  dplyr::filter(Procedure == "RPproc",
-                ACC == 1 | ACC == 0) %>%
+  dplyr::filter(Procedure == "RPproc") %>%
   dplyr::mutate(Subject = as.numeric(Subject),
                 Matching = case_when(Match == "comp" ~ "Matching",
                                      Match == "incomp" ~ "Nonmatching"),
@@ -236,10 +268,19 @@ df[[7]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_54/P54_Exp3_raw.cs
                 RT_ms = RT,
                 RT_sec = RT / 1000,
                 ACC = as.numeric(ACC)) %>%
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
   dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
-  dplyr::filter(RT_ms >= 200 & RT_ms <= 1500) %>%
-  dplyr::mutate(Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                Identity = factor(Identity, levels = c("Self", "Mother", "Acquaintance"))) %>% # nolint
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
   dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[7] <- "Paper 54 Exp 3"
@@ -250,20 +291,28 @@ names(df)[7] <- "Paper 54 Exp 3"
 "Self", "Friend", "Stranger"
 ```{r Paper n4 Experiment 1}
 df[[8]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n4/Pn4_Exp1_raw.csv") %>% # nolint
+  dplyr::filter(blocktype == "mixed") %>%
   dplyr::mutate(Subject = as.numeric(subject),
                 Matching = case_when(type == "match" ~ "Matching",
-                                  type == "nonmatch" ~ "Nonmatching"),
+                                     type == "nonmatch" ~ "Nonmatching"),
                 Identity = as.character(shape),
                 Session = 1,
                 RT_ms = as.numeric(latency),
                 RT_sec = RT_ms / 1000,
                 ACC = as.numeric(correct)) %>%
-  dplyr::filter(RT_ms >= 200 & RT_ms <= 1500,
-                blocktype == "mixed",
-                ACC == 1 | ACC == 0) %>%
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
   dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
-  dplyr::mutate(Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger"))) %>% # nolint
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
   dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[8] <- "Papaer n4 Exp 1"
@@ -274,24 +323,37 @@ names(df)[8] <- "Papaer n4 Exp 1"
 "Self", "Friend", "Stranger"
 ```{r Paper n13 Experiment 1}
 df[[9]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n13/Exp1/Pn13_Exp1_raw.csv") %>% # nolint
-  dplyr::select(Subject, Shape = Stimulus, Label = Word,
-                CloseShape, MediumShape, FarShape,
-                RT = Target.RT, ACC = Target.ACC) %>%
-  dplyr::mutate(Shape = case_when(Shape == CloseShape ~ "Self",
-                                  Shape == MediumShape ~ "Friend",
-                                  Shape == FarShape ~ "Stranger",
-                                  TRUE ~ Shape),
-                Matching = if_else(Shape == Label, "Matching", "Nonmatching"),
+  dplyr::select(Subject,
+                Shape = Stimulus,
+                Label = Word,
+                CloseShape,
+                MediumShape,
+                FarShape,
+                RT = Target.RT,
+                ACC = Target.ACC) %>%
+  dplyr::mutate(Matching = if_else(Shape == Label, "Matching", "Nonmatching"),
+                Identity = case_when(Shape == CloseShape ~ "Self",
+                                     Shape == MediumShape ~ "Friend",
+                                     Shape == FarShape ~ "Stranger",
+                                     TRUE ~ Shape),
+                Session = 1,
                 RT_ms = as.numeric(RT),
                 RT_sec = RT_ms / 1000,
                 ACC = as.numeric(ACC),
-                Session = 1) %>%
-  dplyr::select(Subject, Matching, Identity = Shape, Session, RT_ms, RT_sec, ACC)  %>% # nolint
-  dplyr::filter(ACC == 1 | ACC == 0,
-                RT_ms >= 200 & RT_ms <= 1500)   %>%
-  dplyr::mutate(Subject = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger"))) %>% # nolint
+                ) %>%
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
   dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[9] <- "Papaer n13 Exp 1"
@@ -301,24 +363,37 @@ names(df)[9] <- "Papaer n13 Exp 1"
 "Self", "Father", "Stranger"
 ```{r Paper n13 Experiment 3}
 df[[10]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n13/Exp3/Pn13_Exp3_raw.csv") %>% # nolint
-  dplyr::select(Subject, Shape = Stimulus, Label = Word,
-                CloseShape, MediumShape, FarShape,
-                RT = Target.RT, ACC = Target.ACC) %>%
-  dplyr::mutate(Shape = case_when(Shape == CloseShape ~ "Self",
-                                  Shape == MediumShape ~ "Father",
-                                  Shape == FarShape ~ "Stranger",
-                                  TRUE ~ Shape),
-                Matching = if_else(Shape == Label, "Matching", "Nonmatching"),
+  dplyr::select(Subject,
+                Shape = Stimulus,
+                Label = Word,
+                CloseShape,
+                MediumShape,
+                FarShape,
+                RT = Target.RT,
+                ACC = Target.ACC) %>%
+  dplyr::mutate(Matching = if_else(Shape == Label, "Matching", "Nonmatching"),
+                Identity = case_when(Shape == CloseShape ~ "Self",
+                                     Shape == MediumShape ~ "Father",
+                                     Shape == FarShape ~ "Stranger",
+                                     TRUE ~ Shape),
+                Session = 1,
                 RT_ms = as.numeric(RT),
                 RT_sec = RT_ms / 1000,
                 ACC = as.numeric(ACC),
-                Session = 1) %>%
-  dplyr::select(Subject, Matching, Identity = Shape, Session, RT_ms, RT_sec, ACC) %>% # nolint
-  dplyr::filter(ACC == 1 | ACC == 0,
-                RT_ms >= 200 & RT_ms <= 1500) %>%
-  dplyr::mutate(Subject = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                Identity = factor(Identity, levels = c("Self", "Father", "Stranger"))) %>% # nolint
+                ) %>%
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
   dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[10] <- "Papaer n13 Exp 3"
@@ -328,24 +403,37 @@ names(df)[10] <- "Papaer n13 Exp 3"
 "Self", "Friend", "Stranger"
 ```{r Paper n13 Experiment 4}
 df[[11]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n13/Exp4/Pn13_Exp4_raw.csv") %>% # nolint
-  dplyr::select(Subject, Shape = Stimulus, Label = Word,
-                CloseShape, MediumShape, FarShape,
-                RT = Target.RT, ACC = Target.ACC) %>%
-  dplyr::mutate(Shape = case_when(Shape == CloseShape ~ "Self",
-                                  Shape == MediumShape ~ "Friend",
-                                  Shape == FarShape ~ "Stranger",
-                                  TRUE ~ Shape),
-                Matching = if_else(Shape == Label, "Matching", "Nonmatching"),
+  dplyr::select(Subject,
+                Shape = Stimulus,
+                Label = Word,
+                CloseShape,
+                MediumShape,
+                FarShape,
+                RT = Target.RT,
+                ACC = Target.ACC) %>%
+  dplyr::mutate(Matching = if_else(Shape == Label, "Matching", "Nonmatching"),
+                Identity = case_when(Shape == CloseShape ~ "Self",
+                                     Shape == MediumShape ~ "Friend",
+                                     Shape == FarShape ~ "Stranger",
+                                     TRUE ~ Shape),
+                Session = 1,
                 RT_ms = as.numeric(RT),
                 RT_sec = RT_ms / 1000,
                 ACC = as.numeric(ACC),
-                Session = 1) %>%
-  dplyr::select(Subject, Matching, Identity = Shape, Session, RT_ms, RT_sec, ACC) %>% # nolint
-  dplyr::filter(ACC == 1 | ACC == 0,
-                RT_ms >= 200 & RT_ms <= 1500) %>%
-  dplyr::mutate(Subject = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger"))) %>% # nolint
+                ) %>%
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
   dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[11] <- "Papaer n13 Exp 4"
@@ -356,19 +444,28 @@ names(df)[11] <- "Papaer n13 Exp 4"
 "Self", "Friend"
 ```{r Paper n16 Experiment 1}
 df[[12]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n16/Pn16_Exp1_raw.csv") %>% # nolint
-    dplyr::mutate(Subject = as.numeric(Participant..),
-                  Matching = Trial.Type,
-                  Identity = as.character(Shape.Association),
-                  Session = 1,
-                  RT_ms = as.numeric(Reponse.Time),
-                  RT_sec = RT_ms / 1000,
-                  ACC = as.numeric(Target.Accuracy)) %>%
-    dplyr::filter(RT_ms >= 200 & RT_ms <= 1500,
-                  ACC == 1 | ACC == 0) %>%
-    dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
-    dplyr::mutate(Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                  Identity = factor(Identity, levels = c("Self", "Friend"))) %>%
-    dplyr::arrange(Subject, Matching, Identity, Session)
+  dplyr::select(Subject = Participant..,
+                Matching = Trial.Type,
+                Identity = Shape.Association,
+                Session = 1,
+                RT_ms = Reponse.Time,
+                ACC = Target.Accuracy) %>%
+  dplyr::mutate(RT_ms = as.numeric(RT_ms),
+                RT_sec = RT_ms / 1000) %>%
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
+  dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[12] <- "Papaer n16 Exp 1"
 ```
@@ -377,18 +474,28 @@ names(df)[12] <- "Papaer n16 Exp 1"
 "Self", "Friend"
 ```{r Paper n16 Experiment 2}
 df[[13]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n16/Pn16_Exp2_raw.csv") %>% # nolint
-    dplyr::mutate(Subject = as.numeric(Participant),
-                  Matching = Trial.Type,
-                  Identity = as.character(Shape.Association),
-                  Session = 1,
-                  RT_ms = as.numeric(Response.Time),
-                  RT_sec = RT_ms / 1000,
-                  ACC = as.numeric(Target.Accuracy)) %>%
-    dplyr::filter(RT_ms >= 200 & RT_ms <= 1500, ACC == 1 | ACC == 0) %>%
-    dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
-    dplyr::mutate(Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                  Identity = factor(Identity, levels = c("Self", "Friend"))) %>%
-    dplyr::arrange(Subject, Matching, Identity, Session)
+  dplyr::select(Subject = Participant,
+                Matching = Trial.Type,
+                Identity = Shape.Association,
+                Session = 1,
+                RT_ms = Response.Time,
+                ACC = Target.Accuracy) %>%
+  dplyr::mutate(RT_ms = as.numeric(RT_ms),
+                RT_sec = RT_ms / 1000) %>%
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
+  dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[13] <- "Papaer n16 Exp 2"
 ```
@@ -397,19 +504,28 @@ names(df)[13] <- "Papaer n16 Exp 2"
 "Self", "Friend"
 ```{r Paper n16 Experiment 3}
 df[[14]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n16/Pn16_Exp3_raw.csv") %>% # nolint
-    dplyr::mutate(Subject = as.numeric(Participant),
-                  Matching = Trial.Type,
-                  Identity = as.character(Shape.Association),
-                  Session = 1,
-                  RT_ms = as.numeric(Response.Time),
-                  RT_sec = RT_ms / 1000,
-                  ACC = as.numeric(Target.Accuracy)) %>%
-    dplyr::filter(RT_ms >= 200 & RT_ms <= 1500,
-                  ACC == 1 | ACC == 0) %>%
-    dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
-    dplyr::mutate(Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                  Identity = factor(Identity, levels = c("Self", "Friend"))) %>%
-    dplyr::arrange(Subject, Matching, Identity, Session)
+  dplyr::select(Subject = Participant,
+                Matching = Trial.Type,
+                Identity = Shape.Association,
+                Session = 1,
+                RT_ms = Response.Time,
+                ACC = Target.Accuracy) %>%
+  dplyr::mutate(RT_ms = as.numeric(RT_ms),
+                RT_sec = RT_ms / 1000) %>%
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
+  dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[14] <- "Papaer n16 Exp 3"
 ```
@@ -419,20 +535,32 @@ names(df)[14] <- "Papaer n16 Exp 3"
 "Self", "Friend", "Stranger"
 ```{r Paper n23 Experiment 1}
 df[[15]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n23/Pn23_Exp1_raw.csv") %>% # nolint
-    dplyr::mutate(Subject = as.numeric(Subject),
-                  Matching = case_when(Correctanswer == "j" ~ "Matching",
-                                    Correctanswer == "f" ~ "Nonmatching"),
-                  Identity = as.character(Shape),
-                  Session = as.character(Group),
-                  RT_ms = as.numeric(iti.RT),
-                  RT_sec = RT_ms / 1000,
-                  ACC = as.numeric(iti.ACC)) %>%
-    dplyr::filter(RT_ms >= 200 & RT_ms <= 1500,
-                  ACC == 1 | ACC == 0) %>%
-    dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
-    dplyr::mutate(Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                  Identity = factor(Identity, levels = c("Self", "Friend", "Stranger"))) %>% # nolint
-    dplyr::arrange(Subject, Matching, Identity, Session)
+  dplyr::select(Subject = Subject,
+                Matching = Correctanswer,
+                Identity = Shape,
+                Session = Group,
+                RT_ms = iti.RT,
+                ACC = iti.ACC,
+                ) %>%
+  dplyr::mutate(Matching = case_when(Matching == "j" ~ "Matching",
+                                     Matching == "f" ~ "Nonmatching"),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = RT_ms / 1000,
+                ) %>%
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
+  dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[15] <- "Papaer n23 Exp 1"
 ```
@@ -442,35 +570,42 @@ names(df)[15] <- "Papaer n23 Exp 1"
 "Self", "Friend", "Stranger"
 ```{r Paper 95 Experiment 1}
 df[[16]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_95/P95_Exp1_raw.csv") %>% # nolint
-  dplyr::select(Subject, Label = Cue, Shape = Stimulus, Session = Face_Gender, RT_ms = Cue.RT, ACC = Cue.ACC, PracticeMode) %>% # nolint
   dplyr::filter(PracticeMode == "No") %>%
+  dplyr::select(Subject,
+                Label = Cue,
+                Shape = Stimulus,
+                Session = Face_Gender,
+                RT_ms = Cue.RT,
+                ACC = Cue.ACC) %>% 
   dplyr::mutate(Shape = case_when(Shape == "shape1.jpg" ~ "Self",
                                   Shape == "shape2.jpg" ~ "Friend",
                                   Shape == "shape3.jpg" ~ "Stranger",
                                   is.na(Shape) ~ NA_character_,
-                                  TRUE ~ Shape)
-                ) %>%
-  dplyr::mutate(Label = case_when(Label == "You" ~ "Self",
+                                  TRUE ~ Shape),
+                Label = case_when(Label == "You" ~ "Self",
                                   Label == "Friend" ~ "Friend",
                                   Label == "Stranger" ~ "Stranger",
                                   is.na(Label) ~ NA_character_,
-                                  TRUE ~ Label)
-                ) %>%
-  dplyr::mutate(Session = case_when(Session == "F" ~ 1,
-                                    Session == "M" ~ 2)
-                ) %>%
-  dplyr::mutate(Matching = if_else(Shape == Label, "Matching", "Nonmatching"),
+                                  TRUE ~ Label),
+                Matching = if_else(Shape == Label, "Matching", "Nonmatching"),
                 Identity = Shape,
+                Session = case_when(Session == "F" ~ 1,
+                                    Session == "M" ~ 2),
+                RT_ms = as.numeric(RT_ms),
                 RT_sec = RT_ms / 1000) %>%
-  dplyr::mutate(Subject = as.numeric(Subject),
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = as.numeric(RT_sec),
-                ACC = as.numeric(ACC)) %>%
-  dplyr::filter(ACC == 1 | ACC == 0,
-                RT_ms >= 200 & RT_ms <= 1500)  %>%
+                ACC = as.numeric(ACC),
+                ) %>%
   dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
-  dplyr::mutate(Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger"))) %>% # nolint
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
   dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[16] <- "Paper 95 Exp 1"
@@ -480,35 +615,42 @@ names(df)[16] <- "Paper 95 Exp 1"
 "Self", "Friend", "Stranger"
 ```{r Paper 95 Experiment 2}
 df[[17]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_95/P95_Exp2_raw.csv") %>% # nolint
-  dplyr::select(Subject, Label = Cue, Shape = Stimulus, Session = Face_Gender, RT_ms = Stimulus.RT, ACC = Stimulus.ACC, PracticeMode) %>% # nolint
   dplyr::filter(PracticeMode == "No") %>%
+  dplyr::select(Subject,
+                Label = Cue,
+                Shape = Stimulus,
+                Session = Face_Gender,
+                RT_ms = Stimulus.RT,
+                ACC = Stimulus.ACC) %>% # nolint
   dplyr::mutate(Shape = case_when(Shape == "shape1.jpg" ~ "Self",
                                   Shape == "shape2.jpg" ~ "Friend",
                                   Shape == "shape3.jpg" ~ "Stranger",
                                   is.na(Shape) ~ NA_character_,
-                                  TRUE ~ Shape)
-                ) %>%
-  dplyr::mutate(Label = case_when(Label == "You" ~ "Self",
+                                  TRUE ~ Shape),
+                Label = case_when(Label == "You" ~ "Self",
                                   Label == "Friend" ~ "Friend",
                                   Label == "Stranger" ~ "Stranger",
                                   is.na(Label) ~ NA_character_,
-                                  TRUE ~ Label)
-                ) %>%
-  dplyr::mutate(Session = case_when(Session == "F" ~ 1,
-                                    Session == "M" ~ 2)
-                ) %>%
-  dplyr::mutate(Matching = if_else(Shape == Label, "Matching", "Nonmatching"),
+                                  TRUE ~ Label),
+                Matching = if_else(Shape == Label, "Matching", "Nonmatching"),
                 Identity = Shape,
+                Session = case_when(Session == "F" ~ 1,
+                                    Session == "M" ~ 2),
+                RT_ms = as.numeric(RT_ms),
                 RT_sec = RT_ms / 1000) %>%
-  dplyr::mutate(Subject = as.numeric(Subject),
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = as.numeric(RT_sec),
-                ACC = as.numeric(ACC)) %>%
-  dplyr::filter(ACC == 1 | ACC == 0,
-                RT_ms >= 200 & RT_ms <= 1500)  %>%
+                ACC = as.numeric(ACC),
+                ) %>%
   dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
-  dplyr::mutate(Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger"))) %>% # nolint
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
   dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[17] <- "Paper 95 Exp 2"
@@ -519,8 +661,11 @@ names(df)[17] <- "Paper 95 Exp 2"
 "Self", "Stranger"
 ```{r Paper s1 Experiment 1}
 df_Ps1_E1 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_s1/Ps1_Exp1_raw.csv") %>% # nolint
-  dplyr::select(Subject = Participant.Public.ID, Match = P_Orginal, Identity = P_Group,  # nolint
-                RT_ms = Reaction.Time, ACC = Correct) %>%
+  dplyr::select(Subject = Participant.Public.ID,
+                Match = P_Orginal,
+                Identity = P_Group,
+                RT_ms = Reaction.Time,
+                ACC = Correct) %>%
   dplyr::mutate(Matching = case_when(Match == "JA" ~ "Matching",
                                      Match == "NEIN" ~ "Nonmatching"),
                 Identity = case_when(Identity == "User" ~ "Self",
@@ -528,9 +673,7 @@ df_Ps1_E1 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_s1/Ps1_Exp1_raw.
                 Session = 1,
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = RT_ms / 1000,
-                ACC = as.numeric(ACC)) %>%
-  dplyr::filter(RT_ms >= 200 & RT_ms <= 1500,
-                  ACC == 1 | ACC == 0)
+                ACC = as.numeric(ACC)) 
 
 df_Subject_ID <- df_Ps1_E1 %>% # nolint
   dplyr::group_by(Subject) %>%
@@ -541,10 +684,19 @@ df_Subject_ID <- df_Ps1_E1 %>% # nolint
 df[[18]] <- df_Ps1_E1 %>%
   dplyr::left_join(df_Subject_ID, by = "Subject") %>%
   dplyr::mutate(Subject = Subject_ID) %>%
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Identity = factor(Identity, levels = c("Self", "Celebrity")),
+                Session = as.character(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
   dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
-  dplyr::mutate(Subject = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
-                Identity = factor(Identity, levels = c("Self", "Stranger"))) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
   dplyr::arrange(Subject, Matching, Identity, Session)
 
 rm(df_Subject_ID, df_Ps1_E1)
