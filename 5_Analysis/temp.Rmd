@@ -55,8 +55,20 @@ SPE_half_2[[1]] <- SPE_half_2[[1]] %>%
 ```
 
 ```{r}
+df_test <- df[[1]] %>%
+  dplyr::filter(Subject == 6018) %>%
+    # RWiener::wdm 只识别lower upper
+  dplyr::mutate(ACC = case_when(ACC == 0 ~ "lower",
+                                ACC == 1 ~ "upper")) %>%
+  # RWiener::wdm 只接受一个分组变量
+  split(.$Subject) 
+
+df_test <- df_test[[1]] %>%
+  tidyr::unite(group, Subject, Matching, Identity, Session, sep = "_") %>%
+  dplyr::mutate(group = factor(group))
+
 Start_Time <- Sys.time()
-temp1 <- RWiener::wdm(SPE_half_1[[1]], xvar = "group", yvar = c("RT_sec", "ACC"), start = c(2, 0.3, 0.5, 0))
+temp1 <- RWiener::wdm(df_test, xvar = "group", yvar = c("RT_sec", "ACC"))
 End_Time <- Sys.time()
 ```
 
@@ -67,6 +79,7 @@ End_Time <- Sys.time()
 ```
 
 ```{r}
+options(scipen = 100)
 result1 <- data.frame(temp1$coefficients) %>%
   dplyr::mutate(group = rownames(.)) %>%
   tidyr::separate(group, into = c("Subject", "Matching", "Identity", "Session"), sep = "_") %>%
@@ -83,6 +96,7 @@ result1 <- data.frame(temp1$coefficients) %>%
                 ) %>%
   dplyr::arrange(Subject, Matching, Identity, Session) %>%
   dplyr::select(Subject, Matching, Identity, Session, a, t, z, v)
+write.csv(x = result1, file = "./df_test6018_2.csv")
 ```
 
 ```{r}

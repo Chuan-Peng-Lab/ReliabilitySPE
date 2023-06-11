@@ -17,7 +17,7 @@ library(data.table)
 library(psych)
 # for DDM
 library(hausekeep) # ez ddm
-library(RWiener) # ddm
+library(RWiener) # RW ddm
 # plot
 library(ggplot2)
 library(see)
