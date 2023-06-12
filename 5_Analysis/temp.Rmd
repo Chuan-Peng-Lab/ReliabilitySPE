@@ -90,7 +90,6 @@ result1 <- data.frame(temp1$coefficients) %>%
                 ) %>%
   dplyr::arrange(Subject, Matching, Identity, Session) %>%
   dplyr::select(Subject, Matching, Identity, Session, a, t, z, v)
-write.csv(x = result1, file = "./df_test6018.csv")
 ```
 
 ```{r half_2: result}

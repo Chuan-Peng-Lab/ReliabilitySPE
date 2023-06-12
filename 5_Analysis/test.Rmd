@@ -5,8 +5,13 @@ date: "2023-06-03"
 output: html_document
 ---
 ```{r}
-df_test <- df[[1]]
+df_test <- df[[1]] 
 ```
+
+```{r}
+unique(df[[1]]$Subject)
+```
+
 
 ```{r}
 shl_test <- list()
@@ -27,10 +32,16 @@ shl_test[[3]] <- yukiSH::sh_tool(df.split = df_test, method = "permuted", sub = 
 # Monte Carlo
 ```{r}
 shl_test[[4]] <- yukiSH::sh_tool(df.split = df_test, method = "mc", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session",
-                                 iteration = 10, nc = 16)
+                                 iteration = 50, nc = 16)
 ```
 
 ```{r}
-df_rwddm <- nmshr_rwddm(list = df_test[1:3], Target = "Friend", Paper_ID = "P0S1")
+df_nm_rwddm <- nmshr_rwddm(list = shl_test[1:3], Target = "Friend", Paper_ID = "P0S1")
+```
+
+```{r}
+Start_Time <- Sys.time()
+df_mc_rwddm <- mcshr_rwddm(list = shl_test[[4]], Target = "Friend", Paper_ID = "P0S1")
+End_Time <- Sys.time()
 ```
 
