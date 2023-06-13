@@ -29,9 +29,11 @@ library(doParallel)
 
 # local packages: yukisplithalf & yukibatch
 # install.packages("./PACKAGES/yukiSH_0.0.2.tar.gz") # nolint
+# devtools::install_github("yuki-961004/yukiSH")
 library(yukiSH)
 
 # install.packages("./PACKAGES/yukiBP_0.1.0.tar.gz") # nolint
+# devtools::install_github("yuki-961004/yukiBP")
 library(yukiBP)
 ```
 
