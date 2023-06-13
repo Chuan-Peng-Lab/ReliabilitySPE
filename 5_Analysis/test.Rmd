@@ -5,7 +5,8 @@ date: "2023-06-03"
 output: html_document
 ---
 ```{r}
-df_test <- df[[1]] 
+df_test <- df[[1]] %>%
+  dplyr::filter(Subject == 6001 | Subject == 6002)
 ```
 
 ```{r}
@@ -32,7 +33,7 @@ shl_test[[3]] <- yukiSH::sh_tool(df.split = df_test, method = "permuted", sub = 
 # Monte Carlo
 ```{r}
 shl_test[[4]] <- yukiSH::sh_tool(df.split = df_test, method = "mc", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session",
-                                 iteration = 50, nc = 16)
+                                 iteration = 10, nc = 16)
 ```
 
 ```{r}
@@ -43,5 +44,46 @@ df_nm_rwddm <- nmshr_rwddm(list = shl_test[1:3], Target = "Friend", Paper_ID = "
 Start_Time <- Sys.time()
 df_mc_rwddm <- mcshr_rwddm(list = shl_test[[4]], Target = "Friend", Paper_ID = "P0S1")
 End_Time <- Sys.time()
+```
+
+```{r}
+new_list <- list()
+for (i in 1:5) {
+  new_list[[i]] <- list(shl_test[[4]][[2*i-1]], shl_test[[4]][[2*i]])
+}
+```
+
+```{r}
+# 创建一个空的数据框
+result_df <- data.frame()
+
+# 循环遍历new_list中的每个元素
+for (i in 1:length(new_list)) {
+  # 调用函数并得到数据框
+  df_mc_rwddm <- mcshr_rwddm(list = new_list[[i]], Target = "Friend", Paper_ID = "P0S1")
+  
+  # 将结果添加到空的数据框中
+  result_df <- rbind(result_df, df_mc_rwddm)
+}
+
+# 打印合并后的数据框
+print(result_df)
+```
+
+```{r}
+registerDoParallel(cores = 16)
+
+# 使用foreach循环并行执行迭代
+result_df <- foreach(i = 1:length(new_list), .combine = rbind, .packages = c("dplyr", "tidyr", "RWiener")) %dopar% {
+  
+  # 调用函数并得到数据框
+  df_mc_rwddm <- mcshr_rwddm(list = new_list[[i]], Target = "Friend", Paper_ID = "P0S1")
+  
+  # 返回结果
+  df_mc_rwddm
+}
+
+# 停止并行计算
+stopImplicitCluster()
 ```
 
