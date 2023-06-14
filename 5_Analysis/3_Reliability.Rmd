@@ -128,7 +128,6 @@ df_dp <<- yukiBP::shr(list = shl[[4]], indice = "dp", Target = "Friend", Paper_I
 df_eff <<- yukiBP::shr(list = shl[[4]], indice = "eff", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
 #df_ddmv <<- yukiBP::shr(list = shl[[4]], indice = "ddmv", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
 #df_ddmz <<- yukiBP::shr(list = shl[[4]], indice = "ddmz", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
-df_rwddm <<- yukiBP::shr(list = shl[[4]], indice = "rwddm", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
 }
 ```
 
@@ -140,11 +139,27 @@ df_dp <- yukiBP::shr(list = shl[[4]], indice = "dp", Target = "Friend", Paper_ID
 df_eff <- yukiBP::shr(list = shl[[4]], indice = "eff", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
 # df_ddmv <- yukiBP::shr(list = shl[[4]], indice = "ddmv", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
 # df_ddmz <- yukiBP::shr(list = shl[[4]], indice = "ddmz", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
-df_rwddm <- yukiBP::shr(list = shl[[4]], indice = "rwddm", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
 ```
 
 ```{r laze_mcshr: Friend, message=FALSE, warning=FALSE}
 lazy_mcshr(Target = "Friend", Paper_ID = "P0S1")
+```
+
+```{r}
+df_rwddm <- yukiBP::mt_mcshr_rwddm(list = shl[[4]], Target = "Friend", Paper_ID = "P0S1", nc = 16)
+```
+
+```{r}
+r <- mean(df_rwddm$v)
+CI <- quantile(df_rwddm$v, c(0.025, 0.975))
+df_ddmv <- data.frame("Indice" = "RWDDM: v", "r" = r, "LLCI" = CI[1], "ULCI" = CI[2], "Target" = df_rwddm$Target[1], "Paper_ID" = df_rwddm$Paper_ID[1])
+
+
+r <- mean(df_rwddm$z)
+CI <- quantile(df_rwddm$z, c(0.025, 0.975))
+df_ddmz <- data.frame("Indice" = "RWDDM: z", "r" = r, "LLCI" = CI[1], "ULCI" = CI[2], "Target" = df_rwddm$Target[1], "Paper_ID" = df_rwddm$Paper_ID[1])
+
+rm(r, CI)
 ```
 
 ```{r Rbind 6 Indices}
@@ -169,7 +184,6 @@ df_dp <- yukiBP::shr(list = shl[[4]], indice = "dp", Target = "Stranger", Paper_
 df_eff <- yukiBP::shr(list = shl[[4]], indice = "eff", Target = "Stranger", Paper_ID = "P0S1", mc = TRUE)
 # df_ddmv <- yukiBP::shr(list = shl[[4]], indice = "ddmv", Target = "Stranger", Paper_ID = "P0S1", mc = TRUE)
 # df_ddmz <- yukiBP::shr(list = shl[[4]], indice = "ddmz", Target = "Stranger", Paper_ID = "P0S1", mc = TRUE)
-df_rwddm <- yukiBP::shr(list = shl[[4]], indice = "rwddm", Target = "Stranger", Paper_ID = "P0S1", mc = TRUE)
 ```
 
 ```{r laze_mcshr: Stranger, message=FALSE, warning=FALSE}
