@@ -122,12 +122,12 @@ names(res)[2] <- "Monte Carlo"
 
 ```{r function: lazy_mcshr}
 lazy_mcshr <- function(Target, Paper_ID) {
-df_rt <<- yukiBP::shr(list = shl[[4]], indice = "rt", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
-df_acc <<- yukiBP::shr(list = shl[[4]], indice = "acc", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
-df_dp <<- yukiBP::shr(list = shl[[4]], indice = "dp", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
-df_eff <<- yukiBP::shr(list = shl[[4]], indice = "eff", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
-#df_ddmv <<- yukiBP::shr(list = shl[[4]], indice = "ddmv", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
-#df_ddmz <<- yukiBP::shr(list = shl[[4]], indice = "ddmz", Target = "Friend", Paper_ID = "P0S1", mc = TRUE)
+df_rt <<- yukiBP::shr(list = shl[[4]], indice = "rt", Target = Target, Paper_ID = Paper_ID, mc = TRUE)
+df_acc <<- yukiBP::shr(list = shl[[4]], indice = "acc", Target = Target, Paper_ID = Paper_ID, mc = TRUE)
+df_dp <<- yukiBP::shr(list = shl[[4]], indice = "dp", Target = Target, Paper_ID = Paper_ID, mc = TRUE)
+df_eff <<- yukiBP::shr(list = shl[[4]], indice = "eff", Target = Target, Paper_ID = Paper_ID, mc = TRUE)
+#df_ddmv <<- yukiBP::shr(list = shl[[4]], indice = "ddmv", Target = Target, Paper_ID = Paper_ID, mc = TRUE)
+#df_ddmz <<- yukiBP::shr(list = shl[[4]], indice = "ddmz", Target = Target, Paper_ID = Paper_ID, mc = TRUE)
 }
 ```
 
@@ -142,11 +142,13 @@ df_eff <- yukiBP::shr(list = shl[[4]], indice = "eff", Target = "Friend", Paper_
 ```
 
 ```{r laze_mcshr: Friend, message=FALSE, warning=FALSE}
-lazy_mcshr(Target = "Friend", Paper_ID = "P0S1")
+lazy_mcshr(Target = "Partner", Paper_ID = "P6S1")
 ```
 
 ```{r}
-df_rwddm <- yukiBP::mt_mcshr_rwddm(list = shl[[4]], Target = "Friend", Paper_ID = "P0S1", nc = 16)
+Start_Time <- Sys.time()
+df_rwddm <- yukiBP::mt_mcshr_rwddm(list = shl[[4]], Target = "Partner", Paper_ID = "P6S1", nc = 16)
+End <- Sys.time()
 ```
 
 ```{r}
@@ -171,7 +173,7 @@ rm(df_rt, df_acc, df_dp, df_eff, df_ddmv, df_ddmz)
 
 ```{r Save mcshr_friend}
 write.csv(x = res[[2]][[1]],
-          file = "./OUTPUT/mcshr_P51E1_celebrity.csv",
+          file = "./OUTPUT/mcshr_P0S1_Friend.csv",
           row.names = FALSE,
           )
 ```
