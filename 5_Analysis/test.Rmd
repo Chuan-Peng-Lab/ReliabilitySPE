@@ -1,0 +1,63 @@
+---
+title: "test"
+author: "yuki"
+date: "2023-06-17"
+output: html_document
+---
+```{r}
+Target <- c("Self", "Friend", "Stranger")
+```
+
+
+```{r}
+Half_1 <- shl[[4]][[1]][[1]] %>%
+  dplyr::filter(., Matching == "Matching", ACC == "1") %>%
+  dplyr::group_by(Subject, Session, Identity) %>%
+  dplyr::summarise(mean_rt = mean(RT_ms)) %>%
+  dplyr::ungroup() %>%
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = mean_rt)
+
+Half_2 <- shl[[4]][[1]][[2]] %>%
+  dplyr::filter(., Matching == "Matching", ACC == "1") %>%
+  dplyr::group_by(Subject, Session, Identity) %>%
+  dplyr::summarise(mean_rt = mean(RT_ms)) %>%
+  dplyr::ungroup() %>%
+  tidyr::pivot_wider(names_from = Identity,
+                     values_from = mean_rt)
+
+```
+
+```{r}
+SPE_Half_1 <-list()
+SPE_Half_2 <-list()
+r <- list()
+for (i in 2 : length(Target)) {
+  SPE_Half_1[[i-1]] <- Half_1 %>%
+    dplyr::mutate(SPE_1 = Self - !!sym(Target[i])) %>%
+    dplyr::select(Subject, Session, SPE_1)
+  
+  SPE_Half_2[[i-1]] <- Half_2 %>%
+    dplyr::mutate(SPE_2 = Self - !!sym(Target[i])) %>%
+    dplyr::select(Subject, Session, SPE_2)
+  
+  df.cor <- SPE_Half_1[[i-1]] %>%
+    dplyr::left_join(SPE_Half_2[[i-1]], by = c("Subject", "Session")) %>%
+    dplyr::filter(!is.na(SPE_1) & !is.na(SPE_2)) %>%
+    dplyr::filter(is.finite(SPE_1) & is.finite(SPE_2))
+  
+  r[[i-1]] <-  cor(df.cor[,3], df.cor[,4], method = "pearson")
+  names(r)[[i-1]] <- Target[i]
+}
+```
+
+```{r}
+  result <- rbind(r) %>%
+    as.data.frame() %>%
+    `rownames<-`(NULL)
+```
+
+```{r}
+result <- shr_rt(list = shl[[2]], Target = c("Self", "Friend", "Stranger"))
+```
+
