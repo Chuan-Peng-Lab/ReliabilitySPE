@@ -154,7 +154,7 @@ res[[3]][[3]] <- list.files(file.path("./OUTPUT/icc/"),
   bind_rows() %>%
   dplyr::mutate(ICC_type = factor(ICC_type,
                                   levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d prime", "ACC", "RT") # nolint
-                                  )) 
+                                  ))
 names(res[[3]])[3] <- "plot"
 ```
 

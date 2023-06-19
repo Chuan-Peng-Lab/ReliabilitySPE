@@ -27,13 +27,15 @@ library(parallel)
 library(iterators)
 library(doParallel)
 
-# local packages: yukisplithalf & yukibatch
+# local packages: yukiSH & yukiBP
+# You can install them from ".tar.gz" or GitHub
+
 # install.packages("./PACKAGES/yukiSH_0.0.2.tar.gz") # nolint
-# devtools::install_github("yuki-961004/yukiSH")
+# devtools::install_github("yuki-961004/yukiSH") # nolint
 library(yukiSH)
 
 # install.packages("./PACKAGES/yukiBP_0.1.1.tar.gz") # nolint
-# devtools::install_github("yuki-961004/yukiBP")
+# devtools::install_github("yuki-961004/yukiBP") # nolint
 library(yukiBP)
 ```
 
@@ -68,7 +70,7 @@ df[[1]] <- read.csv("../4_Data_Extraction/4_1_Raw_Data/SPMT_raw.csv") %>%
                 RT_ms = round(RT_ms, 0)) %>%
   dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
                 ACC == 1 | ACC == 0) %>%
-  dplyr::arrange(Subject, Matching, Identity, Session) 
+  dplyr::arrange(Subject, Matching, Identity, Session)
 
 names(df)[1] <- "Paper 0 Exp 1"
 summary(df[[1]])
@@ -85,12 +87,12 @@ df[[2]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_6/P6_Exp1_raw.csv"
                 Matching = Condition,
                 Identity = Shape,
                 Session = ShapeLoc,
-                RT_sec = rt, 
+                RT_sec = rt,
                 ACC = corr) %>%
   dplyr::mutate(Matching = case_when(Matching == "Match" ~ "Matching",
                                      Matching == "Mismatch" ~ "Nonmatching"),
                 Identity = ifelse(Identity == "P1", "Self", ifelse(Identity == "P2", "Partner", Identity)), # nolint
-                Session = ifelse(Session == "Top", 1, ifelse(Session == "Bottom", 2, Session)),
+                Session = ifelse(Session == "Top", 1, ifelse(Session == "Bottom", 2, Session)), # nolint
                 RT_sec = as.numeric(RT_sec),
                 RT_ms = RT_sec * 1000,
                 ) %>% # nolint
@@ -124,7 +126,7 @@ df[[3]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_46/Exp2/P46_Exp2_r
                 Identity = Shape,
                 Session = ShapeLoc,
                 RT_sec = rt,
-                ACC = corr) %>% 
+                ACC = corr) %>%
   # 转化为标准化的名称
   dplyr::mutate(Matching = case_when(Matching == "Match" ~ "Matching",
                                      Matching == "Mismatch" ~ "Nonmatching"),
@@ -205,9 +207,9 @@ df[[5]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_51/P51_Exp2_raw.cs
                 RT_ms = as.numeric(respond3.RT),
                 RT_sec = RT_ms / 1000,
                 ACC = as.numeric(respond3.ACC)
-                ) %>% 
+                ) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
                 Identity = factor(Identity, levels = c("Self", "Celebrity")),
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
@@ -243,8 +245,8 @@ df[[6]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_54/P54_Exp1_raw.cs
                 RT_sec = fl.RT / 1000,
                 ACC = as.numeric(fl.ACC)) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
-                Identity = factor(Identity, levels = c("Self", "Mother", "none", "Acquaintance")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
+                Identity = factor(Identity, levels = c("Self", "Mother", "none", "Acquaintance")), # nolint
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = as.numeric(RT_sec),
@@ -277,8 +279,8 @@ df[[7]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_54/P54_Exp3_raw.cs
                 RT_sec = RT / 1000,
                 ACC = as.numeric(ACC)) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
-                Identity = factor(Identity, levels = c("Self", "Mother", "Acquaintance")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
+                Identity = factor(Identity, levels = c("Self", "Mother", "Acquaintance")), # nolint
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = as.numeric(RT_sec),
@@ -310,8 +312,8 @@ df[[8]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n4/Pn4_Exp1_raw.cs
                 RT_sec = RT_ms / 1000,
                 ACC = as.numeric(correct)) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
-                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
+                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger")), # nolint
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = as.numeric(RT_sec),
@@ -346,15 +348,15 @@ df[[9]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n13/Exp1/Pn13_Exp1
                                      Shape == FarShape ~ "Stranger",
                                      TRUE ~ Shape),
                 # 需要先转化Identity，然后在判断是否匹配
-                Matching = if_else(Identity == Label, "Matching", "Nonmatching"),
+                Matching = if_else(Identity == Label, "Matching", "Nonmatching"), # nolint
                 Session = 1,
                 RT_ms = as.numeric(RT),
                 RT_sec = RT_ms / 1000,
                 ACC = as.numeric(ACC),
                 ) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
-                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
+                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger")), # nolint
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = as.numeric(RT_sec),
@@ -387,15 +389,15 @@ df[[10]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n13/Exp3/Pn13_Exp
                                      Shape == MediumShape ~ "Father",
                                      Shape == FarShape ~ "Stranger",
                                      TRUE ~ Shape),
-                Matching = if_else(Identity == Label, "Matching", "Nonmatching"),
+                Matching = if_else(Identity == Label, "Matching", "Nonmatching"), # nolint
                 Session = 1,
                 RT_ms = as.numeric(RT),
                 RT_sec = RT_ms / 1000,
                 ACC = as.numeric(ACC),
                 ) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
-                Identity = factor(Identity, levels = c("Self", "Father", "Stranger")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
+                Identity = factor(Identity, levels = c("Self", "Father", "Stranger")), # nolint
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = as.numeric(RT_sec),
@@ -428,15 +430,15 @@ df[[11]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n13/Exp4/Pn13_Exp
                                      Shape == MediumShape ~ "Friend",
                                      Shape == FarShape ~ "Stranger",
                                      TRUE ~ Shape),
-                Matching = if_else(Identity == Label, "Matching", "Nonmatching"),
+                Matching = if_else(Identity == Label, "Matching", "Nonmatching"), # nolint
                 Session = 1,
                 RT_ms = as.numeric(RT),
                 RT_sec = RT_ms / 1000,
                 ACC = as.numeric(ACC),
                 ) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
-                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
+                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger")), # nolint
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = as.numeric(RT_sec),
@@ -467,7 +469,7 @@ df[[12]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n16/Pn16_Exp1_raw
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = RT_ms / 1000) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
                 Identity = factor(Identity, levels = c("Self", "Friend")),
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
@@ -498,7 +500,7 @@ df[[13]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n16/Pn16_Exp2_raw
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = RT_ms / 1000) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
                 Identity = factor(Identity, levels = c("Self", "Friend")),
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
@@ -529,7 +531,7 @@ df[[14]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n16/Pn16_Exp3_raw
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = RT_ms / 1000) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
                 Identity = factor(Identity, levels = c("Self", "Friend")),
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
@@ -565,8 +567,8 @@ df[[15]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n23/Pn23_Exp1_raw
                 RT_sec = RT_ms / 1000,
                 ) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
-                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
+                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger")), # nolint
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = as.numeric(RT_sec),
@@ -594,7 +596,7 @@ df[[16]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_95/P95_Exp1_raw.c
                 Shape = Stimulus,
                 Session = Face_Gender,
                 RT_ms = Cue.RT,
-                ACC = Cue.ACC) %>% 
+                ACC = Cue.ACC) %>%
   dplyr::mutate(Shape = case_when(Shape == "shape1.jpg" ~ "Self",
                                   Shape == "shape2.jpg" ~ "Friend",
                                   Shape == "shape3.jpg" ~ "Stranger",
@@ -612,8 +614,8 @@ df[[16]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_95/P95_Exp1_raw.c
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = RT_ms / 1000) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
-                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
+                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger")), # nolint
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = as.numeric(RT_sec),
@@ -658,8 +660,8 @@ df[[17]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_95/P95_Exp2_raw.c
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = RT_ms / 1000) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
-                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
+                Identity = factor(Identity, levels = c("Self", "Friend", "Stranger")), # nolint
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = as.numeric(RT_sec),
@@ -693,7 +695,7 @@ df_Ps1_E1 <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_s1/Ps1_Exp1_raw.
                 Session = 1,
                 RT_ms = as.numeric(RT_ms),
                 RT_sec = RT_ms / 1000,
-                ACC = as.numeric(ACC)) 
+                ACC = as.numeric(ACC))
 
 df_Subject_ID <- df_Ps1_E1 %>% # nolint
   dplyr::group_by(Subject) %>%
@@ -705,7 +707,7 @@ df[[18]] <- df_Ps1_E1 %>%
   dplyr::left_join(df_Subject_ID, by = "Subject") %>%
   dplyr::mutate(Subject = Subject_ID) %>%
   dplyr::mutate(Subjcet = as.numeric(Subject),
-                Matching = factor(Matching, levels = c("Matching", "Nonmatching")),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
                 Identity = factor(Identity, levels = c("Self", "Stranger")),
                 Session = as.factor(Session),
                 RT_ms = as.numeric(RT_ms),
