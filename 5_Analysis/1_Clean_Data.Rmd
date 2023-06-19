@@ -34,7 +34,7 @@ library(doParallel)
 # devtools::install_github("yuki-961004/yukiSH") # nolint
 library(yukiSH)
 
-# install.packages("./PACKAGES/yukiBP_0.1.1.tar.gz") # nolint
+# install.packages("./PACKAGES/yukiBP_0.1.3.tar.gz") # nolint
 # devtools::install_github("yuki-961004/yukiBP") # nolint
 library(yukiBP)
 ```
