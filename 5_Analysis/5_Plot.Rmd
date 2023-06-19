@@ -9,7 +9,13 @@ output: html_document
 plot <- list()
 ```
 
-# SHR
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+
+# Normal SHR
 ```{r Read OUTPUT}
 # 获取所有的nmshr
 res[[1]][[3]] <- list.files(file.path("./OUTPUT/nmshr/"),
@@ -69,6 +75,13 @@ ggsave(filename = "./FIGURE/Fig1_nmshr.png",
        )
 ```
 
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+
+# Monte Carlo SHR
 ```{r Read OUTPUT}
 # 获取所有的mcshr
 res[[2]][[3]] <- list.files(file.path("./OUTPUT/mcshr_10/"),
@@ -124,19 +137,12 @@ ggsave(filename = "./FIGURE/Fig2_mcshr.png",
 ```
 
 
-```{r}
-res[[3]][[1]] <- res[[3]][[1]] %>%
-  dplyr::mutate(Target = "Friend")
-res[[3]][[2]] <- res[[3]][[2]] %>%
-  dplyr::mutate(Target = "Stranger")
-res[[3]][[3]] <- rbind(res[[3]][[1]], res[[3]][[2]]) %>%
-  dplyr::mutate(ICC_type = factor(ICC_type,
-                                  levels = c("ezDDM: z", "ezDDM: v", "Efficiency", "Dprime", "ACC", "RT") # nolint
-                                  )
-                )
-names(res[[3]])[3] <- "plot"
-```
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
 
+
+# ICC
 ```{r Read OUTPUT}
 # 获取所有的icc
 res[[3]][[3]] <- list.files(file.path("./OUTPUT/icc/"),
@@ -147,9 +153,8 @@ res[[3]][[3]] <- list.files(file.path("./OUTPUT/icc/"),
   lapply(function(df) dplyr::filter(df, type != "type")) %>%
   bind_rows() %>%
   dplyr::mutate(ICC_type = factor(ICC_type,
-                                  levels = c("ezDDM: z", "ezDDM: v", "Efficiency", "Dprime", "ACC", "RT") # nolint
-                                  )
-                )
+                                  levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d prime", "ACC", "RT") # nolint
+                                  )) 
 names(res[[3]])[3] <- "plot"
 ```
 
@@ -160,10 +165,10 @@ plot[[3]] <- ggplot2::ggplot(res[[3]][[3]], aes(x = ICC_type, y = ICC, group = I
   ggplot2::geom_point(size = 5) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
-  ggplot2::scale_y_continuous(limits = c(-1, 1),
+  ggplot2::scale_y_continuous(limits = c(-0.22, 1.2),
                      sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
                                              labels = c("unacceptable", "poor", "acceptable", "excellent")), # nolint
-                                breaks = seq(-1, 1, by = 0.2)
+                                breaks = seq(0, 1, by = 0.2)
                                 ) +
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
@@ -178,7 +183,6 @@ names(plot)[3] <- "ICC"
 
 ggsave(filename = "./FIGURE/Fig3_icc.png",
        width = 9,
-       height = 12,
-       dpi = 300,
+       height = 16,
        )
 ```
