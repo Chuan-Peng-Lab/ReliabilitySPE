@@ -91,8 +91,27 @@ lazy_nmshr <- function(Target, Paper_ID) {
 ```
 
 ```{r laze_nmshr, message=FALSE, warning=FALSE}
-lazy_nmshr(Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1")
+lazy_nmshr(Target = c("Self", "Mother","none", "Acquaintance"), Paper_ID = "P54E1")
 ```
+
+df[[1]]   "P0E1"    "Self", "Friend", "Stranger"
+df[[2]]   "P6E1"    "Self", "Partner", "Stranger"
+df[[3]]   "P46E2"    "Self", "Stranger"
+df[[4]]   "P51E1"   "Self", "Celebrity", "Stranger"
+df[[5]]   "P51E2"   "Self", "Celebrity"
+df[[6]]   "P54E1"   "Self", "Mother","none", "Acquaintance"
+df[[7]]   "P54E3"   "Self", "Mother", "Acquaintance"
+df[[8]]   "Pn4E1"   "Self", "Friend", "Stranger"
+df[[9]]   "Pn13E1"   "Self", "Friend", "Stranger"
+df[[10]]   "Pn13E3"   "Self", "Father", "Stranger"
+df[[11]]   "Pn13E4"   "Self", "Friend", "Stranger"
+df[[12]]   "Pn16E1"   "Self", "Friend"
+df[[13]]   "Pn16E2"   "Self", "Friend"
+df[[14]]   "Pn16E3"   "Self", "Friend"
+df[[15]]   "Pn23E1"   "Self", "Friend", "Stranger"
+df[[16]]   "P95E1"   "Self", "Friend", "Stranger"
+df[[17]]   "P95E2"   "Self", "Friend", "Stranger"
+df[[18]]   "Ps1E1""Self", "Stranger"
 
 
 ################################################################################
@@ -108,12 +127,13 @@ names(res)[2] <- "Monte-Carlo SHR"
 
 ```{r mcshr one by one, message=FALSE, warning=FALSE}
 Start_Time <- Sys.time()
-df_rt <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "rt", mc = TRUE, nc = 16)
-df_acc <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "acc", mc = TRUE, nc = 16)
-df_dp <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "dp", mc = TRUE, nc = 16)
-df_eff <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "eff", mc = TRUE, nc = 16)
-df_ezddm <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "ezddm", mc = TRUE, nc = 16)
-df_rwddm <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "rwddm", mc = TRUE, nc = 16)
+df_rt <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "rt", mc = TRUE, nc = 16)
+df_acc <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "acc", mc = TRUE, nc = 16)
+df_dp <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "dp", mc = TRUE, nc = 16)
+df_eff <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "eff", mc = TRUE, nc = 16)
+df_ezddm <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "ezddm", mc = TRUE, nc = 16)
+RWiener_Time <- Sys.time()
+df_rwddm <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "rwddm", mc = TRUE, nc = 16)
 End_Time <- Sys.time()
 ```
 
@@ -138,22 +158,19 @@ rm(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm)
 ```
 
 ```{r Save mcshr_friend}
-write.csv(x = res[[2]][[1]],
-          file = "./OUTPUT/mcshr_P0S1.csv",
-          row.names = FALSE,
-          )
+write.csv(x = res[[2]], file = "./OUTPUT/mcshr_P0S1.csv", row.names = FALSE)
 ```
 
 ```{r function: lazy_mcshr}
 lazy_mcshr <- function(Target, Paper_ID) {
 
   # 计算8个参数的分半信度 
-  df_rt <<- yukiBP::shr(list = shl[[4]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "rt", mc = TRUE, nc = 16)
-  df_acc <<- yukiBP::shr(list = shl[[4]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "acc", mc = TRUE, nc = 16)
-  df_dp <<- yukiBP::shr(list = shl[[4]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "dp", mc = TRUE, nc = 16)
-  df_eff <<- yukiBP::shr(list = shl[[4]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "eff", mc = TRUE, nc = 16)
-  df_ezddm <<- yukiBP::shr(list = shl[[4]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "ezddm", mc = TRUE, nc = 16)
-  df_rwddm <<- yukiBP::shr(list = shl[[4]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "rwddm", mc = TRUE, nc = 16)
+  df_rt <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "rt", mc = TRUE, nc = 16)
+  df_acc <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "acc", mc = TRUE, nc = 16)
+  df_dp <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "dp", mc = TRUE, nc = 16)
+  df_eff <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "eff", mc = TRUE, nc = 16)
+  df_ezddm <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "ezddm", mc = TRUE, nc = 16)
+  df_rwddm <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "rwddm", mc = TRUE, nc = 16)
 
   # 合并8个参数到一个表格内
   res[[2]] <<- rbind(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm) %>%
@@ -175,12 +192,31 @@ lazy_mcshr <- function(Target, Paper_ID) {
   rm(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm)
 
   # 保存生成的表格
-  Path <- paste0("./OUTPUT/nmshr_", Paper_ID, ".csv")
+  Path <- paste0("./OUTPUT/mcshr_", Paper_ID, ".csv")
   write.csv(x = res[[2]], file = Path, row.names = FALSE)
 
 }
 ```
 
 ```{r laze_mcshr, message=FALSE, warning=FALSE}
-lazy_mcshr(Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1")
+lazy_mcshr(Target = c("Self", "Mother","none", "Acquaintance"), Paper_ID = "P54E1")
 ```
+
+df[[1]]   "P0E1"    "Self", "Friend", "Stranger"
+df[[2]]   "P6E1"    "Self", "Partner", "Stranger"
+df[[3]]   "P46E2"    "Self", "Stranger"
+df[[4]]   "P51E1"   "Self", "Celebrity", "Stranger"
+df[[5]]   "P51E2"   "Self", "Celebrity"
+df[[6]]   "P54E1"   "Self", "Mother","none", "Acquaintance"
+df[[7]]   "P54E3"   "Self", "Mother", "Acquaintance"
+df[[8]]   "Pn4E1"   "Self", "Friend", "Stranger"
+df[[9]]   "Pn13E1"   "Self", "Friend", "Stranger"
+df[[10]]   "Pn13E3"   "Self", "Father", "Stranger"
+df[[11]]   "Pn13E4"   "Self", "Friend", "Stranger"
+df[[12]]   "Pn16E1"   "Self", "Friend"
+df[[13]]   "Pn16E2"   "Self", "Friend"
+df[[14]]   "Pn16E3"   "Self", "Friend"
+df[[15]]   "Pn23E1"   "Self", "Friend", "Stranger"
+df[[16]]   "P95E1"   "Self", "Friend", "Stranger"
+df[[17]]   "P95E2"   "Self", "Friend", "Stranger"
+df[[18]]   "Ps1E1""Self", "Stranger"
