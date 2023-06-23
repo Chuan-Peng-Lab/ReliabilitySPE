@@ -53,15 +53,15 @@ write.csv(x = res[[1]], file = "./OUTPUT/nmshr_P0S1.csv", row.names = FALSE)
 ```
 
 ```{r function: lazy_nmshr}
-lazy_nmshr <- function(Target, Paper_ID) {
+lazy_nmshr <- function(Target, Paper_ID, nc) {
 
   # 计算8个参数的分半信度 
-  df_rt <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "rt", mc = FALSE, nc = 8)
-  df_acc <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "acc", mc = FALSE, nc = 8)
-  df_dp <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "dp", mc = FALSE, nc = 8)
-  df_eff <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "eff", mc = FALSE, nc = 8)
-  df_ezddm <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "ezddm", mc = FALSE, nc = 8)
-  df_rwddm <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "rwddm", mc = FALSE, nc = 8)
+  df_rt <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "rt", mc = FALSE, nc = nc)
+  df_acc <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "acc", mc = FALSE, nc = nc)
+  df_dp <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "dp", mc = FALSE, nc = nc)
+  df_eff <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "eff", mc = FALSE, nc = nc)
+  df_ezddm <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "ezddm", mc = FALSE, nc = nc)
+  df_rwddm <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "rwddm", mc = FALSE, nc = nc)
 
   # 合并8个参数到一个表格内
   res[[1]] <<- rbind(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm) %>%
@@ -91,7 +91,7 @@ lazy_nmshr <- function(Target, Paper_ID) {
 ```
 
 ```{r laze_nmshr, message=FALSE, warning=FALSE}
-lazy_nmshr(Target = c("Self", "Mother","none", "Acquaintance"), Paper_ID = "P54E1")
+lazy_nmshr(Target = c("Self", "Mother","none", "Acquaintance"), Paper_ID = "P54E1", nc = 8)
 ```
 
 df[[1]]   "P0E1"    "Self", "Friend", "Stranger"
@@ -162,15 +162,15 @@ write.csv(x = res[[2]], file = "./OUTPUT/mcshr_P0S1.csv", row.names = FALSE)
 ```
 
 ```{r function: lazy_mcshr}
-lazy_mcshr <- function(Target, Paper_ID) {
+lazy_mcshr <- function(Target, Paper_ID, nc) {
 
   # 计算8个参数的分半信度 
-  df_rt <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "rt", mc = TRUE, nc = 16)
-  df_acc <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "acc", mc = TRUE, nc = 16)
-  df_dp <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "dp", mc = TRUE, nc = 16)
-  df_eff <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "eff", mc = TRUE, nc = 16)
-  df_ezddm <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "ezddm", mc = TRUE, nc = 16)
-  df_rwddm <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "rwddm", mc = TRUE, nc = 16)
+  df_rt <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "rt", mc = TRUE, nc = nc)
+  df_acc <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "acc", mc = TRUE, nc = nc)
+  df_dp <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "dp", mc = TRUE, nc = nc)
+  df_eff <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "eff", mc = TRUE, nc = nc)
+  df_ezddm <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "ezddm", mc = TRUE, nc = nc)
+  df_rwddm <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "rwddm", mc = TRUE, nc = nc)
 
   # 合并8个参数到一个表格内
   res[[2]] <<- rbind(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm) %>%
@@ -199,7 +199,7 @@ lazy_mcshr <- function(Target, Paper_ID) {
 ```
 
 ```{r laze_mcshr, message=FALSE, warning=FALSE}
-lazy_mcshr(Target = c("Self", "Mother","none", "Acquaintance"), Paper_ID = "P54E1")
+lazy_mcshr(Target = c("Self", "Mother","none", "Acquaintance"), Paper_ID = "P54E1", nc = 16)
 ```
 
 df[[1]]   "P0E1"    "Self", "Friend", "Stranger"

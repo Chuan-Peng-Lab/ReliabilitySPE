@@ -5,9 +5,7 @@ date: "2023-03-25"
 output: html_document
 ---
 # Package
-```{r package, warning = FALSE,message = FALSE}
-# wd
-library(here)
+```{r Package, warning = FALSE,message = FALSE}
 # clean data
 library(tidyr)
 library(dplyr)
@@ -74,6 +72,7 @@ df[[1]] <- read.csv("../4_Data_Extraction/4_1_Raw_Data/SPMT_raw.csv") %>%
 
 names(df)[1] <- "Paper 0 Exp 1"
 summary(df[[1]])
+write.csv(x = df[[1]], file = "./DATA/df_1.csv")
 ```
 
 # Paper 6 
@@ -113,6 +112,7 @@ df[[2]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_6/P6_Exp1_raw.csv"
 
 names(df)[2] <- "Paper 6 Exp 1"
 summary(df[[2]])
+write.csv(x = df[[2]], file = "./DATA/df_2.csv")
 ```
 
 # Paper 46 (Dark Light Box)
@@ -152,6 +152,7 @@ df[[3]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_46/Exp2/P46_Exp2_r
 
 names(df)[3] <- "Paper 46 Exp 2"
 summary(df[[3]])
+write.csv(x = df[[3]], file = "./DATA/df_3.csv")
 ```
 
 # Paper 51 
@@ -190,6 +191,7 @@ df[[4]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_51/P51_Exp1_raw.cs
 
 names(df)[4] <- "Paper 51 Exp 1"
 summary(df[[4]])
+write.csv(x = df[[4]], file = "./DATA/df_4.csv")
 ```
 
 ## Experiment 2 (Identtiy = 2)
@@ -225,6 +227,7 @@ df[[5]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_51/P51_Exp2_raw.cs
 
 names(df)[5] <- "Paper 51 Exp 2"
 summary(df[[5]])
+write.csv(x = df[[5]], file = "./DATA/df_5.csv")
 ```
 
 # Paper 54 
@@ -261,6 +264,7 @@ df[[6]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_54/P54_Exp1_raw.cs
 
 names(df)[6] <- "Paper 54 Exp 1"
 summary(df[[6]])
+write.csv(x = df[[6]], file = "./DATA/df_6.csv")
 ```
 
 ## Experiment 3 (Identtiy = 3)
@@ -295,6 +299,7 @@ df[[7]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_54/P54_Exp3_raw.cs
 
 names(df)[7] <- "Paper 54 Exp 3"
 summary(df[[7]])
+write.csv(x = df[[7]], file = "./DATA/df_7.csv")
 ```
 
 # Paper n4
@@ -328,6 +333,7 @@ df[[8]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n4/Pn4_Exp1_raw.cs
 
 names(df)[8] <- "Papaer n4 Exp 1"
 summary(df[[8]])
+write.csv(x = df[[8]], file = "./DATA/df_8.csv")
 ```
 
 # Paper n13
@@ -371,6 +377,7 @@ df[[9]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n13/Exp1/Pn13_Exp1
 
 names(df)[9] <- "Papaer n13 Exp 1"
 summary(df[[9]])
+write.csv(x = df[[9]], file = "./DATA/df_9.csv")
 ```
 
 ## Experiment 3 (Identtiy = 3)
@@ -412,6 +419,7 @@ df[[10]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n13/Exp3/Pn13_Exp
 
 names(df)[10] <- "Papaer n13 Exp 3"
 summary(df[[10]])
+write.csv(x = df[[10]], file = "./DATA/df_10.csv")
 ```
 
 ## Experiment 4 (Identtiy = 3)
@@ -453,6 +461,7 @@ df[[11]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n13/Exp4/Pn13_Exp
 
 names(df)[11] <- "Papaer n13 Exp 4"
 summary(df[[11]])
+write.csv(x = df[[11]], file = "./DATA/df_11.csv")
 ```
 
 # Paper n16
@@ -485,6 +494,7 @@ df[[12]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n16/Pn16_Exp1_raw
 
 names(df)[12] <- "Papaer n16 Exp 1"
 summary(df[[12]])
+write.csv(x = df[[12]], file = "./DATA/df_12.csv")
 ```
 
 ## Experiment 2 (Identtiy = 2)
@@ -516,6 +526,7 @@ df[[13]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n16/Pn16_Exp2_raw
 
 names(df)[13] <- "Papaer n16 Exp 2"
 summary(df[[13]])
+write.csv(x = df[[13]], file = "./DATA/df_13.csv")
 ```
 
 ## Experiment 3 (Identtiy = 2)
@@ -547,6 +558,7 @@ df[[14]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n16/Pn16_Exp3_raw
 
 names(df)[14] <- "Papaer n16 Exp 3"
 summary(df[[14]])
+write.csv(x = df[[14]], file = "./DATA/df_14.csv")
 ```
 
 # Paper n23
@@ -583,6 +595,7 @@ df[[15]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_n23/Pn23_Exp1_raw
 
 names(df)[15] <- "Papaer n23 Exp 1"
 summary(df[[15]])
+write.csv(x = df[[15]], file = "./DATA/df_15.csv")
 ```
 
 # Paper 95 (Face)
@@ -630,6 +643,7 @@ df[[16]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_95/P95_Exp1_raw.c
 
 names(df)[16] <- "Paper 95 Exp 1"
 summary(df[[16]])
+write.csv(x = df[[16]], file = "./DATA/df_16.csv")
 ```
 
 ## Experiment 2 (Identtiy = 3)
@@ -676,6 +690,7 @@ df[[17]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_95/P95_Exp2_raw.c
 
 names(df)[17] <- "Paper 95 Exp 2"
 summary(df[[17]])
+write.csv(x = df[[17]], file = "./DATA/df_17.csv")
 ```
 
 # Paper s1 (Face)
@@ -725,4 +740,5 @@ rm(df_Subject_ID, df_Ps1_E1)
 
 names(df)[18] <- "Paper s1 Exp 1"
 summary(df[[18]])
+write.csv(x = df[[18]], file = "./DATA/df_18.csv")
 ```
