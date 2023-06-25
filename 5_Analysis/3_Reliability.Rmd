@@ -52,48 +52,6 @@ rm(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm)
 write.csv(x = res[[1]], file = "./OUTPUT/nmshr_P0S1.csv", row.names = FALSE)
 ```
 
-```{r function: lazy_nmshr}
-lazy_nmshr <- function(Target, Paper_ID, nc) {
-
-  # 计算8个参数的分半信度 
-  df_rt <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "rt", mc = FALSE, nc = nc)
-  df_acc <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "acc", mc = FALSE, nc = nc)
-  df_dp <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "dp", mc = FALSE, nc = nc)
-  df_eff <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "eff", mc = FALSE, nc = nc)
-  df_ezddm <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "ezddm", mc = FALSE, nc = nc)
-  df_rwddm <<- yukiBP::shr(list = shl[1:3], Target = Target, Paper_ID = Paper_ID, Indice = "rwddm", mc = FALSE, nc = nc)
-
-  # 合并8个参数到一个表格内
-  res[[1]] <<- rbind(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm) %>%
-  dplyr::mutate(Indice = case_when(Indice == "rt" ~ "RT",
-                                   Indice == "acc" ~ "ACC",
-                                   Indice == "dp" ~ "d Prime",
-                                   Indice == "eff" ~ "Efficiency",
-                                   Indice == "ez_v" ~ "ezDDM v",
-                                   Indice == "ez_z" ~ "ezDDM z",
-                                   Indice == "rw_v" ~ "rwDDM v",
-                                   Indice == "rw_z" ~ "rwDDM z",)
-                ) %>%
-  dplyr::mutate(Indice = factor(Indice, levels = c("RT", "ACC", "d Prime", "Efficiency", "ezDDM v", "ezDDM z", "rwDDM v", "rwDDM z")),
-                Method = factor(Method, levels = c("First-Second", "Odd-Even", "Permuted")),
-                Target = factor(Target),
-                ) %>%
-  dplyr::select(Target, Indice, Method, r, Paper_ID) %>%
-  dplyr::arrange(Target, Indice, Method)
-
-  rm(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm)
-  
-  # 保存生成的表格
-  Path <- paste0("./OUTPUT/nmshr_", Paper_ID, ".csv")
-  write.csv(x = res[[1]], file = Path, row.names = FALSE)
-
-}
-```
-
-```{r laze_nmshr, message=FALSE, warning=FALSE}
-lazy_nmshr(Target = c("Self", "Mother","none", "Acquaintance"), Paper_ID = "P54E1", nc = 8)
-```
-
 df[[1]]   "P0E1"    "Self", "Friend", "Stranger"
 df[[2]]   "P6E1"    "Self", "Partner", "Stranger"
 df[[3]]   "P46E2"    "Self", "Stranger"
@@ -111,7 +69,7 @@ df[[14]]   "Pn16E3"   "Self", "Friend"
 df[[15]]   "Pn23E1"   "Self", "Friend", "Stranger"
 df[[16]]   "P95E1"   "Self", "Friend", "Stranger"
 df[[17]]   "P95E2"   "Self", "Friend", "Stranger"
-df[[18]]   "Ps1E1""Self", "Stranger"
+df[[18]]   "Ps1E1"    "Self", "Stranger"
 
 
 ################################################################################
@@ -159,47 +117,6 @@ rm(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm)
 
 ```{r Save mcshr_friend}
 write.csv(x = res[[2]], file = "./OUTPUT/mcshr_P0S1.csv", row.names = FALSE)
-```
-
-```{r function: lazy_mcshr}
-lazy_mcshr <- function(Target, Paper_ID, nc) {
-
-  # 计算8个参数的分半信度 
-  df_rt <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "rt", mc = TRUE, nc = nc)
-  df_acc <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "acc", mc = TRUE, nc = nc)
-  df_dp <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "dp", mc = TRUE, nc = nc)
-  df_eff <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "eff", mc = TRUE, nc = nc)
-  df_ezddm <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "ezddm", mc = TRUE, nc = nc)
-  df_rwddm <<- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "rwddm", mc = TRUE, nc = nc)
-
-  # 合并8个参数到一个表格内
-  res[[2]] <<- rbind(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm) %>%
-  dplyr::mutate(Indice = case_when(Indice == "rt" ~ "RT",
-                                   Indice == "acc" ~ "ACC",
-                                   Indice == "dp" ~ "d Prime",
-                                   Indice == "eff" ~ "Efficiency",
-                                   Indice == "ez_v" ~ "ezDDM v",
-                                   Indice == "ez_z" ~ "ezDDM z",
-                                   Indice == "rw_v" ~ "rwDDM v",
-                                   Indice == "rw_z" ~ "rwDDM z",)
-                ) %>%
-  dplyr::mutate(Indice = factor(Indice, levels = c("RT", "ACC", "d Prime", "Efficiency", "ezDDM v", "ezDDM z", "rwDDM v", "rwDDM z")),
-                Target = factor(Target),
-                ) %>%
-  dplyr::select(Target, Indice, r, LLCI, ULCI, Paper_ID) %>%
-  dplyr::arrange(Target, Indice)
-
-  rm(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm)
-
-  # 保存生成的表格
-  Path <- paste0("./OUTPUT/mcshr_", Paper_ID, ".csv")
-  write.csv(x = res[[2]], file = Path, row.names = FALSE)
-
-}
-```
-
-```{r laze_mcshr, message=FALSE, warning=FALSE}
-lazy_mcshr(Target = c("Self", "Mother","none", "Acquaintance"), Paper_ID = "P54E1", nc = 16)
 ```
 
 df[[1]]   "P0E1"    "Self", "Friend", "Stranger"

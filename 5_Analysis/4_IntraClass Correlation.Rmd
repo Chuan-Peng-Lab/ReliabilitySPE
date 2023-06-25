@@ -22,7 +22,7 @@ icc_output <- function(list, Target) {
   #
   final <- rbindlist(result)
   final$ICC_type <- rep(c("RT", "ACC",
-                          "d prime", "Efficiency",
+                          "d Prime", "Efficiency",
                           "ezDDM v","ezDDM z",
                           "rwDDM v", "rwDDM z"),
                         each = nrow(final) / 8)
@@ -32,7 +32,7 @@ icc_output <- function(list, Target) {
   final <- final %>%
     dplyr::mutate(., ICC_type = factor(ICC_type,
                                       levels = c("RT", "ACC",
-                                                  "d prime", "Efficiency",
+                                                  "d Prime", "Efficiency",
                                                   "ezDDM v","ezDDM z",
                                                   "rwDDM v", "rwDDM z"
                                                   )
