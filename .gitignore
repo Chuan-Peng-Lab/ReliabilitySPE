@@ -21,3 +21,10 @@
 
 # Mac OS
 .DS_Store
+
+# LaTex
+*.aux
+*.bcf
+*.log
+*.run.xml
+*.synctex.gz
