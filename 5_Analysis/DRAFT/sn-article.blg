@@ -1,0 +1,18 @@
+[0] Config.pm:307> INFO - This is Biber 2.17
+[0] Config.pm:310> INFO - Logfile is 'sn-article.blg'
+[50] biber-darwin:340> INFO - === Wed Jun 14, 2023, 16:00:55
+[63] Biber.pm:418> INFO - Reading 'sn-article.bcf'
+[169] Biber.pm:972> INFO - Found 83 citekeys in bib section 0
+[181] Biber.pm:4383> INFO - Processing section 0
+[189] Biber.pm:4574> INFO - Looking for bibtex file 'sn-bibliography.bib' for section 0
+[192] bibtex.pm:1713> INFO - LaTeX decoding ...
+[256] bibtex.pm:1518> INFO - Found BibTeX data source 'sn-bibliography.bib'
+[713] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[713] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[713] Biber.pm:4203> INFO - Sorting list 'apa/global//global/global' of type 'entry' with template 'apa' and locale 'en-US'
+[713] Biber.pm:4209> INFO - No sort tailoring available for locale 'en-US'
+[797] bbl.pm:654> INFO - Writing 'sn-article.bbl' with encoding 'UTF-8'
+[852] bbl.pm:757> INFO - Output to sn-article.bbl
+[853] Biber.pm:130> WARN - Duplicate entry key: 'parsons2019psychological' in file 'sn-bibliography.bib', skipping ...
+[853] Biber.pm:130> WARN - BibTeX subsystem: /var/folders/19/3wtxc79x6nl02bfh11l6w5mr0000gn/T/biber_tmp_SSOE/55161de773bd42c7058a0a932ee130f9_9792.utf8, line 398, warning: 1 characters of junk seen at toplevel
+[853] Biber.pm:132> INFO - WARNINGS: 2
