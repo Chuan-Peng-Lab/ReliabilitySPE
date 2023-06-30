@@ -22,6 +22,9 @@
 # Mac OS
 .DS_Store
 
+# Windows OS
+desktop.ini
+
 # LaTex
 *.aux
 *.bcf
