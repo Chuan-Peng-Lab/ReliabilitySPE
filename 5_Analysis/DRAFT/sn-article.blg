@@ -1,18 +1,48 @@
-[0] Config.pm:307> INFO - This is Biber 2.17
-[0] Config.pm:310> INFO - Logfile is 'sn-article.blg'
-[50] biber-darwin:340> INFO - === Wed Jun 14, 2023, 16:00:55
-[63] Biber.pm:418> INFO - Reading 'sn-article.bcf'
-[169] Biber.pm:972> INFO - Found 83 citekeys in bib section 0
-[181] Biber.pm:4383> INFO - Processing section 0
-[189] Biber.pm:4574> INFO - Looking for bibtex file 'sn-bibliography.bib' for section 0
-[192] bibtex.pm:1713> INFO - LaTeX decoding ...
-[256] bibtex.pm:1518> INFO - Found BibTeX data source 'sn-bibliography.bib'
-[713] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[713] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[713] Biber.pm:4203> INFO - Sorting list 'apa/global//global/global' of type 'entry' with template 'apa' and locale 'en-US'
-[713] Biber.pm:4209> INFO - No sort tailoring available for locale 'en-US'
-[797] bbl.pm:654> INFO - Writing 'sn-article.bbl' with encoding 'UTF-8'
-[852] bbl.pm:757> INFO - Output to sn-article.bbl
-[853] Biber.pm:130> WARN - Duplicate entry key: 'parsons2019psychological' in file 'sn-bibliography.bib', skipping ...
-[853] Biber.pm:130> WARN - BibTeX subsystem: /var/folders/19/3wtxc79x6nl02bfh11l6w5mr0000gn/T/biber_tmp_SSOE/55161de773bd42c7058a0a932ee130f9_9792.utf8, line 398, warning: 1 characters of junk seen at toplevel
-[853] Biber.pm:132> INFO - WARNINGS: 2
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: sn-article.aux
+I found no \citation commands---while reading file sn-article.aux
+I found no \bibdata command---while reading file sn-article.aux
+I found no \bibstyle command---while reading file sn-article.aux
+You've used 0 entries,
+            0 wiz_defined-function locations,
+            83 strings with 494 characters,
+and the built_in function-call counts, 0 in all, are:
+= -- 0
+> -- 0
+< -- 0
++ -- 0
+- -- 0
+* -- 0
+:= -- 0
+add.period$ -- 0
+call.type$ -- 0
+change.case$ -- 0
+chr.to.int$ -- 0
+cite$ -- 0
+duplicate$ -- 0
+empty$ -- 0
+format.name$ -- 0
+if$ -- 0
+int.to.chr$ -- 0
+int.to.str$ -- 0
+missing$ -- 0
+newline$ -- 0
+num.names$ -- 0
+pop$ -- 0
+preamble$ -- 0
+purify$ -- 0
+quote$ -- 0
+skip$ -- 0
+stack$ -- 0
+substring$ -- 0
+swap$ -- 0
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 0
+width$ -- 0
+write$ -- 0
+(There were 3 error messages)

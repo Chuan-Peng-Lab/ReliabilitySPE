@@ -12,6 +12,7 @@
 4_Data_Extraction/4_2_Open_Data/
 5_Analysis/DATA
 5_Analysis/DRAFT/CP_rev
+5_Analysis/DRAFT/Old Version
 
 # Office temp Files
 ~$*
@@ -31,4 +32,4 @@ desktop.ini
 *.log
 *.run.xml
 *.synctex.gz
-5_Analysis/DRAFT/sn-article.pdf
+
