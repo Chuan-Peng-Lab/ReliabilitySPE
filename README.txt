@@ -10,15 +10,6 @@
 |-----1_2_Planned_Analysis
 |----------1_2_1_DATA
 |----------1_2_2_OUTPUT
-|----------1_2_3_R_package
-|-----------------batch
-|-----------------splithalf
-|-----------------batch_0.0.2.tar.gz
-|-----------------splithalf_0.0.1.tar.gz
-|----------1_2_4_Source_Functions
-|-----------------1_Functions_Split_Half.Rmd
-|-----------------2_Functions_Calculate_Indices.Rmd
-|-----------------3_Functions_ICC.Rmd
 |----------Pilot.Rproj
 |----------1_Clean_Data.Rmd
 |----------2_Split_Half.Rmd
@@ -51,9 +42,21 @@
 |--------------Paper_n23
 |--------------Paper_s1
 |---5_Analysis
+|----------DDM_Packages_Comparison
+|----------DATA
+|----------DRAFT
+|----------FIGURE
+|----------OUTPUT
+|----------PACKAGES
 |----------Label.xlsx
 |----------Formal.Rproj
+|----------Formal.code-workspace
 |----------1_Clean_Data.Rmd
+|----------2_3_Loop Split Half & Reliability
+|----------2_Split_Half
+|----------3_Reliability
+|----------4_IntraClass Correlation
+|----------5_Plot
 |---6_Reports
 |----------6_1_Phase_1
 |----------6_2_Phase_2

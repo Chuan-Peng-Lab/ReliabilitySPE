@@ -163,7 +163,7 @@ lazy_mcshr <- function(Target, Paper_ID, nc) {
 ```
 
 ```{r}
-for (i in 4) {
+for (i in 1:18) {
   shl <- list(list(), list(), list(), list())
   
   gc()
@@ -182,7 +182,7 @@ for (i in 4) {
                               sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session",
                               iteration = 5000, nc = 10)
   
-  #lazy_mnshr(Target = t[[i]], Paper_ID = p[[i]], nc = 10)
+  lazy_mnshr(Target = t[[i]], Paper_ID = p[[i]], nc = 10)
   lazy_mcshr(Target = t[[i]], Paper_ID = p[[i]], nc = 10)
 }
 ```

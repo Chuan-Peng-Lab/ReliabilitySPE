@@ -7,6 +7,7 @@ output: html_document
 # Create NULL List
 ```{r Create NULL List}
 plot <- list()
+desc <- list()
 ```
 
 
@@ -45,6 +46,14 @@ plot[[1]] <- list.files(file.path("./OUTPUT/nmshr/"),
                 )
 names(plot)[1] <- "Normal SHR"
 ```
+
+```{r}
+desc[[1]] <- plot[[1]] %>%
+  dplyr::group_by(Target, Indice, Method) %>%
+  dplyr::summarise(mean_r = mean(r),
+                   sd_r = sd(r))
+```
+
 
 ```{r Plot nmshr, warning=FALSE}
 ggplot2::ggplot(plot[[1]],aes(x = Indice, y = r, fill = interaction(Indice, Target))) + 
