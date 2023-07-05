@@ -52,11 +52,11 @@
 |----------Formal.Rproj
 |----------Formal.code-workspace
 |----------1_Clean_Data.Rmd
-|----------2_3_Loop Split Half & Reliability
-|----------2_Split_Half
-|----------3_Reliability
-|----------4_IntraClass Correlation
-|----------5_Plot
+|----------2_3_Loop Split Half & Reliability.Rmd
+|----------2_Split_Half.Rmd
+|----------3_Reliability.Rmd
+|----------4_IntraClass Correlation.Rmd
+|----------5_Plot.Rmd
 |---6_Reports
 |----------6_1_Phase_1
 |----------6_2_Phase_2
