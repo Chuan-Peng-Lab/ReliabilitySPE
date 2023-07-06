@@ -91,11 +91,11 @@ ggsave(filename = "./FIGURE/Fig1_nmshr.png",
 # Monte Carlo SHR
 ```{r Read OUTPUT}
 # 获取所有的mcshr
-plot[[2]] <- list.files(file.path("./OUTPUT/mcshr_10/"),
+plot[[2]] <- list.files(file.path("./OUTPUT/mcshr_5k/"),
                         pattern = "mcshr_.*\\.csv$",
                         ) %>%
   # 对读取到的所有.out文件x都执行函数read.table
-  lapply(function(x) read.csv(file.path("./OUTPUT/mcshr_10/", x), header = TRUE)) %>% # nolint
+  lapply(function(x) read.csv(file.path("./OUTPUT/mcshr_5k/", x), header = TRUE)) %>% # nolint
   # 对所有被read.table处理过的数据执行dplyr的清洗
   lapply(function(df) dplyr::filter(df, Indice != "Indice")) %>%
   bind_rows() %>%
