@@ -53,22 +53,28 @@ ggplot2::ggplot(plot[[1]],aes(x = Indice, y = r, fill = interaction(Indice, Targ
   ggdist::stat_dots(side = "left", justification = 1.2, alpha = 0.5) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_y_continuous(limits = c(-0.2, 1.2),
-                     sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
-                                             labels = c("unacceptable", "poor", "acceptable", "excellent")), 
-                                breaks = seq(0, 1, by = 0.1)
-                                ) +
+                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
+                                                  labels = c("unacceptable", "poor", "acceptable", "excellent")),
+                              breaks = c(0, 0.5, 0.7, 1)
+                              ) +
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::labs(y = "", x = "") +
   papaja::theme_apa() +
-  ggplot2::theme(legend.position = "none") +
-  ggplot2::labs(y = "Split-Half Reliability", x = "Indices") +
+  ggplot2::theme(legend.position = "none",
+                 axis.text.x.top = element_text(size = 10), 
+                 axis.text.x.bottom = element_text(size = 15),
+                 axis.text.y.left = element_text(size = 15),
+                 axis.title = element_blank(),
+                 strip.text = element_text(size = 12)
+                 ) +
   ggplot2::facet_wrap(~Target + Method, ncol = 3)
 
 ggsave(filename = "./FIGURE/Fig1_nmshr.png",
-       width = 15,
-       height = 20,
+       width = 20,
+       height = 15,
        dpi = 300,
        )
 ```
@@ -107,27 +113,32 @@ names(plot)[2] <- "Monte Carlo SHR"
 
 ```{r Plot SHR for Simulated Data, message= FALSE, warning = FALSE}
 ggplot(plot[[2]], aes(x = Indice, y = r, group = Paper_ID, color = interaction(Indice, Target))) + # nolint
-  ggplot2::geom_errorbar(aes(color = interaction(Indice, Target), ymin = LLCI, ymax = ULCI), width = 0.1, size = 2, position = position_dodge(width = 1)) + # nolint
+  ggplot2::geom_errorbar(aes(color = interaction(Indice, Target), ymin = LLCI, ymax = ULCI), width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
   #geom_line() +
-  ggplot2::geom_point(size = 5, position = position_dodge(width = 1)) +
+  ggplot2::geom_point(size = 3, position = position_dodge(width = 1)) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_y_continuous(limits = c(-0.2, 1.2),
-                     sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
-                                             labels = c("unacceptable", "poor", "acceptable", "excellent")), # nolint
-                                breaks = seq(0, 1, by = 0.1)
-                                ) +
+                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
+                                                  labels = c("unacceptable", "poor", "acceptable", "excellent")), # nolint
+                              breaks = c(0, 0.5, 0.7, 1)
+                              ) +
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::labs(y = "", x = "") +
   papaja::theme_apa() +
-  ggplot2::theme(legend.position = "none") +
-  ggplot2::labs(y = "Monte Carlo-based Split-Half Reliability", x = "Indices") +
+  ggplot2::theme(legend.position = "none",
+                 axis.text.x.top = element_text(size = 10), 
+                 axis.text.x.bottom = element_text(size = 25),
+                 axis.text.y.left = element_text(size = 30),
+                 axis.title = element_blank(),
+                 strip.text = element_text(size = 20),) +
   ggplot2::facet_wrap(~Target, ncol = 4)
 
-ggsave(filename = "./FIGURE/Fig2_mcshr.png",
-       width = 21,
-       height = 28,
+ggsave(filename = "./FIGURE/Fig2_mcshr_5k.png",
+       width = 20,
+       height = 15,
        dpi = 300,
        )
 ```
@@ -148,8 +159,19 @@ plot[[3]] <- list.files(file.path("./OUTPUT/icc/"),
   # 对所有被read.table处理过的数据执行dplyr的清洗
   lapply(function(df) dplyr::filter(df, type != "type")) %>%
   bind_rows() %>%
-  dplyr::mutate(ICC_type = factor(ICC_type,
-                                  levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT") # nolint
+  dplyr::mutate(Target = case_when(Target == "Friend" ~ "Close",
+                                   Target == "Partner" ~ "Close",
+                                   Target == "Mother" ~ "Close",
+                                   Target == "Father" ~ "Close",
+                                   Target == "Acquaintance" ~ "Stranger",
+                                   Target == "Stranger" ~ "Stranger",
+                                   Target == "Celebrity" ~ "Celebrity",
+                                   Target == "none" ~ "NonPerson",
+                                   )
+                ) %>%
+  dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
+                ICC_type = factor(ICC_type,
+                                  levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT") 
                                   ))
 names(plot)[3] <- "ICC"
 ```
@@ -164,19 +186,24 @@ ggplot2::ggplot(plot[[3]], aes(x = ICC_type, y = ICC, group = ICC_type, color = 
   ggplot2::scale_y_continuous(limits = c(-0.2, 1.2),
                      sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
                                              labels = c("unacceptable", "poor", "acceptable", "excellent")), # nolint
-                                breaks = seq(0, 1, by = 0.1)
+                                breaks = c(0, 0.5, 0.7, 1)
                                 ) +
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::labs(y = "", x = "") +
   papaja::theme_apa() +
-  ggplot2::theme(legend.position = "none") +
-  ggplot2::labs(y = "Intraclass Correlation Coefficient", x = "Indices") +
+  ggplot2::theme(legend.position = "none",
+                 axis.text.x.top = element_text(size = 15), 
+                 axis.text.x.bottom = element_text(size = 25),
+                 axis.text.y.left = element_text(size = 15),
+                 axis.title = element_blank(),
+                 strip.text = element_text(size = 15),) +
   ggplot2::facet_wrap(~ type + Target, ncol = 1)
 
 ggsave(filename = "./FIGURE/Fig3_icc.png",
-       width = 9,
-       height = 16,
+       width = 10,
+       height = 15,
        )
 ```
