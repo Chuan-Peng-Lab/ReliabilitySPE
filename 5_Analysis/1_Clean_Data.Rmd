@@ -9,6 +9,7 @@ output: html_document
 # clean data
 library(tidyr)
 library(dplyr)
+library(stringr)
 # More efficient
 library(data.table)
 # for ICC

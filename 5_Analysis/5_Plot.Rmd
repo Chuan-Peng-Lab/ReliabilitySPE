@@ -106,6 +106,7 @@ plot[[2]] <- list.files(file.path("./OUTPUT/mcshr_5k/"),
                                    Target == "none" ~ "NonPerson",
                                    )
                 ) %>%
+  dplyr::filter(!stringr::str_detect(Indice, "ez")) %>%
   dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
                 Indice = factor(Indice,levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT")))
 names(plot)[2] <- "Monte Carlo SHR"
@@ -138,7 +139,7 @@ ggplot(plot[[2]], aes(x = Indice, y = r, group = Paper_ID, color = interaction(I
 
 ggsave(filename = "./FIGURE/Fig2_mcshr_5k.png",
        width = 20,
-       height = 15,
+       height = 12,
        dpi = 300,
        )
 ```
@@ -169,6 +170,7 @@ plot[[3]] <- list.files(file.path("./OUTPUT/icc/"),
                                    Target == "none" ~ "NonPerson",
                                    )
                 ) %>%
+  dplyr::filter(!stringr::str_detect(ICC_type, "ez")) %>%
   dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
                 ICC_type = factor(ICC_type,
                                   levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT") 
@@ -204,6 +206,6 @@ ggplot2::ggplot(plot[[3]], aes(x = ICC_type, y = ICC, group = ICC_type, color = 
 
 ggsave(filename = "./FIGURE/Fig3_icc.png",
        width = 10,
-       height = 15,
+       height = 12,
        )
 ```
