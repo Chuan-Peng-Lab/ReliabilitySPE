@@ -52,9 +52,9 @@ ggplot2::ggplot(plot[[1]],aes(x = Indice, y = r, fill = interaction(Indice, Targ
   see::geom_violinhalf(color = "grey", alpha = 0.5, position = position_nudge(x = 0.1)) + 
   ggdist::stat_dots(side = "left", justification = 1.2, alpha = 0.5) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
-  ggplot2::scale_y_continuous(limits = c(-0.2, 1.2),
+  ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
                               sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
-                                                  labels = c("unacceptable", "poor", "acceptable", "excellent")),
+                                                  labels = c("UNACPT", "POOR", "ACPTBL", "EXCLNT")),
                               breaks = c(0, 0.5, 0.7, 1)
                               ) +
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
@@ -64,17 +64,17 @@ ggplot2::ggplot(plot[[1]],aes(x = Indice, y = r, fill = interaction(Indice, Targ
   ggplot2::labs(y = "", x = "") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 10), 
-                 axis.text.x.bottom = element_text(size = 15),
-                 axis.text.y.left = element_text(size = 15),
+                 axis.text.x.top = element_text(size = 12), 
+                 axis.text.x.bottom = element_text(size = 12),
+                 axis.text.y.left = element_text(size = 12),
                  axis.title = element_blank(),
                  strip.text = element_text(size = 12)
                  ) +
   ggplot2::facet_wrap(~Target + Method, ncol = 3)
 
 ggsave(filename = "./FIGURE/Fig1_nmshr.png",
-       width = 20,
-       height = 15,
+       width = 30,
+       height = 30,
        dpi = 300,
        )
 ```
@@ -106,7 +106,7 @@ plot[[2]] <- list.files(file.path("./OUTPUT/mcshr_5k/"),
                                    Target == "none" ~ "NonPerson",
                                    )
                 ) %>%
-  dplyr::filter(!stringr::str_detect(Indice, "ez")) %>%
+  #dplyr::filter(!stringr::str_detect(Indice, "ez")) %>%
   dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
                 Indice = factor(Indice,levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT")))
 names(plot)[2] <- "Monte Carlo SHR"
@@ -118,9 +118,9 @@ ggplot(plot[[2]], aes(x = Indice, y = r, group = Paper_ID, color = interaction(I
   #geom_line() +
   ggplot2::geom_point(size = 3, position = position_dodge(width = 1)) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
-  ggplot2::scale_y_continuous(limits = c(-0.2, 1.2),
+  ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
                               sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
-                                                  labels = c("unacceptable", "poor", "acceptable", "excellent")), # nolint
+                                                  labels = c("UNACPT", "POOR", "ACPTBL", "EXCLNT")), # nolint
                               breaks = c(0, 0.5, 0.7, 1)
                               ) +
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
@@ -130,16 +130,16 @@ ggplot(plot[[2]], aes(x = Indice, y = r, group = Paper_ID, color = interaction(I
   ggplot2::labs(y = "", x = "") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 10), 
-                 axis.text.x.bottom = element_text(size = 25),
+                 axis.text.x.top = element_text(size = 30), 
+                 axis.text.x.bottom = element_text(size = 30),
                  axis.text.y.left = element_text(size = 30),
                  axis.title = element_blank(),
-                 strip.text = element_text(size = 20),) +
-  ggplot2::facet_wrap(~Target, ncol = 4)
+                 strip.text = element_text(size = 30),) +
+  ggplot2::facet_wrap(~Target, ncol = 2)
 
-ggsave(filename = "./FIGURE/Fig2_mcshr_5k.png",
-       width = 20,
-       height = 12,
+ggsave(filename = "./FIGURE/Fig2_mcshr_5k_ez.png",
+       width = 25,
+       height = 25,
        dpi = 300,
        )
 ```
@@ -170,7 +170,7 @@ plot[[3]] <- list.files(file.path("./OUTPUT/icc/"),
                                    Target == "none" ~ "NonPerson",
                                    )
                 ) %>%
-  dplyr::filter(!stringr::str_detect(ICC_type, "ez")) %>%
+  #dplyr::filter(!stringr::str_detect(ICC_type, "ez")) %>%
   dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
                 ICC_type = factor(ICC_type,
                                   levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT") 
@@ -185,9 +185,9 @@ ggplot2::ggplot(plot[[3]], aes(x = ICC_type, y = ICC, group = ICC_type, color = 
   ggplot2::geom_point(size = 5) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
-  ggplot2::scale_y_continuous(limits = c(-0.2, 1.2),
+  ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
                      sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
-                                             labels = c("unacceptable", "poor", "acceptable", "excellent")), # nolint
+                                             labels = c("UNACPT", "POOR", "ACPTBL", "EXCLNT")), # nolint
                                 breaks = c(0, 0.5, 0.7, 1)
                                 ) +
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
@@ -197,15 +197,15 @@ ggplot2::ggplot(plot[[3]], aes(x = ICC_type, y = ICC, group = ICC_type, color = 
   ggplot2::labs(y = "", x = "") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 15), 
-                 axis.text.x.bottom = element_text(size = 25),
-                 axis.text.y.left = element_text(size = 15),
+                 axis.text.x.top = element_text(size = 30), 
+                 axis.text.x.bottom = element_text(size = 30),
+                 axis.text.y.left = element_text(size = 30),
                  axis.title = element_blank(),
-                 strip.text = element_text(size = 15),) +
-  ggplot2::facet_wrap(~ type + Target, ncol = 1)
+                 strip.text = element_text(size = 30),) +
+  ggplot2::facet_wrap(~ type + Target, ncol = 2)
 
-ggsave(filename = "./FIGURE/Fig3_icc.png",
-       width = 10,
-       height = 12,
+ggsave(filename = "./FIGURE/Fig3_icc_ez.png",
+       width = 25,
+       height = 25,
        )
 ```
