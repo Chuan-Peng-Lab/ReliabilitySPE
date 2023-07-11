@@ -743,3 +743,42 @@ names(df)[18] <- "Paper s1 Exp 1"
 summary(df[[18]])
 write.csv(x = df[[18]], file = "./DATA/df_18.csv")
 ```
+
+```{r Paper s2 Experiment 1}
+df[[19]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_s2/Ps2_Exp1_raw.csv") %>%
+  dplyr::filter(Session != 3,
+                !(Subject %in% c(6205, 6209, 6223)),
+                ) %>%
+  dplyr::select(Subject = Subject,
+                Matching = CorrectAnswer,
+                Identity = identity,
+                Session = Session,
+                RT = Target.RT,
+                ACC = Target.ACC) %>%
+  dplyr::mutate(Matching = case_when(Matching == "m" ~ "Matching",
+                                     Matching == "k" ~ "Nonmatching"),
+                Identity = case_when(Identity == "self" ~ "Self",
+                                     Identity == "other" ~ "Stranger"),
+                RT_ms = as.numeric(RT),
+                RT_sec = RT_ms / 1000,
+                ) %>%
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
+                Identity = factor(Identity, levels = c("Self", "Stranger")), # nolint
+                Session = as.factor(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
+  dplyr::arrange(Subject, Matching, Identity, Session)
+
+names(df)[19] <- "Paper s2 Exp 1"
+summary(df[[19]])
+write.csv(x = df[[19]], file = "./DATA/df_19.csv")
+```
+
