@@ -20,6 +20,7 @@ library(RWiener) # RW ddm
 # plot
 library(ggplot2)
 library(see)
+library(patchwork)
 # Parallel Computing
 library(foreach)
 library(parallel)

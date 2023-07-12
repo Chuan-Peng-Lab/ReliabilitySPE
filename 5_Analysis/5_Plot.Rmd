@@ -245,5 +245,96 @@ ggsave(filename = "./FIGURE/Fig4_trails.png",
        )
 ```
 
+```{r}
+plot[[5]] <- plot[[2]] %>%
+  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  dplyr::filter(Target == "Close" | Target == "Stranger") %>%
+  dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger")),
+                Indice = factor(Indice,levels = c("RT", "ACC", "d Prime", "Efficiency", "ezDDM v", "ezDDM z", "rwDDM v", "rwDDM z"))) %>%
+  dplyr::mutate(r_8 = case_when(Target == "Close" & Indice == "RT" ~ 120,
+                                Target == "Stranger" & Indice == "RT" ~ 75,
+                                Target == "Close" & Indice == "ACC" ~ 130,
+                                Target == "Close" & Indice == "Efficiency" ~ 110,
+                                Target == "Stranger" & Indice == "Efficiency" ~ 80,
+                                Target == "Close" & Indice == "ezDDM v" ~ 130,
+                                Target == "Stranger" & Indice == "ezDDM v" ~ 119,
+                                Target == "Close" & Indice == "rwDDM v" ~ 134,
+                                TRUE ~ NA),
+                )
+```
+
+```{r}
+p1 <- plot[[5]] %>%
+  dplyr::filter(!grepl("DDM", Indice)) %>%
+  ggplot2::ggplot(data = ., aes(x = Trials, y = r, color = Indice, fill = Indice)) +
+  ggplot2::geom_point() +  # 添加散点
+  ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
+  ggplot2::scale_x_continuous(limits = c(0, 140),
+                              breaks = c(0, 30, 60, 100, 130),
+                              ) +
+  ggplot2::scale_y_continuous(limits = c(0, 1),
+                              breaks = c(0, 0.5, 0.8, 1),
+                              ) +
+  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Close" & Indice == "RT"),
+                      aes(xintercept = r_8),
+                      linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
+  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Stranger" & Indice == "RT"),
+                      aes(xintercept = r_8),
+                      linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
+  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Close" & Indice == "ACC"),
+                      aes(xintercept = r_8),
+                      linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
+  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Close" & Indice == "Efficiency"),
+                      aes(xintercept = r_8),
+                      linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
+  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Stranger" & Indice == "Efficiency"),
+                      aes(xintercept = r_8),
+                      linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
+  ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::facet_grid(cols = vars(Target), 
+                      rows = vars(Indice)) +
+  ggplot2::labs(y = "Monte-Carlo Split-Half Reliability", x = "Trial Numbers") +
+  ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
+  ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+p2 <- plot[[5]] %>%
+  dplyr::filter(grepl("DDM", Indice)) %>%
+  ggplot2::ggplot(data = ., aes(x = Trials, y = r, color = Indice, fill = Indice)) +
+  ggplot2::geom_point() +  # 添加散点
+  ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
+  ggplot2::scale_x_continuous(limits = c(0, 140),
+                              breaks = c(0, 30, 60, 100, 130),
+                              ) +
+  ggplot2::scale_y_continuous(limits = c(0, 1),
+                              breaks = c(0, 0.5, 0.8, 1),
+                              ) +
+  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Close" & Indice == "ezDDM v"),
+                      aes(xintercept = r_8),
+                      linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
+  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Stranger" & Indice == "ezDDM v"),
+                      aes(xintercept = r_8),
+                      linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
+  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Close" & Indice == "rwDDM v"),
+                      aes(xintercept = r_8),
+                      linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
+  ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::facet_grid(cols = vars(Target), 
+                      rows = vars(Indice)) +
+  ggplot2::labs(y = "", x = "Trial Numbers") +
+  ggplot2::scale_color_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
+  ggplot2::scale_fill_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+p3 <- p1 + p2+plot_layout(guides = 'collect')
+
+ggsave(filename = "./FIGURE/Fig5_regression.png",
+       width = 10,
+       height = 8,
+       )
+rm(p1, p2, p3)
+```
 
 
