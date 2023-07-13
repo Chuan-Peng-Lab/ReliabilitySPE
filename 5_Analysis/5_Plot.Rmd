@@ -216,12 +216,12 @@ plot[[4]] <- plot[[2]] %>%
   dplyr::ungroup() %>%
   dplyr::distinct(Target, Indice, cor)  %>%
   dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger")),
-                Indice = factor(Indice,levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT")))
+                Indice = factor(Indice,levels = c("RT", "ACC", "d Prime", "Efficiency", "ezDDM v", "ezDDM z", "rwDDM v", "rwDDM z")))
 ```
 
 ```{r}
 ggplot2::ggplot(plot[[4]], aes(x = Indice, y = cor)) +
-  ggplot2::geom_bar(data = plot[[4]], aes(fill = Target), stat = "identity") +
+  ggplot2::geom_bar(data = plot[[4]], aes(fill = Indice), alpha = 0.7, stat = "identity") +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
   ggplot2::scale_y_continuous(limits = c(-0, 1),
@@ -235,7 +235,7 @@ ggplot2::ggplot(plot[[4]], aes(x = Indice, y = cor)) +
   ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::facet_wrap(~Target, ncol = 1) +
   ggplot2::labs(y = "", x = "") +
-  ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
+  #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none")
 
