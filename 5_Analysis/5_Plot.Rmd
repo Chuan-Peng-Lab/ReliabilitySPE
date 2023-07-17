@@ -7,6 +7,7 @@ output: html_document
 # Create NULL List
 ```{r Create NULL List}
 plot <- list()
+meta <- list()
 ```
 
 
@@ -46,6 +47,54 @@ plot[[1]] <- list.files(file.path("./OUTPUT/nmshr/"),
 names(plot)[1] <- "Normal SHR"
 ```
 
+```{r}
+meta[[1]] <- plot[[1]] %>%
+  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  dplyr::mutate(unique_ID = paste(Target, Indice, Method, sep="_")) %>%
+  metafor::escalc(data = ., measure = "COR", ni = Trials, ri = r) %>%
+  metafor::aggregate.escalc(x = ., cluster = unique_ID, rho = 0) %>%
+  base::summary() %>%
+  dplyr::select(Target, Indice, Method, yi, vi, sei, zi, pval, ci.lb, ci.ub) %>%
+  dplyr::mutate(pval = ifelse(pval < 0.001, "<.001", 
+                       ifelse(pval < 0.05, sprintf("%.3f", pval), sprintf("%.2f", pval)))) %>% 
+  dplyr::mutate(yi_r = round(yi, 2),
+                ci.lb = round(ci.lb, 2),
+                ci.ub = round(ci.ub, 2)) %>%
+  dplyr::mutate(CI = paste(yi_r, "(", ci.lb, ", ", ci.ub, ")", sep = ""))  %>% # 得到CI
+  dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
+                Indice = factor(Indice,levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT")),
+                ) 
+names(meta)[1] <- "Normal SHR"
+```
+
+```{r}
+ggplot2::ggplot(meta[[1]], aes(x = Indice, y = yi, color = interaction(Indice, Target))) +
+  ggplot2::geom_linerange(aes(ymin = ci.lb, ymax = ci.ub, color = interaction(Indice, Target)), size = 1) +
+  ggplot2::geom_point(aes(color = interaction(Indice, Target)), shape=15, size = 2) +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
+                              breaks = c(0, 0.5, 0.7, 1),
+                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
+                                                  labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+                              ) +
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::facet_wrap(~Target + Method, ncol = 3) +
+  ggplot2::labs(y = "", x = "") +
+  #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+ggsave(filename = "./FIGURE/Fig1_meta_nmshr.png",
+       width = 20,
+       height = 15,
+       )
+```
+
+
 ```{r Plot nmshr, warning=FALSE}
 ggplot2::ggplot(plot[[1]],aes(x = Indice, y = r, fill = interaction(Indice, Target))) + 
   ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), color = "grey", alpha = 0.5, outlier.color = NA,) +  
@@ -69,9 +118,11 @@ ggplot2::ggplot(plot[[1]],aes(x = Indice, y = r, fill = interaction(Indice, Targ
 ggsave(filename = "./FIGURE/Fig1_nmshr.png",
        width = 20,
        height = 20,
-       dpi = 300,
        )
 ```
+
+
+
 
 
 ################################################################################
@@ -107,9 +158,6 @@ names(plot)[2] <- "Monte Carlo SHR"
 ```
 
 ```{r}
-meta <- list()
-meta[[1]] <- plot[[1]]
-
 meta[[2]] <- plot[[2]] %>%
   dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::mutate(unique_ID = paste(Target, Indice, sep="_")) %>%
@@ -123,23 +171,24 @@ meta[[2]] <- plot[[2]] %>%
                 ci.lb = round(ci.lb, 2),
                 ci.ub = round(ci.ub, 2)) %>%
   dplyr::mutate(CI = paste(yi_r, "(", ci.lb, ", ", ci.ub, ")", sep = ""))  %>% # 得到CI
+  dplyr::filter(!stringr::str_detect(Indice, "ez")) %>%
   dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
                 Indice = factor(Indice,levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT")),
                 ) 
+names(meta)[2] <- "Monte Carlo SHR"
 ```
 
 ```{r}
 ggplot2::ggplot(meta[[2]], aes(x = Indice, y = yi, color = interaction(Indice, Target))) +
   ggplot2::geom_linerange(aes(ymin = ci.lb, ymax = ci.ub, color = interaction(Indice, Target)), size = 1) +
-  ggplot2::geom_point(aes(color = interaction(Indice, Target)), shape=15, size = 2) +
+  ggplot2::geom_point(aes(color = interaction(Indice, Target)), shape = 15, size = 3) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
-  ggplot2::scale_y_continuous(limits = c(-1, 1),
-                              breaks = c(-1, 0, 0.5, 0.7, 1),
+  ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
+                              breaks = c(0, 0.5, 0.7, 1),
                               sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
                                                   labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
                               ) +
-  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
@@ -151,7 +200,7 @@ ggplot2::ggplot(meta[[2]], aes(x = Indice, y = yi, color = interaction(Indice, T
   ggplot2::theme(legend.position = "none")
 
 ggsave(filename = "./FIGURE/Fig2_meta_mcshr.png",
-       width = 14,
+       width = 10,
        height = 7,
        )
 ```
@@ -160,7 +209,7 @@ ggsave(filename = "./FIGURE/Fig2_meta_mcshr.png",
 ```{r Plot SHR for Simulated Data, message= FALSE, warning = FALSE}
 ggplot(plot[[2]], aes(x = Indice, y = r, group = Paper_ID, color = interaction(Indice, Target))) + # nolint
   ggplot2::geom_errorbar(aes(color = interaction(Indice, Target), ymin = LLCI, ymax = ULCI), width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
-  ggplot2::geom_point(size = 3, position = position_dodge(width = 1)) +
+  ggplot2::geom_point(shape = 15, size = 3, position = position_dodge(width = 1)) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
                               breaks = c(0, 0.5, 0.7, 1),
@@ -174,19 +223,13 @@ ggplot(plot[[2]], aes(x = Indice, y = r, group = Paper_ID, color = interaction(I
   ggplot2::labs(y = "", x = "") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 plot.margin = margin(r = 40),
-                 axis.text.x.top = element_text(size = 30, angle = 30, hjust = 0), 
-                 axis.text.x.bottom = element_text(size = 30),
-                 axis.text.y.left = element_text(size = 30),
                  axis.title = element_blank(),
-                 strip.text = element_text(size = 30),
                  ) +
-  ggplot2::facet_wrap(~Target, ncol = 2)
+  ggplot2::facet_wrap(~Target, ncol = 4)
 
-ggsave(filename = "./FIGURE/Fig2_mcshr_5k_ez.png",
+ggsave(filename = "./FIGURE/Fig2_mcshr_supp.png",
        width = 20,
-       height = 25,
-       dpi = 300,
+       height = 20,
        )
 ```
 
@@ -216,7 +259,8 @@ plot[[3]] <- list.files(file.path("./OUTPUT/icc/"),
                                    Target == "none" ~ "NonPerson",
                                    )
                 ) %>%
-  #dplyr::filter(!stringr::str_detect(ICC_type, "ez")) %>%
+  dplyr::filter(!stringr::str_detect(ICC_type, "ez")) %>%
+  dplyr::filter(Paper_ID == "P0E1") %>%
   dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
                 ICC_type = factor(ICC_type,
                                   levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT") 
@@ -228,7 +272,7 @@ names(plot)[3] <- "ICC"
 ```{r Plot ICC, message= FALSE, warning = FALSE}
 ggplot2::ggplot(plot[[3]], aes(x = ICC_type, y = ICC, group = Paper_ID, color = interaction(ICC_type, Target))) + # nolint
   ggplot2::geom_errorbar(aes(color = interaction(ICC_type, Target), ymin = LLCI, ymax = ULCI), width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
-  ggplot2::geom_point(size = 3, position = position_dodge(width = 1)) +
+  ggplot2::geom_point(shape = 15, size = 3, position = position_dodge(width = 1)) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
   ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
@@ -243,17 +287,12 @@ ggplot2::ggplot(plot[[3]], aes(x = ICC_type, y = ICC, group = Paper_ID, color = 
   ggplot2::labs(y = "", x = "") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 plot.margin = margin(r = 40),
-                 axis.text.x.top = element_text(size = 30, angle = 30, hjust = 0), 
-                 axis.text.x.bottom = element_text(size = 30),
-                 axis.text.y.left = element_text(size = 30),
-                 axis.title = element_blank(),
-                 strip.text = element_text(size = 30),) +
-  ggplot2::facet_wrap(~ type + Target, ncol = 3)
+                 axis.title = element_blank()) +
+  ggplot2::facet_wrap(~ type + Target, ncol = 2)
 
-ggsave(filename = "./FIGURE/Fig3_icc_ez.png",
-       width = 25,
-       height = 25,
+ggsave(filename = "./FIGURE/Fig3_icc.png",
+       width = 10,
+       height = 7,
        )
 ```
 
