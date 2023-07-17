@@ -106,6 +106,57 @@ plot[[2]] <- list.files(file.path("./OUTPUT/mcshr_5k/"),
 names(plot)[2] <- "Monte Carlo SHR"
 ```
 
+```{r}
+meta <- list()
+meta[[1]] <- plot[[1]]
+
+meta[[2]] <- plot[[2]] %>%
+  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  dplyr::mutate(unique_ID = paste(Target, Indice, sep="_")) %>%
+  metafor::escalc(data = ., measure = "COR", ni = Trials, ri = r) %>%
+  metafor::aggregate.escalc(x = ., cluster = unique_ID, rho = 0) %>%
+  base::summary() %>%
+  dplyr::select(Target, Indice, yi, vi, sei, zi, pval, ci.lb, ci.ub) %>%
+  dplyr::mutate(pval = ifelse(pval < 0.001, "<.001", 
+                       ifelse(pval < 0.05, sprintf("%.3f", pval), sprintf("%.2f", pval)))) %>% 
+  dplyr::mutate(yi_r = round(yi, 2),
+                ci.lb = round(ci.lb, 2),
+                ci.ub = round(ci.ub, 2)) %>%
+  dplyr::mutate(CI = paste(yi_r, "(", ci.lb, ", ", ci.ub, ")", sep = ""))  %>% # 得到CI
+  dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
+                Indice = factor(Indice,levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT")),
+                ) 
+```
+
+```{r}
+ggplot2::ggplot(meta[[2]], aes(x = Indice, y = yi, color = interaction(Indice, Target))) +
+  ggplot2::geom_linerange(aes(ymin = ci.lb, ymax = ci.ub, color = interaction(Indice, Target)), size = 1) +
+  ggplot2::geom_point(aes(color = interaction(Indice, Target)), shape=15, size = 2) +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(limits = c(-1, 1),
+                              breaks = c(-1, 0, 0.5, 0.7, 1),
+                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
+                                                  labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+                              ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::facet_wrap(~Target, ncol = 2) +
+  ggplot2::labs(y = "", x = "") +
+  #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+ggsave(filename = "./FIGURE/Fig2_meta_mcshr.png",
+       width = 14,
+       height = 7,
+       )
+```
+
+
 ```{r Plot SHR for Simulated Data, message= FALSE, warning = FALSE}
 ggplot(plot[[2]], aes(x = Indice, y = r, group = Paper_ID, color = interaction(Indice, Target))) + # nolint
   ggplot2::geom_errorbar(aes(color = interaction(Indice, Target), ymin = LLCI, ymax = ULCI), width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint

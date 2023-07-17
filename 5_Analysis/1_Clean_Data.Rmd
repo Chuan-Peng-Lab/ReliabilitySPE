@@ -26,6 +26,8 @@ library(foreach)
 library(parallel)
 library(iterators)
 library(doParallel)
+# meta analysis
+library(metafor)
 
 # local packages: yukiSH & yukiBP
 # You can install them from ".tar.gz" or GitHub
