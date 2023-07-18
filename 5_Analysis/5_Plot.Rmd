@@ -359,10 +359,11 @@ p1 <- plot[[5]] %>%
   ggplot2::ggplot(data = ., aes(x = Trials, y = r, color = Indice, fill = Indice)) +
   ggplot2::geom_point() +  # 添加散点
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
+  ggpubr::stat_cor(label.x = 3, label.y = 1.1, r.accuracy = .01, p.accuracy = .01) +
   ggplot2::scale_x_continuous(limits = c(0, 140),
                               breaks = c(0, 30, 60, 100, 130),
                               ) +
-  ggplot2::scale_y_continuous(limits = c(0, 1),
+  ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
                               breaks = c(0, 0.5, 0.8, 1),
                               ) +
   ggplot2::geom_vline(data = subset(plot[[5]], Target == "Close" & Indice == "RT"),
@@ -394,10 +395,11 @@ p2 <- plot[[5]] %>%
   ggplot2::ggplot(data = ., aes(x = Trials, y = r, color = Indice, fill = Indice)) +
   ggplot2::geom_point() +  # 添加散点
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
+  ggpubr::stat_cor(label.x = 3, label.y = 1.1, r.accuracy = .01, p.accuracy = .01) +
   ggplot2::scale_x_continuous(limits = c(0, 140),
                               breaks = c(0, 30, 60, 100, 130),
                               ) +
-  ggplot2::scale_y_continuous(limits = c(0, 1),
+  ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
                               breaks = c(0, 0.5, 0.8, 1),
                               ) +
   ggplot2::geom_vline(data = subset(plot[[5]], Target == "Close" & Indice == "ezDDM v"),
