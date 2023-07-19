@@ -172,34 +172,46 @@ meta[[2]] <- plot[[2]] %>%
                 ci.ub = round(ci.ub, 2)) %>%
   dplyr::mutate(CI = paste(yi_r, "(", ci.lb, ", ", ci.ub, ")", sep = ""))  %>% # 得到CI
   dplyr::filter(!stringr::str_detect(Indice, "ez")) %>%
-  dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
+  dplyr::mutate(.,
+                Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
                 Indice = factor(Indice,levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT")),
-                ) 
+                Indice = case_when(Indice == "d Prime" ~ "d'",
+                                   Indice == "rwDDM v" ~ "v",
+                                   Indice == "rwDDM z" ~ "z",
+                                   TRUE ~ Indice),
+                Indice = factor(Indice,levels = c("RT", "Efficiency", "ACC", "d'", "v", "z")),
+                Target_Indice = paste(Target, Indice, sep = "_"), 
+                Target_Indice = factor(Target_Indice)
+                ) %>%
+  dplyr::arrange(yi) %>%
+  dplyr::mutate(Order = row_number(),
+                )
 names(meta)[2] <- "Monte Carlo SHR"
 ```
 
 ```{r}
-ggplot2::ggplot(meta[[2]], aes(x = Indice, y = yi, color = interaction(Indice, Target))) +
-  ggplot2::geom_linerange(aes(ymin = ci.lb, ymax = ci.ub, color = interaction(Indice, Target)), size = 1) +
-  ggplot2::geom_point(aes(color = interaction(Indice, Target)), shape = 15, size = 3) +
+ggplot2::ggplot(meta[[2]], aes(x = reorder(Target_Indice, Order), y = yi)) +
+  ggplot2::geom_linerange(aes(ymin = ci.lb, ymax = ci.ub), size = 1, color = "black") +
+  ggplot2::geom_point(shape = 15, size = 3, color = "black") +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
-  ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
-                              breaks = c(0, 0.5, 0.7, 1),
+  ggplot2::scale_y_continuous(limits = c(-1, 1),
+                              breaks = c(-1, 0, 0.5, 0.7, 1),
                               sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
                                                   labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
                               ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
-  ggplot2::facet_wrap(~Target, ncol = 2) +
+  #ggplot2::facet_wrap(~Target, ncol = 2) +
   ggplot2::labs(y = "", x = "") +
   #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
   papaja::theme_apa() +
-  ggplot2::theme(legend.position = "none")
+  ggplot2::theme()
 
-ggsave(filename = "./FIGURE/Fig2_meta_mcshr.png",
+ggsave(filename = "./FIGURE/Fig2_meta_mcshr_unite.png",
        width = 10,
        height = 7,
        )
@@ -264,18 +276,26 @@ plot[[3]] <- list.files(file.path("./OUTPUT/icc/"),
   dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
                 ICC_type = factor(ICC_type,
                                   levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT") 
-                                  ))
+                                  ),
+                ICC_type = case_when(ICC_type == "d Prime" ~ "d'",
+                                     ICC_type == "rwDDM v" ~ "v",
+                                     ICC_type == "rwDDM z" ~ "z",
+                                     TRUE ~ ICC_type),
+                Target_Type = paste(Target, ICC_type, sep = "_"), 
+                ) %>%
+  dplyr::arrange(ICC) %>%
+  dplyr::mutate(Order = row_number())
 names(plot)[3] <- "ICC"
 ```
 
 # ICC
 ```{r Plot ICC, message= FALSE, warning = FALSE}
-ggplot2::ggplot(plot[[3]], aes(x = ICC_type, y = ICC, group = Paper_ID, color = interaction(ICC_type, Target))) + # nolint
-  ggplot2::geom_errorbar(aes(color = interaction(ICC_type, Target), ymin = LLCI, ymax = ULCI), width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
+ggplot2::ggplot(plot[[3]], aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
+  ggplot2::geom_errorbar(aes(color = type, ymin = LLCI, ymax = ULCI), width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
   ggplot2::geom_point(shape = 15, size = 3, position = position_dodge(width = 1)) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
-  ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
+  ggplot2::scale_y_continuous(limits = c(-0.3, 1.3),
                               breaks = c(0, 0.5, 0.7, 1),
                               sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
                                                   labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
@@ -284,13 +304,16 @@ ggplot2::ggplot(plot[[3]], aes(x = ICC_type, y = ICC, group = Paper_ID, color = 
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::scale_fill_manual(values = c("grey60", "black")) +
+  ggplot2::scale_color_manual(values = c("grey60", "black")) +
+  ggplot2::facet_wrap(~ type, ncol = 1) +
   ggplot2::labs(y = "", x = "") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.title = element_blank()) +
-  ggplot2::facet_wrap(~ type + Target, ncol = 2)
+                 axis.title = element_blank()) 
+  
 
-ggsave(filename = "./FIGURE/Fig3_icc.png",
+ggsave(filename = "./FIGURE/Fig3_icc_unite.png",
        width = 10,
        height = 7,
        )
