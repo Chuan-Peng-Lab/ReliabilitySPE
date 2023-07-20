@@ -318,4 +318,12 @@ plot_atvz <- plot_a +
 plot_atvz
 ggsave(plot = plot_atvz, filename = "./Pack_Com.png", width = 14, height = 7)
 ```
+# DESC
+```{r}
+desc <- plot %>%
+  dplyr::group_by(Package, indice) %>%
+  dplyr::summarize(mean_value = mean(value),
+            lower_ci = mean_value - qt(0.975, df = n() - 1) * sd(value) / sqrt(n()),
+            upper_ci = mean_value + qt(0.975, df = n() - 1) * sd(value) / sqrt(n()))
+```
 
