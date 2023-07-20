@@ -273,7 +273,8 @@ plot[[3]] <- list.files(file.path("./OUTPUT/icc/"),
                 ) %>%
   dplyr::filter(!stringr::str_detect(ICC_type, "ez")) %>%
   dplyr::filter(Paper_ID == "P0E1") %>%
-  dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
+  dplyr::mutate(type = factor(type, levels = c("ICC2k", "ICC2")),
+                Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
                 ICC_type = factor(ICC_type,
                                   levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT") 
                                   ),
