@@ -244,7 +244,9 @@ plot_a <- plot %>%
                                   ) +
     ggplot2::geom_hline(yintercept = 2, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
     papaja::theme_apa() +
-    ggplot2::theme(legend.position = "none") +
+    labs(x = "", y = "") +
+    ggplot2::theme(legend.position = "none",
+                   axis.text.x.top = element_text(size = 24)) +
     ggplot2::scale_fill_manual(values = "#F3533A") 
 plot_a
 ```
@@ -264,7 +266,13 @@ plot_t <- plot %>%
                                   ) +
     ggplot2::geom_hline(yintercept = 0.3, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
     papaja::theme_apa() +
-    ggplot2::theme(legend.position = "none") +
+    labs(x = "", y = "") +
+    ggplot2::theme(legend.position = "none",
+                   axis.line.y = element_blank(),  # 隐藏 y 轴线
+                   axis.text.y = element_blank(),  # 隐藏 y 轴刻度标签
+                   axis.ticks.y = element_blank(),
+                   axis.text.x.top = element_text(size = 24)
+                   ) +
     ggplot2::scale_fill_manual(values = "#FA9F42") 
 plot_t
 ```
@@ -284,7 +292,9 @@ plot_v <- plot %>%
                                   ) +
     ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
     papaja::theme_apa() +
-    ggplot2::theme(legend.position = "none") +
+    labs(x = "", y = "") +
+    ggplot2::theme(legend.position = "none",
+                   axis.text.x.top = element_text(size = 24)) +
     ggplot2::scale_fill_manual(values = "#8AD879") 
 plot_v
 ```
@@ -299,25 +309,31 @@ plot_z <- plot %>%
     ggplot2::coord_flip() +
     ggplot2::scale_y_continuous(limits = c(0, 3),
                        sec.axis = sec_axis(~., breaks = 0.7,
-                                               labels = "z"), # nolint
+                                               labels = "z",
+                                                ), # nolint
                                   breaks = seq(0, 3, by = 0.7)
                                   ) +
     ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
     papaja::theme_apa() +
-    ggplot2::theme(legend.position = "none") +
+    labs(x = "", y = "") +
+    ggplot2::theme(legend.position = "none",
+                   axis.line.y = element_blank(),  # 隐藏 y 轴线
+                   axis.text.y = element_blank(),  # 隐藏 y 轴刻度标签
+                   axis.ticks.y = element_blank(),
+                   axis.text.x.top = element_text(size = 24)) +
     ggplot2::scale_fill_manual(values = "#5ACFC9") 
 plot_z
 ```
 
 
 ```{r}
-plot_atvz <- plot_a +
-  plot_t +
-  plot_v +
-  plot_z 
+plot_atvz <- plot_a + plot_t + plot_v + plot_z + 
+  plot_layout(guides = 'collect', ncol = 2)
+
 plot_atvz
-ggsave(plot = plot_atvz, filename = "./Pack_Com.png", width = 14, height = 7)
+ggsave(plot = plot_atvz, filename = "./Pack_Com.png", width = 9, height = 6)
 ```
+
 # DESC
 ```{r}
 desc <- plot %>%

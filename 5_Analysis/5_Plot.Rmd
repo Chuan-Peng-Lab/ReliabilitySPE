@@ -61,37 +61,106 @@ meta[[1]] <- plot[[1]] %>%
                 ci.lb = round(ci.lb, 2),
                 ci.ub = round(ci.ub, 2)) %>%
   dplyr::mutate(CI = paste(yi_r, "(", ci.lb, ", ", ci.ub, ")", sep = ""))  %>% # 得到CI
-  dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
-                Indice = factor(Indice,levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT")),
+  dplyr::mutate(.,
+                Indice = case_when(Indice == "d Prime" ~ "d'",
+                                   #Indice == "rwDDM v" ~ "v",
+                                   #Indice == "rwDDM z" ~ "z",
+                                   Indice == "rwDDM v" ~ "v(RWiener)",
+                                   Indice == "rwDDM z" ~ "z(RWiener)",
+                                   Indice == "ezDDM v" ~ "v(hausekeep)",
+                                   Indice == "ezDDM z" ~ "z(hausekeep)",
+                                   TRUE ~ Indice),
+                Target_Indice = paste(Target, Indice, sep = "_"), 
+                Target_Indice = factor(Target_Indice)
                 ) 
+                
 names(meta)[1] <- "Normal SHR"
 ```
 
 ```{r}
-ggplot2::ggplot(meta[[1]], aes(x = Indice, y = yi, color = interaction(Indice, Target))) +
-  ggplot2::geom_linerange(aes(ymin = ci.lb, ymax = ci.ub, color = interaction(Indice, Target)), size = 1) +
-  ggplot2::geom_point(aes(color = interaction(Indice, Target)), shape=15, size = 2) +
+p1 <- meta[[1]] %>%
+  dplyr::filter(Method == "First-Second") %>%
+  dplyr::arrange(yi) %>%
+  dplyr::mutate(Order = row_number()) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = yi)) +
+  ggplot2::geom_linerange(aes(ymin = ci.lb, ymax = ci.ub), size = 1) +
+  ggplot2::geom_point(shape=15, size = 2) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
-  ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
-                              breaks = c(0, 0.5, 0.7, 1),
+  ggplot2::scale_y_continuous(limits = c(-1, 1),
+                              breaks = c(-1, 0, 0.5, 0.7, 1),
                               sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
                                                   labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
                               ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
-  ggplot2::facet_wrap(~Target + Method, ncol = 3) +
+  ggplot2::facet_wrap(~Method, ncol = 1) +
   ggplot2::labs(y = "", x = "") +
   #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none")
 
+p2 <- meta[[1]] %>%
+  dplyr::filter(Method == "Odd-Even") %>%
+  dplyr::arrange(yi) %>%
+  dplyr::mutate(Order = row_number()) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = yi)) +
+  ggplot2::geom_linerange(aes(ymin = ci.lb, ymax = ci.ub), size = 1) +
+  ggplot2::geom_point(shape=15, size = 2) +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(limits = c(-1, 1),
+                              breaks = c(-1, 0, 0.5, 0.7, 1),
+                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
+                                                  labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+                              ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::facet_wrap(~Method, ncol = 1) +
+  ggplot2::labs(y = "", x = "") +
+  #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+p3 <- meta[[1]] %>%
+  dplyr::filter(Method == "Permuted") %>%
+  dplyr::arrange(yi) %>%
+  dplyr::mutate(Order = row_number()) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = yi)) +
+  ggplot2::geom_linerange(aes(ymin = ci.lb, ymax = ci.ub), size = 1) +
+  ggplot2::geom_point(shape=15, size = 2) +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(limits = c(-1, 1),
+                              breaks = c(-1, 0, 0.5, 0.7, 1),
+                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
+                                                  labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+                              ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::facet_wrap(~Method, ncol = 1) +
+  ggplot2::labs(y = "", x = "") +
+  #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+p <- p1 + p2 + p3 + plot_layout(ncol = 3, guides = 'collect')
+
 ggsave(filename = "./FIGURE/Fig1_meta_nmshr.png",
-       width = 20,
+       width = 30,
        height = 15,
        )
+
+rm(p, p1, p2, p3)
 ```
 
 
@@ -160,6 +229,7 @@ names(plot)[2] <- "Monte Carlo SHR"
 ```{r}
 meta[[2]] <- plot[[2]] %>%
   dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  dplyr::filter(!(Paper_ID %in% c("P51E1", "P95E1", "P95E2", "PS1E1"))) %>%
   dplyr::mutate(unique_ID = paste(Target, Indice, sep="_")) %>%
   metafor::escalc(data = ., measure = "COR", ni = Trials, ri = r) %>%
   metafor::aggregate.escalc(x = ., cluster = unique_ID, rho = 0) %>%
@@ -171,21 +241,24 @@ meta[[2]] <- plot[[2]] %>%
                 ci.lb = round(ci.lb, 2),
                 ci.ub = round(ci.ub, 2)) %>%
   dplyr::mutate(CI = paste(yi_r, "(", ci.lb, ", ", ci.ub, ")", sep = ""))  %>% # 得到CI
-  dplyr::filter(!stringr::str_detect(Indice, "ez")) %>%
+  #dplyr::filter(!stringr::str_detect(Indice, "ez")) %>%
   dplyr::mutate(.,
-                Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
-                Indice = factor(Indice,levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT")),
+                #Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
+                #Indice = factor(Indice,levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT")),
                 Indice = case_when(Indice == "d Prime" ~ "d'",
-                                   Indice == "rwDDM v" ~ "v",
-                                   Indice == "rwDDM z" ~ "z",
+                                   #Indice == "rwDDM v" ~ "v",
+                                   #Indice == "rwDDM z" ~ "z",
+                                   Indice == "rwDDM v" ~ "v(RWiener)",
+                                   Indice == "rwDDM z" ~ "z(RWiener)",
+                                   Indice == "ezDDM v" ~ "v(hausekeep)",
+                                   Indice == "ezDDM z" ~ "z(hausekeep)",
                                    TRUE ~ Indice),
-                Indice = factor(Indice,levels = c("RT", "Efficiency", "ACC", "d'", "v", "z")),
+                #Indice = factor(Indice,levels = c("RT", "Efficiency", "ACC", "d'", "v", "z")),
                 Target_Indice = paste(Target, Indice, sep = "_"), 
                 Target_Indice = factor(Target_Indice)
                 ) %>%
   dplyr::arrange(yi) %>%
-  dplyr::mutate(Order = row_number(),
-                )
+  dplyr::mutate(Order = row_number())
 names(meta)[2] <- "Monte Carlo SHR"
 ```
 
@@ -211,9 +284,9 @@ ggplot2::ggplot(meta[[2]], aes(x = reorder(Target_Indice, Order), y = yi)) +
   papaja::theme_apa() +
   ggplot2::theme()
 
-ggsave(filename = "./FIGURE/Fig2_meta_mcshr_unite.png",
+ggsave(filename = "./FIGURE/Fig2_meta_mcshr_unite_ez_filter.png",
        width = 10,
-       height = 7,
+       height = 8,
        )
 ```
 
@@ -271,27 +344,62 @@ plot[[3]] <- list.files(file.path("./OUTPUT/icc/"),
                                    Target == "none" ~ "NonPerson",
                                    )
                 ) %>%
-  dplyr::filter(!stringr::str_detect(ICC_type, "ez")) %>%
-  dplyr::filter(Paper_ID == "P0E1") %>%
-  dplyr::mutate(type = factor(type, levels = c("ICC2k", "ICC2")),
-                Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
-                ICC_type = factor(ICC_type,
-                                  levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT") 
-                                  ),
+  #dplyr::filter(!stringr::str_detect(ICC_type, "ez")) %>%
+  dplyr::filter((Paper_ID %in% c("P0E1", "Ps2E1"))) %>%
+  dplyr::mutate(type = factor(type, levels = c("ICC2", "ICC2k")),
+                #Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
+                #ICC_type = factor(ICC_type,
+                                  #levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT") 
+                                  #),
                 ICC_type = case_when(ICC_type == "d Prime" ~ "d'",
-                                     ICC_type == "rwDDM v" ~ "v",
-                                     ICC_type == "rwDDM z" ~ "z",
-                                     TRUE ~ ICC_type),
+                                     #ICC_type == "rwDDM v" ~ "v",
+                                     #ICC_type == "rwDDM z" ~ "z",
+                                     ICC_type == "rwDDM v" ~ "v(RWiener)",
+                                     ICC_type == "rwDDM z" ~ "z(RWiener)",
+                                     ICC_type == "ezDDM v" ~ "v(hausekeep)",
+                                     ICC_type == "ezDDM z" ~ "z(hausekeep)",
+                                     TRUE ~ ICC_type
+                                     ),
                 Target_Type = paste(Target, ICC_type, sep = "_"), 
-                ) %>%
-  dplyr::arrange(ICC) %>%
-  dplyr::mutate(Order = row_number())
+                ) 
 names(plot)[3] <- "ICC"
 ```
 
-# ICC
-```{r Plot ICC, message= FALSE, warning = FALSE}
-ggplot2::ggplot(plot[[3]], aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
+```{r}
+plot[[3]] %>%
+  dplyr::mutate(ICC_type = factor(ICC_type, levels = c("z(hausekeep)", "v(hausekeep)","z(RWiener)", "v(RWiener)", "Efficiency", "d'", "ACC", "RT"))) %>%
+  ggplot2::ggplot(., aes(x = ICC_type, y = ICC, group = Paper_ID, color = interaction(ICC_type, Target))) + # nolint
+  ggplot2::geom_errorbar(aes(color = interaction(ICC_type, Target), ymin = LLCI, ymax = ULCI), width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
+  ggplot2::geom_point(size = 3, position = position_dodge(width = 1)) +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(limits = c(-1, 1),
+                              breaks = c(-1, 0, 0.5, 0.7, 1),
+                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
+                                                  labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+                              ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::labs(y = "", x = "") +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none") +
+  ggplot2::facet_wrap(~ type + Target, ncol = 2)
+
+ggsave(filename = "./FIGURE/Fig3_icc_supp.png",
+       width = 15,
+       height = 7,
+       )
+```
+
+
+```{r}
+plot[[3]] %>%
+  dplyr::arrange(ICC) %>%
+  dplyr::mutate(Order = row_number()) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
   ggplot2::geom_errorbar(aes(color = type, ymin = LLCI, ymax = ULCI), width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
   ggplot2::geom_point(shape = 15, size = 3, position = position_dodge(width = 1)) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
@@ -363,23 +471,30 @@ ggsave(filename = "./FIGURE/Fig4_trails.png",
 plot[[5]] <- plot[[2]] %>%
   dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::filter(Target == "Close" | Target == "Stranger") %>%
-  dplyr::mutate(Target = factor(Target,levels = c("Close", "Stranger")),
-                Indice = factor(Indice,levels = c("RT", "ACC", "d Prime", "Efficiency", "ezDDM v", "ezDDM z", "rwDDM v", "rwDDM z"))) %>%
-  dplyr::mutate(r_8 = case_when(Target == "Close" & Indice == "RT" ~ 120,
+  dplyr::filter(!(Paper_ID %in% c("Ps1E1", "P95E1", "P95E2'", "P51E1"))) %>%
+  dplyr::mutate(r_8 = case_when(Target == "Close" & Indice == "RT" ~ 115,
                                 Target == "Stranger" & Indice == "RT" ~ 75,
-                                Target == "Close" & Indice == "ACC" ~ 130,
-                                Target == "Close" & Indice == "Efficiency" ~ 110,
+                                Target == "Close" & Indice == "ACC" ~ 125,
+                                Target == "Close" & Indice == "Efficiency" ~ 105,
                                 Target == "Stranger" & Indice == "Efficiency" ~ 80,
-                                Target == "Close" & Indice == "ezDDM v" ~ 130,
-                                Target == "Stranger" & Indice == "ezDDM v" ~ 119,
-                                Target == "Close" & Indice == "rwDDM v" ~ 134,
+                                Target == "Close" & Indice == "ezDDM v" ~ 120,
+                                Target == "Stranger" & Indice == "ezDDM v" ~ 110,
+                                Target == "Close" & Indice == "rwDDM v" ~ 130,
                                 TRUE ~ NA),
-                )
+                ) %>%
+  dplyr::mutate(Indice = case_when(Indice == "d Prime" ~ "d'",
+                                   Indice == "rwDDM v" ~ "v(RWiener)",
+                                   Indice == "rwDDM z" ~ "z(RWiener)",
+                                   Indice == "ezDDM v" ~ "v(hausekeep)",
+                                   Indice == "ezDDM z" ~ "z(hausekeep)",
+                                   TRUE ~ Indice),
+                Target = factor(Target,levels = c("Close", "Stranger")),
+                Indice = factor(Indice, levels = c("RT", "ACC", "d'", "Efficiency", "v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)")))
 ```
 
 ```{r}
 p1 <- plot[[5]] %>%
-  dplyr::filter(!grepl("DDM", Indice)) %>%
+  dplyr::filter((Indice %in% c("RT", "ACC", "d'", "Efficiency"))) %>%
   ggplot2::ggplot(data = ., aes(x = Trials, y = r, color = Indice, fill = Indice)) +
   ggplot2::geom_point() +  # 添加散点
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
@@ -415,7 +530,7 @@ p1 <- plot[[5]] %>%
   ggplot2::theme(legend.position = "none")
 
 p2 <- plot[[5]] %>%
-  dplyr::filter(grepl("DDM", Indice)) %>%
+  dplyr::filter((Indice %in% c("v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)"))) %>%
   ggplot2::ggplot(data = ., aes(x = Trials, y = r, color = Indice, fill = Indice)) +
   ggplot2::geom_point() +  # 添加散点
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
@@ -426,13 +541,13 @@ p2 <- plot[[5]] %>%
   ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
                               breaks = c(0, 0.5, 0.8, 1),
                               ) +
-  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Close" & Indice == "ezDDM v"),
+  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Close" & Indice == "v(hausekeep)"),
                       aes(xintercept = r_8),
                       linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
-  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Stranger" & Indice == "ezDDM v"),
+  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Stranger" & Indice == "v(hausekeep)"),
                       aes(xintercept = r_8),
                       linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
-  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Close" & Indice == "rwDDM v"),
+  ggplot2::geom_vline(data = subset(plot[[5]], Target == "Close" & Indice == "v(RWiener)"),
                       aes(xintercept = r_8),
                       linetype = "dotted", color = "black", size = 1, alpha = 0.5) +
   ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
