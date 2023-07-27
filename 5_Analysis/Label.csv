@@ -17,3 +17,4 @@ DataFrame_ID,Paper_ID,Exp_ID,Self,Close,Celebrity,Stranger,NonPerson,Sample_Size
 16,P95E1,1,Self,Friend,,Stranger,,18,56
 17,P95E2,2,Self,Friend,,Stranger,,18,60
 18,Ps1E1,1,Self,,,Stranger,,298,16
+,,,,,,,,833,

@@ -401,8 +401,8 @@ p1 <- plot[[3]] %>%
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
-  ggplot2::scale_fill_manual(values = c("grey60", "black")) +
-  ggplot2::scale_color_manual(values = c("grey60", "black")) +
+  ggplot2::scale_fill_manual(values = c("black", "grey60")) +
+  ggplot2::scale_color_manual(values = c("black", "grey60")) +
   ggplot2::facet_wrap(~ type, ncol = 1) +
   ggplot2::labs(y = "", x = "") +
   papaja::theme_apa() +
@@ -428,8 +428,8 @@ p2 <- plot[[3]] %>%
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
-  ggplot2::scale_fill_manual(values = c("grey60", "black")) +
-  ggplot2::scale_color_manual(values = c("grey60", "black")) +
+  ggplot2::scale_fill_manual(values = c("black", "grey60")) +
+  ggplot2::scale_color_manual(values = c("black", "grey60")) +
   ggplot2::facet_wrap(~ type, ncol = 1) +
   ggplot2::labs(y = "", x = "") +
   papaja::theme_apa() +
@@ -545,6 +545,8 @@ p1 <- plot[[5]] %>%
   ggplot2::facet_grid(cols = vars(Target), 
                       rows = vars(Indice)) +
   ggplot2::labs(y = "Monte-Carlo Split-Half Reliability", x = "Trial Numbers") +
+  #ggplot2::scale_color_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
+  #ggplot2::scale_fill_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
   ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
   ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
   papaja::theme_apa() +
@@ -575,6 +577,8 @@ p2 <- plot[[5]] %>%
   ggplot2::facet_grid(cols = vars(Target), 
                       rows = vars(Indice)) +
   ggplot2::labs(y = "", x = "Trial Numbers") +
+  #ggplot2::scale_color_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
+  #ggplot2::scale_fill_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
   ggplot2::scale_color_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
   ggplot2::scale_fill_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
   papaja::theme_apa() +
