@@ -361,19 +361,19 @@ plot[[3]] <- list.files(file.path("./OUTPUT/icc/"),
                                    Target == "none" ~ "NonPerson",
                                    )
                 ) %>%
-  #dplyr::filter(!stringr::str_detect(ICC_type, "ez")) %>%
+  dplyr::filter(!stringr::str_detect(ICC_type, "ez")) %>%
   dplyr::mutate(type = factor(type, levels = c("ICC2", "ICC2k")),
                 #Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
                 #ICC_type = factor(ICC_type,
                                   #levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT") 
                                   #),
                 ICC_type = case_when(ICC_type == "d Prime" ~ "d'",
-                                     #ICC_type == "rwDDM v" ~ "v",
-                                     #ICC_type == "rwDDM z" ~ "z",
-                                     ICC_type == "rwDDM v" ~ "v(RWiener)",
-                                     ICC_type == "rwDDM z" ~ "z(RWiener)",
-                                     ICC_type == "ezDDM v" ~ "v(hausekeep)",
-                                     ICC_type == "ezDDM z" ~ "z(hausekeep)",
+                                     ICC_type == "rwDDM v" ~ "v",
+                                     ICC_type == "rwDDM z" ~ "z",
+                                     #ICC_type == "rwDDM v" ~ "v(RWiener)",
+                                     #ICC_type == "rwDDM z" ~ "z(RWiener)",
+                                     #ICC_type == "ezDDM v" ~ "v(hausekeep)",
+                                     #ICC_type == "ezDDM z" ~ "z(hausekeep)",
                                      TRUE ~ ICC_type
                                      ),
                 Target_Type = paste(Target, ICC_type, sep = "_"), 
@@ -382,59 +382,119 @@ names(plot)[3] <- "ICC"
 ```
 
 ```{r}
-p1 <- plot[[3]] %>%
+p0 <- plot[[3]] %>%
   dplyr::filter((Paper_ID %in% c("P0E1"))) %>%
   dplyr::arrange(ICC) %>%
-  dplyr::mutate(Order = row_number()) %>%
+  dplyr::mutate(Order = row_number(),
+                Outliar = case_when(LLCI <= 0 ~ FALSE, 
+                                    LLCI > 0 ~TRUE),
+                LLCI = ifelse(LLCI < 0, 0, LLCI), 
+                ) %>%
   ggplot2::ggplot(., aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
-  ggplot2::geom_errorbar(aes(color = type, ymin = LLCI, ymax = ULCI), width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
+  ggplot2::geom_errorbar(aes(color = type, ymin = LLCI, ymax = ULCI, linetype = Outliar),
+                         width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
   ggplot2::geom_point(shape = 15, size = 3, position = position_dodge(width = 1)) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
-  ggplot2::scale_y_continuous(limits = c(-1, 1),
-                              breaks = c(-1, 0, 0.5, 0.7, 1),
-                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
-                                                  labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+  ggplot2::scale_y_continuous(limits = c(0, 1),
+                              breaks = c(-1, 0, 0.5, 0.75, 0.9, 1),
+                              sec.axis = sec_axis(~., breaks = c(0.25, 0.625, 0.825, 0.95),
+                                                  labels = c("Poor", "Moderate", "Good", "Excellent")),
                               ) +
   ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::scale_linetype_manual(values = c("dashed", "solid")) +
   ggplot2::scale_fill_manual(values = c("black", "grey60")) +
   ggplot2::scale_color_manual(values = c("black", "grey60")) +
   ggplot2::facet_wrap(~ type, ncol = 1) +
   ggplot2::labs(y = "", x = "") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.title = element_blank()) 
+                 axis.title = element_blank(),
+                 axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
+                 ) 
+
+p1 <- plot[[3]] %>%
+  dplyr::filter((Paper_ID %in% c("P0E1"))) %>%
+  dplyr::arrange(ICC) %>%
+  dplyr::mutate(Order = row_number(),
+                Outliar = case_when(LLCI <= 0 ~ FALSE, 
+                                    LLCI > 0 ~TRUE),
+                LLCI = ifelse(LLCI < 0, 0, LLCI), 
+                ) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
+  ggplot2::geom_errorbar(aes(color = type, ymin = LLCI, ymax = ULCI, linetype = Outliar),
+                         width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
+  ggplot2::geom_point(shape = 15, size = 3, position = position_dodge(width = 1)) +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(limits = c(0, 1),
+                              breaks = c(-1, 0, 0.5, 0.75, 0.9, 1),
+                              sec.axis = sec_axis(~., breaks = c(0.25, 0.625, 0.825, 0.95),
+                                                  labels = c("Poor", "Moderate", "Good", "Excellent")),
+                              ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::scale_linetype_manual(values = c("dashed", "solid")) +
+  ggplot2::scale_fill_manual(values = c("black", "grey60")) +
+  ggplot2::scale_color_manual(values = c("black", "grey60")) +
+  ggplot2::facet_wrap(~ type, ncol = 1) +
+  ggplot2::labs(y = "", x = "") +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none",
+                 axis.title = element_blank(),
+                 axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
+                 ) 
   
 p2 <- plot[[3]] %>%
   dplyr::filter((Paper_ID %in% c("Ps2E1"))) %>%
   dplyr::arrange(ICC) %>%
-  dplyr::mutate(Order = row_number()) %>%
+  dplyr::mutate(Order = row_number(),
+                Outliar = case_when(LLCI <= 0 ~ FALSE, 
+                                    LLCI > 0 ~TRUE),
+                LLCI = ifelse(LLCI < 0, 0, LLCI), 
+                ) %>%
   ggplot2::ggplot(., aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
-  ggplot2::geom_errorbar(aes(color = type, ymin = LLCI, ymax = ULCI), width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
+  ggplot2::geom_errorbar(aes(color = type, ymin = LLCI, ymax = ULCI, linetype = Outliar),
+                         width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
   ggplot2::geom_point(shape = 15, size = 3, position = position_dodge(width = 1)) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
-  ggplot2::scale_y_continuous(limits = c(-1.5, 1),
-                              breaks = c(-1, 0, 0.5, 0.7, 1),
-                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
-                                                  labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+  ggplot2::scale_y_continuous(limits = c(0, 1),
+                              breaks = c(-1, 0, 0.5, 0.75, 0.9, 1),
+                              sec.axis = sec_axis(~., breaks = c(0.25, 0.625, 0.825, 0.95),
+                                                  labels = c("Poor", "Moderate", "Good", "Excellent")),
                               ) +
   ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + # nolint
+  ggplot2::scale_linetype_manual(values = c("dashed", "solid")) +
   ggplot2::scale_fill_manual(values = c("black", "grey60")) +
   ggplot2::scale_color_manual(values = c("black", "grey60")) +
   ggplot2::facet_wrap(~ type, ncol = 1) +
   ggplot2::labs(y = "", x = "") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.title = element_blank()) 
+                 axis.title = element_blank(),
+                 axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
+                 ) 
+ggsave(plot = p0,
+       filename = "./FIGURE/Fig3_icc.png",
+       width = 10,
+       height = 8,
+       )
+
   
 ggsave(plot = p1,
        filename = "./FIGURE/Fig3_icc_P0.png",
