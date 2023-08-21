@@ -785,3 +785,35 @@ summary(df[[19]])
 write.csv(x = df[[19]], file = "./DATA/df_19.csv")
 ```
 
+# Check ACC
+```{r}
+min_ACC_list <- list()
+
+for (i in 1:19) {
+  min_ACC <- df[[i]] %>%
+    dplyr::group_by(Subject) %>%
+    dplyr::summarise(mean_ACC = mean(ACC)) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(mean_ACC < 0.5) %>%
+    dplyr::arrange(mean_ACC)
+  
+  min_ACC_list[[i]] <- min_ACC
+  cat("For df[[", i, "]], the min ACC is:", min(min_ACC$mean_ACC), "\n")
+}
+
+rm(min_ACC, i)
+```
+
+```{r}
+for (i in 1:length(df)) {
+  filtered_df <- df[[i]] %>%
+    dplyr::anti_join(min_ACC_list[[i]], by = "Subject") 
+  
+  df[[i]] <- filtered_df
+  write.csv(x = filtered_df, file = paste0("./DATA/df_", i, ".csv"), row.names = FALSE)
+}
+
+rm(filtered_df, i)
+```
+
+
