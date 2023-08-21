@@ -249,6 +249,7 @@ names(plot)[2] <- "Monte Carlo SHR"
 meta[[2]] <- plot[[2]] %>%
   dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::mutate(unique_ID = paste(Target, Indice, sep="_")) %>%
+  dplyr::filter(!(Trials < 60 & grepl("DDM", Indice))) %>%
   metafor::escalc(data = ., measure = "COR", ni = Trials, ri = r) %>%
   metafor::aggregate.escalc(x = ., cluster = unique_ID, rho = 0) %>%
   base::summary() %>%
