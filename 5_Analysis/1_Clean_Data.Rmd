@@ -747,6 +747,9 @@ summary(df[[18]])
 write.csv(x = df[[18]], file = "./DATA/df_18.csv")
 ```
 
+# Paper s2
+## Experiment 1 (Identtiy = 2)
+"Self", "Stranger"
 ```{r Paper s2 Experiment 1}
 df[[19]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_s2/Ps2_Exp1_raw.csv") %>%
   dplyr::filter(Session != 3,
@@ -783,6 +786,46 @@ df[[19]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_s2/Ps2_Exp1_raw.c
 names(df)[19] <- "Paper s2 Exp 1"
 summary(df[[19]])
 write.csv(x = df[[19]], file = "./DATA/df_19.csv")
+```
+
+# Paper s3
+## Experiment 1 (Identtiy = 3)
+"Self", "Friend", "Stranger"
+```{r Paper s3 Experiment 1}
+df[[20]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_s3/Ps3_Exp1_raw.csv") %>%
+  dplyr::select(Subject = Subject,
+                Session = Session,
+                Group = Block,
+                Shape = SelfRelated,
+                Label = Question, 
+                RT_ms = RT,
+                ACC = ACC,
+                ) %>%
+  dplyr::mutate(Label = case_when(Label == "You" ~ "Self",
+                                  TRUE ~ Label),
+                Matching = case_when(Shape == Label ~ "Matching",
+                                     Shape != Label ~ "Nonmatching"),
+                RT_sec = RT_ms / 1000,
+                Identity = Shape
+                ) %>%
+  dplyr::mutate(Subjcet = as.numeric(Subject),
+                Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
+                Identity = factor(Identity, levels = c("Self", "Friend","Stranger")), # nolint
+                Session = as.factor(Session),
+                RT_ms = as.numeric(RT_ms),
+                RT_sec = as.numeric(RT_sec),
+                ACC = as.numeric(ACC),
+                ) %>%
+  dplyr::select(Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC) %>%
+  dplyr::mutate(RT_sec = round(RT_sec, 3),
+                RT_ms = round(RT_ms, 0)) %>%
+  dplyr::filter(RT_sec >= 0.2 & RT_sec <= 1.5,
+                ACC == 1 | ACC == 0) %>%
+  dplyr::arrange(Subject, Matching, Identity, Session)
+
+names(df)[20] <- "Paper s3 Exp 1"
+summary(df[[20]])
+write.csv(x = df[[20]], file = "./DATA/df_20.csv")
 ```
 
 # Check ACC
