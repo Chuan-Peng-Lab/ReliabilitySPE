@@ -1,0 +1,253 @@
+---
+title: "7_Meta"
+author: "yuki"
+date: "2023-08-24"
+output: html_document
+---
+# Create NULL List
+```{r Create NULL List}
+meta <- list()
+```
+
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+
+# Normal SHR
+```{r}
+meta[[1]] <- plot[[1]] %>%
+  dplyr::left_join(
+    desc[[1]], by = "Paper_ID"
+  ) %>%
+  dplyr::mutate(
+    unique_ID = paste(Target, Indice, Method, sep="_")
+  ) %>%
+  metafor::escalc(
+    data = ., measure = "COR", ni = Trials, ri = r
+  ) %>%
+  metafor::aggregate.escalc(
+    x = ., cluster = unique_ID, rho = 0
+  ) %>%
+  base::summary(
+    
+  ) %>%
+  dplyr::select(
+    Target, Indice, Method,
+    yi, vi, sei, zi, pval,
+    ci.lb, ci.ub
+  ) %>%
+  dplyr::mutate(
+    pval = ifelse(
+      pval < 0.001, "<.001", 
+      ifelse(pval < 0.05, sprintf("%.3f", pval), sprintf("%.2f", pval))
+    )
+  ) %>% 
+  dplyr::mutate(
+    yi_r = round(yi, 2),
+    ci.lb = round(ci.lb, 2),
+    ci.ub = round(ci.ub, 2)
+  ) %>%
+  dplyr::mutate(
+    CI = paste(yi_r, "(", ci.lb, ", ", ci.ub, ")", sep = "")
+  )  %>% # 得到CI
+  dplyr::mutate(
+    .,
+    Indice = case_when(
+      Indice == "Efficiency" ~ "η",
+      Indice == "d Prime" ~ "d'",
+      #Indice == "rwDDM v" ~ "v",
+      #Indice == "rwDDM z" ~ "z",
+      Indice == "rwDDM v" ~ "v(RWiener)",
+      Indice == "rwDDM z" ~ "z(RWiener)",
+      Indice == "ezDDM v" ~ "v(hausekeep)",
+      Indice == "ezDDM z" ~ "z(hausekeep)",
+      TRUE ~ Indice
+    ),
+    Target_Indice = paste(Target, Indice, sep = "_"), 
+    Target_Indice = factor(Target_Indice)
+  ) 
+                
+names(meta)[1] <- "Normal SHR"
+```
+
+```{r}
+p1 <- meta[[1]] %>%
+  dplyr::filter(Method == "First-Second") %>%
+  dplyr::arrange(yi) %>%
+  dplyr::mutate(Order = row_number()) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = yi)) +
+  ggplot2::geom_linerange(aes(ymin = ci.lb, ymax = ci.ub), size = 1) +
+  ggplot2::geom_point(shape=15, size = 2) +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(
+    limits = c(-1, 1),
+    breaks = c(-1, 0, 0.5, 0.7, 1),
+    sec.axis = sec_axis(
+      ~., breaks = c(0, 0.5, 0.7, 1),
+      labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+  ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  #ggplot2::facet_wrap(~Method, ncol = 1) +
+  ggplot2::labs(y = "", x = "") +
+  #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+p2 <- meta[[1]] %>%
+  dplyr::filter(Method == "Odd-Even") %>%
+  dplyr::arrange(yi) %>%
+  dplyr::mutate(Order = row_number()) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = yi)) +
+  ggplot2::geom_linerange(aes(ymin = ci.lb, ymax = ci.ub), size = 1) +
+  ggplot2::geom_point(shape=15, size = 2) +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(
+    limits = c(-1, 1),
+    breaks = c(-1, 0, 0.5, 0.7, 1),
+    sec.axis = sec_axis(
+      ~., breaks = c(0, 0.5, 0.7, 1),
+      labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+    ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  #ggplot2::facet_wrap(~Method, ncol = 1) +
+  ggplot2::labs(y = "", x = "") +
+  #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+p3 <- meta[[1]] %>%
+  dplyr::filter(Method == "Permuted") %>%
+  dplyr::arrange(yi) %>%
+  dplyr::mutate(Order = row_number()) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = yi)) +
+  ggplot2::geom_linerange(aes(ymin = ci.lb, ymax = ci.ub), size = 1) +
+  ggplot2::geom_point(shape=15, size = 2) +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(
+    limits = c(-1, 1),
+    breaks = c(-1, 0, 0.5, 0.7, 1),
+    sec.axis = sec_axis(
+      ~., breaks = c(0, 0.5, 0.7, 1),
+      labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+  ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  #ggplot2::facet_wrap(~Method, ncol = 1) +
+  ggplot2::labs(y = "", x = "") +
+  #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+p <- p1 + p2 + p3 + plot_layout(ncol = 1, guides = 'collect')
+
+ggsave(plot = p,
+       filename = "./FIGURE/Fig1_meta_nmshr.png",
+       width = 9,
+       height = 20,
+       )
+ggsave(plot = p1,
+       filename = "./FIGURE/Fig1_meta_fs.png",
+       width = 10,
+       height = 8,
+       )
+ggsave(plot = p2,
+       filename = "./FIGURE/Fig1_meta_od.png",
+       width = 10,
+       height = 8,
+       )
+ggsave(plot = p3,
+       filename = "./FIGURE/Fig1_meta_per.png",
+       width = 10,
+       height = 8,
+       )
+
+rm(p, p1, p2, p3)
+```
+
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+
+# Monte Carlo SHR
+```{r}
+meta[[2]] <- plot[[2]] %>%
+  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  dplyr::mutate(unique_ID = paste(Target, Indice, sep="_")) %>%
+  dplyr::filter(!(Trials < 60 & grepl("DDM", Indice))) %>%
+  metafor::escalc(data = ., measure = "COR", ni = Trials, ri = r) %>%
+  metafor::aggregate.escalc(x = ., cluster = unique_ID, rho = 0) %>%
+  base::summary() %>%
+  dplyr::select(Target, Indice, yi, vi, sei, zi, pval, ci.lb, ci.ub) %>%
+  dplyr::mutate(pval = ifelse(pval < 0.001, "<.001", 
+                       ifelse(pval < 0.05, sprintf("%.3f", pval), sprintf("%.2f", pval)))) %>% 
+  dplyr::mutate(yi_r = round(yi, 2),
+                ci.lb = round(ci.lb, 2),
+                ci.ub = round(ci.ub, 2)) %>%
+  dplyr::mutate(CI = paste(yi_r, "(", ci.lb, ", ", ci.ub, ")", sep = ""))  %>% # 得到CI
+  dplyr::filter(!stringr::str_detect(Indice, "ez")) %>%
+  dplyr::mutate(.,
+                #Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
+                #Indice = factor(Indice,levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT")),
+                Indice = case_when(Indice == "Efficiency" ~ "η",
+                                   Indice == "d Prime" ~ "d'",
+                                   Indice == "rwDDM v" ~ "v",
+                                   Indice == "rwDDM z" ~ "z",
+                                   #Indice == "rwDDM v" ~ "v(RWiener)",
+                                   #Indice == "rwDDM z" ~ "z(RWiener)",
+                                   #Indice == "ezDDM v" ~ "v(hausekeep)",
+                                   #Indice == "ezDDM z" ~ "z(hausekeep)",
+                                   TRUE ~ Indice),
+                #Indice = factor(Indice,levels = c("RT", "Efficiency", "ACC", "d'", "v", "z")),
+                Target_Indice = paste(Target, Indice, sep = "_"), 
+                Target_Indice = factor(Target_Indice)
+                ) %>%
+  dplyr::arrange(yi) %>%
+  dplyr::mutate(Order = row_number())
+names(meta)[2] <- "Monte Carlo SHR"
+```
+
+```{r}
+ggplot2::ggplot(meta[[2]], aes(x = reorder(Target_Indice, Order), y = yi)) +
+  ggplot2::geom_linerange(aes(ymin = ci.lb, ymax = ci.ub), size = 1, color = "black") +
+  ggplot2::geom_point(shape = 15, size = 3, color = "black") +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(limits = c(-1, 1),
+                              breaks = c(-1, 0, 0.5, 0.7, 1),
+                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
+                                                  labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+                              ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", size = 1, alpha = 0.5) + 
+  #ggplot2::facet_wrap(~Target, ncol = 2) +
+  ggplot2::labs(y = "", x = "") +
+  #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
+  papaja::theme_apa() +
+  ggplot2::theme()
+
+ggsave(filename = "./FIGURE/Fig2_meta_mcshr_unite.png",
+       width = 10,
+       height = 8,
+       )
+```

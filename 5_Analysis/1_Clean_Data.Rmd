@@ -27,7 +27,7 @@ library(parallel)
 library(iterators)
 library(doParallel)
 # Meta Analysis
-library(metafor) # Weighted average SHR
+#library(metafor) # Weighted average SHR
 
 # My packages: yukiSH & yukiBP
 # You can install them with ".tar.gz" or  from GitHub
