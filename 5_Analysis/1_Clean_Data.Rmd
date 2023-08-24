@@ -39,6 +39,8 @@ library(yukiSH)
 # install.packages("./PACKAGES/yukiBP_0.1.3.tar.gz") # nolint
 # devtools::install_github("yuki-961004/yukiBP") # nolint
 library(yukiBP)
+
+library(R.matlab)
 ```
 
 # Data.Frame List
@@ -828,11 +830,199 @@ summary(df[[20]])
 write.csv(x = df[[20]], file = "./DATA/df_20.csv")
 ```
 
+```{r function read.mat}
+read.mat <- function(list) {
+  
+  res <- list()
+  
+  for (i in 1:length(list)) {
+    list_mat <- list[[i]]
+    df_rt <- data.frame(
+      RT_1 = list_mat$TestRt[,1],
+      RT_2 = list_mat$TestRt[,2],
+      RT_3 = list_mat$TestRt[,3],
+      RT_4 = list_mat$TestRt[,4]
+      ) %>%
+      tidyr::pivot_longer(
+        cols = starts_with("RT_"),
+        names_to = "Block",
+        names_prefix = "RT_",
+        values_to = "RT"
+        ) 
+      
+    df_acc <- data.frame(
+      ACC_1 = list_mat$Correct[, 1],
+      ACC_2 = list_mat$Correct[, 2],
+      ACC_3 = list_mat$Correct[, 3],
+      ACC_4 = list_mat$Correct[, 4]
+      ) %>%
+      tidyr::pivot_longer(
+        cols = starts_with("ACC_"),
+        names_to = "Block",
+        names_prefix = "ACC_",
+        values_to = "ACC"
+        ) %>%
+      dplyr::select(-Block)
+    
+    df_sha <- data.frame(
+      Shape_1 = list_mat$Tshape[, 1],
+      Shape_2 = list_mat$Tshape[, 2],
+      Shape_3 = list_mat$Tshape[, 3],
+      Shape_4 = list_mat$Tshape[, 4]
+      ) %>%
+      tidyr::pivot_longer(
+        cols = starts_with("Shape_"),
+        names_to = "Block",
+        names_prefix = "Shape_",
+        values_to = "Shape"
+        ) %>%
+      dplyr::select(-Block)
+    
+    df_lab <- data.frame(
+      Label_1 = list_mat$Tlabel[, 1],
+      Label_2 = list_mat$Tlabel[, 2],
+      Label_3 = list_mat$Tlabel[, 3],
+      Label_4 = list_mat$Tlabel[, 4]
+      ) %>%
+      tidyr::pivot_longer(
+        cols = starts_with("Label_"),
+        names_to = "Block",
+        names_prefix = "Label_",
+        values_to = "Label"
+        ) %>%
+      dplyr::select(-Block)
+    
+    df_mat <- data.frame(Subject = list_mat$num,
+                         Session = list_mat$ses,
+                         df_sha, df_lab,
+                         df_rt, df_acc)
+    
+    res[[i]] <- df_mat
+  }
+  df <- do.call(rbind, res)
+  return(df)
+}
+```
+
+# Paper s4
+## Experiment 1 (Identtiy = 3)
+"Self", "Friend", "Stranger"
+```{r Paper s4 Experiment 1}
+# 获取文件夹内所有满足条件的文件名
+file_list <- list.files(path = "../4_Data_Extraction/4_2_Open_Data/Paper_s4/Source/", pattern = "^PractExperiment_1.*\\.mat$", full.names = TRUE)
+
+# 创建一个空的列表来存储读取的.mat文件
+list_mat_e1 <- list()
+
+# 循环读取文件并存储到列表中
+for (file in file_list) {
+  mat_data <- R.matlab::readMat(file)
+  list_mat_e1[[basename(file)]] <- mat_data
+}
+
+rm(file, file_list)
+
+df[[21]] <- read.mat(list = list_mat_e1) %>%
+  dplyr::mutate(
+    Matching = case_when(Shape == Label ~ "Matching",
+                         Shape != Label ~ "Nonmatching"),
+    Identity = case_when(Shape == 1 ~ "Self",
+                         Shape == 2 ~ "Friend",
+                         Shape == 3 ~ "Stranger"),
+    RT_ms = RT,
+    RT_sec = RT / 1000,
+    ) %>%
+  dplyr::mutate(
+    Subjcet = as.numeric(Subject),
+    Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
+    Identity = factor(Identity, levels = c("Self", "Friend","Stranger")), # nolint
+    Session = as.factor(Session),
+    RT_ms = as.numeric(RT_ms),
+    RT_sec = as.numeric(RT_sec),
+    ACC = as.numeric(ACC),
+    ) %>%
+  dplyr::select(
+    Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC
+    ) %>%
+  dplyr::mutate(
+    RT_sec = round(RT_sec, 3),
+    RT_ms = round(RT_ms, 0)
+    ) %>%
+  dplyr::filter(
+    RT_sec >= 0.2 & RT_sec <= 1.5,
+    ACC == 1 | ACC == 0
+    ) %>%
+  dplyr::arrange(
+    Subject, Matching, Identity, Session
+    )
+
+names(df)[21] <- "Paper s4 Exp 1"
+summary(df[[21]])
+write.csv(x = df[[21]], file = "./DATA/df_21.csv")
+```
+
+# Paper s4
+## Experiment 2 (Identtiy = 3)
+"Self", "Friend", "Stranger"
+```{r Paper s4 Experiment 2}
+# 获取文件夹内所有满足条件的文件名
+file_list <- list.files(path = "../4_Data_Extraction/4_2_Open_Data/Paper_s4/Source/", pattern = "^PractExperiment_2.*\\.mat$", full.names = TRUE)
+
+# 创建一个空的列表来存储读取的.mat文件
+list_mat_e2 <- list()
+
+# 循环读取文件并存储到列表中
+for (file in file_list) {
+  mat_data <- R.matlab::readMat(file)
+  list_mat_e2[[basename(file)]] <- mat_data
+}
+
+rm(file, file_list)
+
+df[[22]] <- read.mat(list = list_mat_e2) %>%
+  dplyr::mutate(
+    Matching = case_when(Shape == Label ~ "Matching",
+                         Shape != Label ~ "Nonmatching"),
+    Identity = case_when(Shape == 1 ~ "Self",
+                         Shape == 2 ~ "Friend",
+                         Shape == 3 ~ "Stranger"),
+    RT_ms = RT,
+    RT_sec = RT / 1000,
+    ) %>%
+  dplyr::mutate(
+    Subjcet = as.numeric(Subject),
+    Matching = factor(Matching, levels = c("Matching", "Nonmatching")), # nolint
+    Identity = factor(Identity, levels = c("Self", "Friend","Stranger")), # nolint
+    Session = as.factor(Session),
+    RT_ms = as.numeric(RT_ms),
+    RT_sec = as.numeric(RT_sec),
+    ACC = as.numeric(ACC),
+    ) %>%
+  dplyr::select(
+    Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC
+    ) %>%
+  dplyr::mutate(
+    RT_sec = round(RT_sec, 3),
+    RT_ms = round(RT_ms, 0)
+    ) %>%
+  dplyr::filter(
+    RT_sec >= 0.2 & RT_sec <= 1.5,
+    ACC == 1 | ACC == 0
+    ) %>%
+  dplyr::arrange(
+    Subject, Matching, Identity, Session
+    )
+
+names(df)[22] <- "Paper s4 Exp 1"
+summary(df[[22]])
+write.csv(x = df[[22]], file = "./DATA/df_22.csv")
+```
+
 # Check ACC
 ```{r}
 min_ACC_list <- list()
 
-for (i in 1:19) {
+for (i in 1:22) {
   min_ACC <- df[[i]] %>%
     dplyr::group_by(Subject) %>%
     dplyr::summarise(mean_ACC = mean(ACC)) %>%
