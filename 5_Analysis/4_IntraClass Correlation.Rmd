@@ -21,23 +21,27 @@ icc_output <- function(list, Target) {
 
   #
   final <- rbindlist(result)
-  final$ICC_type <- rep(c("RT", "ACC",
-                          "d Prime", "Efficiency",
-                          "ezDDM v","ezDDM z",
-                          "rwDDM v", "rwDDM z"),
-                        each = nrow(final) / 8)
+  final$ICC_type <- rep(
+    c("RT", "ACC",
+    "d Prime", "Efficiency",
+    "ezDDM v", "ezDDM z",
+    "rwDDM v", "rwDDM z"),
+    each = nrow(final) / 8
+  )
   colnames(final)[7] <- "LLCI"
   colnames(final)[8] <- "ULCI"
 
   final <- final %>%
-    dplyr::mutate(., ICC_type = factor(ICC_type,
-                                      levels = c("RT", "ACC",
-                                                  "d Prime", "Efficiency",
-                                                  "ezDDM v","ezDDM z",
-                                                  "rwDDM v", "rwDDM z"
-                                                  )
-                                      )
-                  ) %>%
+    dplyr::mutate(.,
+    ICC_type = factor(
+      ICC_type, levels = c(
+        "RT", "ACC",
+        "d Prime", "Efficiency",
+        "ezDDM v","ezDDM z",
+        "rwDDM v", "rwDDM z"
+        )
+      )
+    ) %>%
     dplyr::arrange(., type) %>%
     dplyr::mutate(Target = "Target") %>%
     dplyr::select(type, ICC_type, ICC, LLCI, ULCI)
@@ -72,7 +76,7 @@ df_rwddmz <- df_rwddm[[2]]
 ```
 
 ```{r DF for Plot ICC}
-iccl[[1]] <- list(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
+iccl[[1]] <- list(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz) # nolint
 
 rm(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
 ```
@@ -108,7 +112,7 @@ df_rwddmz <- df_rwddm[[2]]
 ```
 
 ```{r DF for Plot ICC}
-iccl[[2]] <- list(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
+iccl[[2]] <- list(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz) # nolint
 
 rm(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
 ```
