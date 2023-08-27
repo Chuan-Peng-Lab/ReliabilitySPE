@@ -7,7 +7,6 @@ output: html_document
 # Create NULL List
 ```{r Create NULL List}
 plot <- list()
-meta <- list()
 ```
 
 
@@ -67,6 +66,7 @@ plot[[1]] <- list.files(
     )
   ) %>%
   dplyr::filter(!(Paper_ID %in% c("P51E1"))) 
+
 names(plot)[1] <- "Normal SHR"
 ```
 
