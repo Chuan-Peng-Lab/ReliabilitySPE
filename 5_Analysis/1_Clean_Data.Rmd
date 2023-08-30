@@ -1518,7 +1518,8 @@ min_ACC_list <- list()
 
 for (i in 1:22) {
   min_ACC <- df[[i]] %>%
-    dplyr::group_by(Subject) %>%
+    dplyr::group_by(Subject, Matching, Identity, Session) %>%
+    #dplyr::group_by(Subject) %>%
     dplyr::summarise(mean_ACC = mean(ACC)) %>%
     dplyr::ungroup() %>%
     dplyr::filter(mean_ACC < 0.5) %>%
@@ -1579,4 +1580,12 @@ for (i in 1:length(df)) {
 rm(filtered_df, i)
 ```
 
+
+```{r}
+df[[18]] <- read.csv("./DATA/df_18.csv") %>%
+  dplyr::filter(
+    !(Subject %in% c(51, 143, 153, 158, 212, 255, 257))
+  )
+write.csv(x = df[[18]], file = "./DATA/df_18.csv")
+```
 
