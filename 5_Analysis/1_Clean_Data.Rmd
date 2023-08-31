@@ -14,6 +14,8 @@ library(R.matlab) # Paper s4 is from MATLAB
 library(data.table) # some functions need it
 # for ICC
 library(psych)
+#devtools::install_github("TingsterX/ReX")
+library(ReX)
 # for DDM
 library(hausekeep) # ez ddm
 library(RWiener) # RW ddm
