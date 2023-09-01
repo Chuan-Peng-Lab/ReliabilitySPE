@@ -1,4 +1,4 @@
-DataFrame_ID,Paper_ID,Exp_ID,Self,Close,Celebrity,Stranger,NonPerson,Sample_Size,Trials,,
+DataFrame_ID,Paper_ID,Exp_ID,Self,Close,Celebrity,Stranger,NonPerson,Sample_Size,Trials,Drop,Remain
 1,P0E1,1,Self,Friend,,Stranger,,33,60,,33
 2,P6E1,1,Self,Partner,,Stranger,,46,20,,46
 3,P46E2,2,Self,,,Stranger,,56,48,drop 1,55
@@ -17,4 +17,3 @@ DataFrame_ID,Paper_ID,Exp_ID,Self,Close,Celebrity,Stranger,NonPerson,Sample_Size
 16,P95E1,1,Self,Friend,,Stranger,,18,56,,18
 17,P95E2,2,Self,Friend,,Stranger,,18,60,,18
 18,Ps1E1,1,Self,,,Stranger,,298,16,drop 24,274
-,,,,,,,,833,,,805

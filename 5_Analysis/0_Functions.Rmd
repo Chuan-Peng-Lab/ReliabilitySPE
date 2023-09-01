@@ -1,89 +1,128 @@
----
-title: "0_Functions"
-author: "yuki"
-date: "2023-09-01"
-output: html_document
----
-```{r}
-plot.icc <- function(df.plot, plot.title=NULL, 
-                           axis.min=NULL, axis.max=NULL, plot.percent=c(0,1),
-                           plot.point=TRUE, size.point = 2, color.point.fill="red", color.point.border="grey80",
-                           plot.bin=FALSE, nbins=30, 
-                           plot.density=TRUE, nbins.contour = 6, alpha.density = 0.5, 
-                           color="red", ColorBrewer.direction=1, 
-                           show.contour=FALSE, color.contour="grey30",
-                           show.icc_slope=TRUE, color.icc_slope="grey50"){
-  # df.plot: Input dataframe contains sigma2_w, sigma2_b
-  # color: palette name from ColorBrewer, or a color array, e.g. c("blue", "red")
-  #        If only one color provided, then it is filled by c("white", "red"). default="red"
-  # direction: direction to use the palette from ColorBrewer
-  # plot.percent: using the percentile to limit the x- and y-axis. default=c(0,1)
-  # show.icc_slope: default=TRUE
+# Read MATLAB .mat
+```{r function read.mat}
+read.mat <- function(list) {
   
-  # Check the input dataframe
-  if (!"sigma2_w" %in% colnames(df.plot) || !"sigma2_b" %in% colnames(df.plot)){
-    stop("Input datafrmae in var_field_map_bin requires sigma2_w and sigma2_b")
-  }
-  df.plot <- df.plot[complete.cases(df.plot),]
-  if(dim(df.plot)[1]==1) {plot.density = FALSE; plot.bin = FALSE}
+  res <- list()
   
-  if (is.null(axis.min)){
-    axis.min = min(min(df.plot$sigma2_w),min(df.plot$sigma2_b))
-  }
-  if (is.null(axis.max)){
-    axis.max = max(max(df.plot$sigma2_w),max(df.plot$sigma2_b))
-  }
-  if (plot.percent[1]>0 || plot.percent[2]<1){
-    axis.min = min(quantile(df.plot$sigma2_w, probs=c(plot.percent[1]), na.rm=TRUE),
-                   quantile(df.plot$sigma2_b, probs=c(plot.percent[1]), na.rm=TRUE))
-    axis.max = max(quantile(df.plot$sigma2_w, probs=c(plot.percent[2]), na.rm=TRUE),
-                   quantile(df.plot$sigma2_b, probs=c(plot.percent[2]), na.rm=TRUE))
-  }
-  axis.min = max(0, axis.min-0.02*(axis.max-axis.min))
-  axis.max = axis.max + 0.02*(axis.max-axis.min)
+  for (i in 1:length(list)) {
 
-  # Let's plot
-  p <- ggplot(df.plot, aes(x=.data$sigma2_w, y=.data$sigma2_b, na.rm=TRUE, color = Indice)) +
-    labs(x = "Within-Subject Variation", y="Between-Subject Variation", fill="") +
-    coord_fixed(ratio = 1, xlim = c(axis.min, axis.max), ylim = c(axis.min, axis.max), 
-                expand = FALSE, clip = "on") +
-    facet_wrap(~Target)
-  
-  # plot points
-  if (plot.point && !plot.bin){
-    if (is.null(color.point.border)) 
-      p <- p + geom_point(shape=16, size=size.point) 
-    else
-      p <- p + geom_point(shape=21, size=size.point) 
+    list_mat <- list[[i]]
+
+    df_rt <- data.frame(
+      RT_1 = list_mat$TestRt[,1],
+      RT_2 = list_mat$TestRt[,2],
+      RT_3 = list_mat$TestRt[,3],
+      RT_4 = list_mat$TestRt[,4]
+      ) %>%
+      tidyr::pivot_longer(
+        cols = starts_with("RT_"),
+        names_to = "Block",
+        names_prefix = "RT_",
+        values_to = "RT"
+      ) 
+      
+    df_acc <- data.frame(
+      ACC_1 = list_mat$Correct[, 1],
+      ACC_2 = list_mat$Correct[, 2],
+      ACC_3 = list_mat$Correct[, 3],
+      ACC_4 = list_mat$Correct[, 4]
+      ) %>%
+      tidyr::pivot_longer(
+        cols = starts_with("ACC_"),
+        names_to = "Block",
+        names_prefix = "ACC_",
+        values_to = "ACC"
+      ) %>%
+      dplyr::select(-Block)
+    
+    df_sha <- data.frame(
+      Shape_1 = list_mat$Tshape[, 1],
+      Shape_2 = list_mat$Tshape[, 2],
+      Shape_3 = list_mat$Tshape[, 3],
+      Shape_4 = list_mat$Tshape[, 4]
+      ) %>%
+      tidyr::pivot_longer(
+        cols = starts_with("Shape_"),
+        names_to = "Block",
+        names_prefix = "Shape_",
+        values_to = "Shape"
+      ) %>%
+      dplyr::select(-Block)
+    
+    df_lab <- data.frame(
+      Label_1 = list_mat$Tlabel[, 1],
+      Label_2 = list_mat$Tlabel[, 2],
+      Label_3 = list_mat$Tlabel[, 3],
+      Label_4 = list_mat$Tlabel[, 4]
+      ) %>%
+      tidyr::pivot_longer(
+        cols = starts_with("Label_"),
+        names_to = "Block",
+        names_prefix = "Label_",
+        values_to = "Label"
+      ) %>%
+      dplyr::select(-Block)
+    
+    df_mat <- data.frame(
+      Subject = list_mat$num,
+      Session = list_mat$ses,
+      df_sha, df_lab,
+      df_rt, df_acc
+    )
+    
+    res[[i]] <- df_mat
   }
-  # remove the colorbar tick label
-  p <- p + guides(fill = guide_colourbar(label = FALSE))
-  # plot the contour line
-  if (show.contour){
-    p <- p + geom_density_2d(size = 0.5, colour = color.contour, bins = nbins.contour, contour_var='count')
-  }
-  
-  # show ICC slope ()
-  if (show.icc_slope) {
-    icc_slope=array(0, 10); i=1;
-    for (z in seq(0,.9,by=0.1)){icc_slope[i]=z/(1-z); i=i+1}
-    p <- p + geom_abline(size=0.25, slope=icc_slope, intercept =rep(0,10), colour=color.icc_slope) +
-      annotate(geom="text", x=axis.max*0.95, y=icc_slope[3]*axis.max*0.95, label='ICC=0.2', color="gray30", angle='15', size=3) +
-      annotate(geom="text", x=axis.max*0.95, y=icc_slope[5]*axis.max*0.95, label='ICC=0.4', color="gray30", angle='38', size=3) +
-      annotate(geom="text", x=axis.max*0.95/icc_slope[7], y=axis.max*0.95, label='ICC=0.6', color="gray30", angle='60', size=3) +
-      annotate(geom="text", x=axis.max*0.95/icc_slope[9], y=axis.max*0.95, label='ICC=0.8', color="gray30", angle='75', size=3) +
-      annotate(geom="text", x=axis.max*0.95, y=icc_slope[6]*axis.max*0.95, label='ICC=0.5', color="gray30", angle='45', size=3)
-  }
-  
-  # show title
-  if (!is.null(plot.title)){
-    p <- p + ggtitle(plot.title)
-  }
-  # set theme
-  p <- p + papaja::theme_apa()
-  
-  return(p)
+
+  df <- do.call(rbind, res)
+
+  return(df)
+
 }
-
 ```
 
+# Get ICC Output DataFrame
+```{r icc_output}
+icc_output <- function(list, Target) {
+
+  # run psych::ICC
+  output <- lapply(list, function(x) {
+    psych::ICC(x, lmer = FALSE)
+    })
+
+  # 提取其中的结果表格
+  result <- list()
+    for (i in 1:length(output)){
+      result[[i]] <- output[[i]][[1]]
+    }
+
+  #
+  final <- rbindlist(result)
+  final$ICC_type <- rep(
+    c("RT", "ACC",
+    "d Prime", "Efficiency",
+    "ezDDM v", "ezDDM z",
+    "rwDDM v", "rwDDM z"),
+    each = nrow(final) / 8
+  )
+  colnames(final)[7] <- "LLCI"
+  colnames(final)[8] <- "ULCI"
+
+  final <- final %>%
+    dplyr::mutate(.,
+    ICC_type = factor(
+      ICC_type, levels = c(
+        "RT", "ACC",
+        "d Prime", "Efficiency",
+        "ezDDM v","ezDDM z",
+        "rwDDM v", "rwDDM z"
+        )
+      )
+    ) %>%
+    dplyr::arrange(., type) %>%
+    dplyr::mutate(Target = "Target") %>%
+    dplyr::select(type, ICC_type, ICC, LLCI, ULCI)
+  final$Target <- Target
+
+  return(final)
+}
+```

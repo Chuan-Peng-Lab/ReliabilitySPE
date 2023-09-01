@@ -199,58 +199,6 @@ ggsave(filename = "./FIGURE/Fig2_mcshr_supp.png",
 # 获取所有的icc
 plot[[3]] <- list.files(
   file.path("./OUTPUT/icc/"),
-  pattern = "icc_ReX.*\\.csv$"
-  ) %>%
-  # 对读取到的所有.out文件x都执行函数read.table
-  lapply(
-    function(x) read.csv(
-      file.path("./OUTPUT/icc/", x),
-      header = TRUE)
-  ) %>% # nolint
-  bind_rows(
-    
-  ) %>%
-  dplyr::mutate(
-    Target = case_when(
-      Target == "Friend" ~ "Close",
-      Target == "Partner" ~ "Close",
-      Target == "Mother" ~ "Close",
-      Target == "Father" ~ "Close",
-      Target == "Acquaintance" ~ "Stranger",
-      Target == "Stranger" ~ "Stranger",
-      Target == "Celebrity" ~ "Celebrity",
-      Target == "none" ~ "NonPerson",
-      )
-    ) %>%
-  dplyr::filter(
-    #!stringr::str_detect(Indice, "ez")
-  ) %>%
-  dplyr::mutate(
-    Indice = case_when(
-      Indice == "Efficiency" ~ "η",
-      Indice == "d Prime" ~ "d'",
-      #Indice == "rwDDM v" ~ "v",
-      #Indice == "rwDDM z" ~ "z",
-      Indice == "rwDDM v" ~ "v(RWiener)",
-      Indice == "rwDDM z" ~ "z(RWiener)",
-      Indice == "ezDDM v" ~ "v(hausekeep)",
-      Indice == "ezDDM z" ~ "z(hausekeep)",
-      TRUE ~ Indice
-    )
-   ) 
-names(plot)[3] <- "ICC"
-```
-
-```{r ICC plot}
-plot.icc(plot[[3]], size.point = 4,  alpha.density = 0.3, color.point.fill = Indice, color=Indice)
-
-ggplot2::ggsave(filename = "./temp.png", width = 10, height = 5)
-```
-
-```{r Read OUTPUT}
-# 获取所有的icc
-plot[[3]] <- list.files(
-  file.path("./OUTPUT/icc/"),
   pattern = "icc_P.*\\.csv$"
   ) %>%
   # 对读取到的所有.out文件x都执行函数read.table
@@ -293,10 +241,6 @@ p0 <- plot[[3]] %>%
       ICC_type == "d Prime" ~ "d'",
       ICC_type == "rwDDM v" ~ "v",
       ICC_type == "rwDDM z" ~ "z",
-      #ICC_type == "rwDDM v" ~ "v(RWiener)",
-      #ICC_type == "rwDDM z" ~ "z(RWiener)",
-      #ICC_type == "ezDDM v" ~ "v(hausekeep)",
-      #ICC_type == "ezDDM z" ~ "z(hausekeep)",
       TRUE ~ ICC_type
     ),
     Target_Type = paste(
