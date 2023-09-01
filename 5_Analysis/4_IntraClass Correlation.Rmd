@@ -4,6 +4,54 @@ author: "yuki"
 date: "2023-04-30"
 output: html_document
 ---
+# Get ICC Output DataFrame
+```{r icc_output}
+icc_output <- function(list, Target) {
+
+  # run psych::ICC
+  output <- lapply(list, function(x) {
+    psych::ICC(x, lmer = FALSE)
+    })
+
+  # 提取其中的结果表格
+  result <- list()
+    for (i in 1:length(output)){
+      result[[i]] <- output[[i]][[1]]
+    }
+
+  #
+  final <- rbindlist(result)
+  final$ICC_type <- rep(
+    c("RT", "ACC",
+    "d Prime", "Efficiency",
+    "ezDDM v", "ezDDM z",
+    "rwDDM v", "rwDDM z"),
+    each = nrow(final) / 8
+  )
+  colnames(final)[7] <- "LLCI"
+  colnames(final)[8] <- "ULCI"
+
+  final <- final %>%
+    dplyr::mutate(.,
+    ICC_type = factor(
+      ICC_type, levels = c(
+        "RT", "ACC",
+        "d Prime", "Efficiency",
+        "ezDDM v","ezDDM z",
+        "rwDDM v", "rwDDM z"
+        )
+      )
+    ) %>%
+    dplyr::arrange(., type) %>%
+    dplyr::mutate(Target = "Target") %>%
+    dplyr::select(type, ICC_type, ICC, LLCI, ULCI)
+  final$Target <- Target
+
+  return(final)
+}
+```
+
+
 # Create NULL list
 ```{r ICC List}
 iccl <- list(list(), list())
