@@ -88,19 +88,32 @@ Subject <- as.matrix(res[[3]][[1]][,"Subject"])
 Session <- as.matrix(res[[3]][[1]][,"Session"])         
 
 res[[3]][[1]] <- data.frame(
-  ReX::lme_ICC_1wayR(
-    Data,
-    Subject,
-    Session
+    ReX::lme_ICC_1wayR(
+      Data,
+      Subject,
+      Session
+    )
+  ) %>%
+  dplyr::mutate(
+    Target = "Friend",
+    Indice = c(
+      "RT",
+      "ACC",
+      "d Prime",
+      "Efficiency",
+      "ezDDM v",
+      "ezDDM z",
+      "rwDDM v",
+      "rwDDM z"
+    )
   )
-)
 
-rm(Data, Subject, Session)
+rm(Data, Subject, Session, i)
 
 write.csv(
   x = res[[3]][[1]],
   "./OUTPUT/icc_ReX_P0E1_Friend.csv",
-  row.names = TRUE
+  row.names = FALSE
 )
 ```
 
@@ -177,18 +190,31 @@ Subject <- as.matrix(res[[3]][[2]][,"Subject"])
 Session <- as.matrix(res[[3]][[2]][,"Session"])         
 
 res[[3]][[2]] <- data.frame(
-  ReX::lme_ICC_1wayR(
-    Data,
-    Subject,
-    Session
+    ReX::lme_ICC_1wayR(
+      Data,
+      Subject,
+      Session
+    )
+  ) %>%
+  dplyr::mutate(
+    Target = "Stranger",
+    Indice = c(
+      "RT",
+      "ACC",
+      "d Prime",
+      "Efficiency",
+      "ezDDM v",
+      "ezDDM z",
+      "rwDDM v",
+      "rwDDM z"
+    )
   )
-)
 
-rm(Data, Subject, Session)
+rm(Data, Subject, Session, i)
 
 write.csv(
   x = res[[3]][[2]],
   "./OUTPUT/icc_ReX_P0E1_Stranger.csv",
-  row.names = TRUE
+  row.names = FALSE
 )
 ```
