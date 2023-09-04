@@ -289,110 +289,21 @@ for (i in 1:18) {
 
 ```{r, message=FALSE}
 for (i in 1:18) {
-  raw_meta[[i]][[1]] <-df.rt(df = df[[i]], i = i)
-  raw_meta[[i]][[2]] <-df.acc(df = df[[i]], i = i)
-  raw_meta[[i]][[3]] <-df.dp(df = df[[i]], i = i)
-  raw_meta[[i]][[4]] <-df.eta(df = df[[i]], i = i)
-  #raw_meta[[i]][[5]] <-df.ezddm(df = df[[i]], i = i)
-  raw_meta[[i]][[5]] <-df.rwddm(df = df[[i]], i = i)
+  raw_meta[[i]][[1]] <-yukiBP::df(df = df[[i]], i = i, Indice = "rt")
+  raw_meta[[i]][[2]] <-yukiBP::df(df = df[[i]], i = i, Indice = "acc")
+  raw_meta[[i]][[3]] <-yukiBP::df(df = df[[i]], i = i, Indice = "dp")
+  raw_meta[[i]][[4]] <-yukiBP::df(df = df[[i]], i = i, Indice = "eta")
+  #raw_meta[[i]][[5]] <-yukiBP::df(df = df[[i]], i = i, Indice = "ezddm")
+  raw_meta[[i]][[5]] <-yukiBP::df(df = df[[i]], i = i, Indice = "rwddm")
   
-  raw_meta[[i]] <- base::Reduce(function(x, y) left_join(x, y, by = c("Identity", "Paper_ID")), raw_meta[[i]])
+  raw_meta[[i]] <- base::Reduce(
+    function(x, y)
+      left_join(x, y, by = c("Identity", "Paper_ID")),
+    raw_meta[[i]]
+  )
 }
 
 raw_meta <- bind_rows(raw_meta)
-```
-
-```{r test functions}
-df_rt <- df[[1]] %>%
-  dplyr::filter(., Matching == "Matching") %>%
-  dplyr::group_by(Subject, Session, Identity) %>%
-  dplyr::summarise(mean_rt = mean(RT_ms)) %>%
-  dplyr::ungroup() %>%
-  dplyr::group_by(Identity) %>%
-  dplyr::summarise(RT = mean(mean_rt)) %>%
-  dplyr::ungroup() %>%
-  dplyr::mutate(Paper_ID = p[[1]])
-
-df_acc <- df[[1]] %>%
-  dplyr::filter(., Matching == "Matching") %>%
-  dplyr::group_by(Subject, Session, Identity) %>%
-  dplyr::summarise(acc = mean(ACC)) %>%
-  dplyr::ungroup() %>%
-  dplyr::group_by(Identity) %>%
-  dplyr::summarise(ACC = mean(acc)) %>%
-  dplyr::ungroup() %>%
-  dplyr::mutate(Paper_ID = "P0E1")
-
-df_dp <- df[[1]] %>%
-  dplyr::group_by(Subject,Session,Identity) %>%
-  dplyr::summarise(
-    hit = length(ACC[Matching == "Matching" & ACC == 1]),
-    fa = length(ACC[Matching == "Nonmatching" & ACC == 0]),
-    miss = length(ACC[Matching == "Matching" & ACC == 0]),
-    cr = length(ACC[Matching == "Nonmatching" & ACC == 1]),
-    Dprime = qnorm(
-      ifelse(hit / (hit + miss) < 1,
-             hit / (hit + miss),
-             1 - 1 / (2 * (hit + miss))
-      )
-    ) - qnorm(
-      ifelse(fa / (fa + cr) > 0,
-             fa / (fa + cr),
-             1 / (2 * (fa + cr))
-      )
-    )) %>%
-  dplyr::ungroup() %>%
-  select(-"hit",-"fa",-"miss",-"cr")%>%
-  dplyr::group_by(Identity) %>%
-  dplyr::summarise(d = mean(Dprime)) %>%
-  dplyr::ungroup() %>%
-  dplyr::mutate(Paper_ID = "P0E1")
-
-df_eff <- df[[1]] %>%
-  dplyr::filter(., Matching == "Matching") %>%
-  dplyr::group_by(Subject, Identity, Session) %>%
-  dplyr::summarise(Eff = mean(RT_ms)/mean(ACC))%>%
-  dplyr::ungroup() %>%
-  dplyr::group_by(Identity) %>%
-  dplyr::summarise(eta = mean(Eff)) %>%
-  dplyr::ungroup() %>%
-  dplyr::mutate(Paper_ID = "P0E1")
-
-df_ezddm <- df[[14]] %>%
-  # 不关心Nonmatching组的情况，提前筛选掉，提高运行速度
-  dplyr::filter(Matching == "Matching") %>%
-  ###############################CORE CODES###################################
-  hausekeep::fit_ezddm(data = ., rts = "RT_sec", responses = "ACC",
-                       id = "Subject", group = c("Session", "Matching", "Identity")) %>%
-  ###############################CORE CODES###################################
-  dplyr::mutate(z = a / 2,
-                t = t0_Ter) %>%
-  dplyr::select(Subject, Session, Matching, Identity, a, t, v, z) %>%
-  dplyr::group_by(Identity) %>%
-  dplyr::summarise(v = mean(v),
-                   z = mean(z)) %>%
-  dplyr::ungroup() %>%
-  dplyr::mutate(Paper_ID = "P0E1")
-
-df_rwddm <- df[[1]] %>%
-  dplyr::filter(Subject == "6001") %>%
-  # 不关心Nonmatching组的情况，提前筛选掉，提高运行速度
-  dplyr::filter(Matching == "Matching") %>%
-  # RWiener::wdm 只识别lower upper
-  dplyr::mutate(ACC = case_when(ACC == 0 ~ "lower",
-                                ACC == 1 ~ "upper")) %>%
-  # RWiener::wdm 一次接受一个被试
-  split(.$Subject) %>%
-  ###############################CORE CODES###################################
-  base::lapply(., yukiBP::rwddm) %>%
-  ###############################CORE CODES###################################
-  # 将分割的结果重新组合
-  base::do.call(rbind, .) %>%
-  dplyr::group_by(Identity) %>%
-  dplyr::summarise(v = mean(v),
-                   z = mean(z)) %>%
-  dplyr::ungroup() %>%
-  dplyr::mutate(Paper_ID = "P0E1")
 ```
 
 ```{r Raw Meta Data}

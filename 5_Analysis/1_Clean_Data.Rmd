@@ -29,7 +29,7 @@ library(parallel)
 library(iterators)
 library(doParallel)
 # Meta Analysis
-#library(metafor) # Weighted average SHR
+#library(metafor) 
 
 # My packages: yukiSH & yukiBP
 # You can install them with ".tar.gz" or  from GitHub
@@ -38,7 +38,7 @@ library(doParallel)
 # devtools::install_github("yuki-961004/yukiSH") # nolint
 library(yukiSH)
 
-# install.packages("./PACKAGES/yukiBP_0.1.4.tar.gz") # nolint
+# install.packages("./PACKAGES/yukiBP_0.1.5.tar.gz") # nolint
 # devtools::install_github("yuki-961004/yukiBP") # nolint
 library(yukiBP)
 ```
