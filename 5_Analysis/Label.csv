@@ -2,7 +2,7 @@ DataFrame_ID,Paper_ID,Exp_ID,Self,Close,Celebrity,Stranger,NonPerson,Sample_Size
 1,P0E1,1,Self,Friend,,Stranger,,33,60,,33
 2,P6E1,1,Self,Partner,,Stranger,,46,20,,46
 3,P46E2,2,Self,,,Stranger,,56,48,drop 1,55
-4,P51E1,1,Self,,Celebrity,Stranger,,24,24,,24
+!4,P51E1,1,Self,,Celebrity,Stranger,,24,24,,24
 5,P51E2,2,Self,,Celebrity,,,25,25,,25
 6,P54E1,1,Self,Mother/Acquaintance,,,none,32,18,drop 1,31
 7,P54E3,3,Self,Mother/Acquaintance,,,,35,24,drop 1,34

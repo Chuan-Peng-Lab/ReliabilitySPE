@@ -154,9 +154,9 @@ p3 <- meta[[1]] %>%
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none")
 
-p <- p1 + p2 + p3 + plot_layout(ncol = 1, guides = 'collect')
+p0 <- p1 + p2 + p3 + plot_layout(ncol = 1, guides = 'collect')
 
-ggsave(plot = p,
+ggsave(plot = p0,
        filename = "./FIGURE/Fig1_meta_nmshr.png",
        width = 9,
        height = 20,
@@ -177,7 +177,7 @@ ggsave(plot = p3,
        height = 8,
        )
 
-rm(p, p1, p2, p3)
+rm(p0, p1, p2, p3)
 ```
 
 
@@ -202,18 +202,18 @@ meta[[2]] <- plot[[2]] %>%
                 ci.lb = round(ci.lb, 2),
                 ci.ub = round(ci.ub, 2)) %>%
   dplyr::mutate(CI = paste(yi_r, "(", ci.lb, ", ", ci.ub, ")", sep = ""))  %>% # 得到CI
-  #dplyr::filter(!stringr::str_detect(Indice, "ez")) %>%
+  dplyr::filter(!stringr::str_detect(Indice, "ez")) %>%
   dplyr::mutate(.,
                 #Target = factor(Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")),
                 #Indice = factor(Indice,levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT")),
                 Indice = case_when(Indice == "Efficiency" ~ "η",
                                    Indice == "d Prime" ~ "d'",
-                                   #Indice == "rwDDM v" ~ "v",
-                                   #Indice == "rwDDM z" ~ "z",
-                                   Indice == "rwDDM v" ~ "v(RWiener)",
-                                   Indice == "rwDDM z" ~ "z(RWiener)",
-                                   Indice == "ezDDM v" ~ "v(hausekeep)",
-                                   Indice == "ezDDM z" ~ "z(hausekeep)",
+                                   Indice == "rwDDM v" ~ "v",
+                                   Indice == "rwDDM z" ~ "z",
+                                   #Indice == "rwDDM v" ~ "v(RWiener)",
+                                   #Indice == "rwDDM z" ~ "z(RWiener)",
+                                   #Indice == "ezDDM v" ~ "v(hausekeep)",
+                                   #Indice == "ezDDM z" ~ "z(hausekeep)",
                                    TRUE ~ Indice),
                 #Indice = factor(Indice,levels = c("RT", "Efficiency", "ACC", "d'", "v", "z")),
                 Target_Indice = paste(Target, Indice, sep = "_"), 
@@ -247,7 +247,7 @@ ggplot2::ggplot(meta[[2]], aes(x = reorder(Target_Indice, Order), y = yi)) +
   papaja::theme_apa() +
   ggplot2::theme()
 
-ggsave(filename = "./FIGURE/Fig2_meta_mcshr_unite_ez.png",
+ggsave(filename = "./FIGURE/Fig2_meta_mcshr_unite.png",
        width = 10,
        height = 8,
        )
@@ -397,7 +397,11 @@ df_rwddm <- df[[1]] %>%
 
 ```{r Raw Meta Data}
 df_meta <- list()
-df_meta[[1]] <- raw_meta
+df_meta[[1]] <- raw_meta %>%
+  dplyr::filter(
+    # 被认为是在原范式上有较大修改(4 session 4 mood)
+    !(Paper_ID %in% c("P51E1")) 
+  ) 
 
 names(df_meta)[1] <- "Raw Meta Data"
 ```
