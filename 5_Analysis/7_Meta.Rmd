@@ -253,6 +253,114 @@ ggsave(filename = "./FIGURE/Fig2_meta_mcshr_unite.png",
        )
 ```
 
+```{r}
+p_shr <- meta[[2]] %>%
+  dplyr::filter(
+    Target %in% c("Close", "Stranger")
+  ) %>%
+  dplyr::mutate(
+    Outliar = case_when(ci.lb <= 0 ~ TRUE, 
+                        ci.lb > 0 ~FALSE),
+    ci.lb = ifelse(ci.lb < -0.10, -0.10, ci.lb), 
+  ) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = yi)) +
+  ggplot2::geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub, linetype = Outliar),
+                         width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
+  #ggplot2::geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), linewidth = 1, color = "black", linetype = Outliar) +
+  ggplot2::geom_point(shape = 15, size = 3, color = "black") +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(limits = c(-0.1, 1.1),
+                              breaks = c(0, 0.5, 0.7, 1),
+                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
+                                                  labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+                              ) +
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  #ggplot2::facet_wrap(~Target, ncol = 2) +
+  ggplot2::labs(y = "Split-Half Reliability", x = "") +
+  #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+ggsave(filename = "./FIGURE/Fig2_meta_mcshr_unite.png",
+       width = 10,
+       height = 8,
+       )
+```
+
+
+```{r}
+p_icc <- plot[[3]] %>%
+  dplyr::filter(
+    !stringr::str_detect(ICC_type, "ez")
+  ) %>%
+  dplyr::mutate(
+    ICC_type = case_when(
+      ICC_type == "Efficiency" ~ "η",
+      ICC_type == "d Prime" ~ "d'",
+      ICC_type == "rwDDM v" ~ "v",
+      ICC_type == "rwDDM z" ~ "z",
+      TRUE ~ ICC_type
+    ),
+    Target_Type = paste(
+      Target, ICC_type, sep = "_"), 
+  ) %>%
+  dplyr::filter(
+    (Paper_ID %in% c("P0E1")),
+    type == "ICC2"
+  ) %>%
+  dplyr::arrange(ICC) %>%
+  dplyr::mutate(
+    Order = row_number(),
+    Outliar = case_when(LLCI <= 0 ~ TRUE, 
+                        LLCI > 0 ~FALSE),
+    LLCI = ifelse(LLCI < -0.10, -1.1, LLCI), 
+  ) %>%
+  dplyr::mutate(Order = row_number()) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
+  ggplot2::geom_errorbar(aes(color = type, ymin = LLCI, ymax = ULCI, linetype = Outliar),
+                         width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
+  ggplot2::geom_point(shape = 15, size = 3, position = position_dodge(width = 1)) +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(
+    limits = c(-0.10, 1.10),
+    breaks = c(-1, 0, 0.5, 0.75, 0.9, 1),
+    sec.axis = sec_axis(
+      ~., breaks = c(0.25, 0.625, 0.825, 0.95),
+      labels = c("Poor", "Moderate", "Good", "Excellent")),
+  ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  #ggplot2::scale_linetype_manual(values = c("dashed", "solid")) +
+  ggplot2::scale_fill_manual(values = c("black", "grey60")) +
+  ggplot2::scale_color_manual(values = c("black", "grey60")) +
+  #ggplot2::facet_wrap(~ type, ncol = 1) +
+  ggplot2::labs(y = "Intraclass Correlation Coefficient 2", x = "") +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none",
+                 #axis.title = element_blank(),
+                 axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
+                 ) 
+```
+
+```{r}
+p_shr_icc <- p_shr + p_icc + plot_layout(ncol = 2, guides = 'collect')
+
+ggsave(plot = p_shr_icc,
+       filename = "./FIGURE/Fig34_shr_icc.png",
+       width = 16,
+       height = 9,
+       )
+```
+
 # Meta Analysis
 ```{r List for Paper ID}
 p <- list()
