@@ -352,13 +352,14 @@ p_icc <- plot[[3]] %>%
 ```
 
 ```{r}
-p_shr_icc <- p_shr + p_icc + plot_layout(ncol = 2, guides = 'collect')
+p_shr_icc <- p_shr + p_icc + plot_layout(ncol = 1, guides = 'collect')
 
 ggsave(plot = p_shr_icc,
        filename = "./FIGURE/Fig34_shr_icc.png",
-       width = 16,
-       height = 9,
+       width = 9,
+       height = 12,
        )
+rm(p_shr_icc, p_shr, p_icc)
 ```
 
 # Meta Analysis
@@ -422,6 +423,7 @@ df_meta[[1]] <- raw_meta %>%
     !(Paper_ID %in% c("P51E1")) 
   ) 
 
+rm(raw_meta)
 names(df_meta)[1] <- "Raw Meta Data"
 ```
 
@@ -657,6 +659,7 @@ rm(prd)
 
 metafor::rma(yi, vi, data = res_meta[[1]][[6]])
 ```
+
 
 ## Stranger
 ```{r}

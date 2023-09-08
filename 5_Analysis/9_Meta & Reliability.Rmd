@@ -1,0 +1,121 @@
+---
+title: "9_Meta & Reliability"
+author: "yuki"
+date: "2023-09-08"
+output: html_document
+---
+```{r}
+df_MR <- list()
+```
+
+```{r}
+df_MR[[1]] <- out[[1]][[1]] %>%
+  dplyr::mutate(Indice = "RT", Target = "Close") %>%
+  dplyr::inner_join(plot[[2]], by = c("Paper_ID", "Target", "Indice")) %>%
+  dplyr::select(Target, Indice, Paper_ID, r, yi_r)
+
+df_MR[[2]] <- out[[1]][[2]] %>%
+  dplyr::mutate(Indice = "ACC", Target = "Close") %>%
+  dplyr::inner_join(plot[[2]], by = c("Paper_ID", "Target", "Indice")) %>%
+  dplyr::select(Target, Indice, Paper_ID, r, yi_r)
+
+df_MR[[3]] <- out[[1]][[3]] %>%
+  dplyr::mutate(Indice = "d Prime", Target = "Close") %>%
+  dplyr::inner_join(plot[[2]], by = c("Paper_ID", "Target", "Indice")) %>%
+  dplyr::select(Target, Indice, Paper_ID, r, yi_r)
+
+df_MR[[4]] <- out[[1]][[4]] %>%
+  dplyr::mutate(Indice = "Efficiency", Target = "Close") %>%
+  dplyr::inner_join(plot[[2]], by = c("Paper_ID", "Target", "Indice")) %>%
+  dplyr::select(Target, Indice, Paper_ID, r, yi_r)
+
+df_MR[[5]] <- out[[1]][[5]] %>%
+  dplyr::mutate(Indice = "rwDDM v", Target = "Close") %>%
+  dplyr::inner_join(plot[[2]], by = c("Paper_ID", "Target", "Indice")) %>%
+  dplyr::select(Target, Indice, Paper_ID, r, yi_r)
+
+df_MR[[6]] <- out[[1]][[6]] %>%
+  dplyr::mutate(Indice = "rwDDM z", Target = "Close") %>%
+  dplyr::inner_join(plot[[2]], by = c("Paper_ID", "Target", "Indice")) %>%
+  dplyr::select(Target, Indice, Paper_ID, r, yi_r)
+
+df_MR[[7]] <- out[[2]][[1]] %>%
+  dplyr::mutate(Indice = "RT", Target = "Stranger") %>%
+  dplyr::inner_join(plot[[2]], by = c("Paper_ID", "Target", "Indice")) %>%
+  dplyr::select(Target, Indice, Paper_ID, r, yi_r)
+
+df_MR[[8]] <- out[[2]][[2]] %>%
+  dplyr::mutate(Indice = "ACC", Target = "Stranger") %>%
+  dplyr::inner_join(plot[[2]], by = c("Paper_ID", "Target", "Indice")) %>%
+  dplyr::select(Target, Indice, Paper_ID, r, yi_r)
+
+df_MR[[9]] <- out[[2]][[3]] %>%
+  dplyr::mutate(Indice = "d Prime", Target = "Stranger") %>%
+  dplyr::inner_join(plot[[2]], by = c("Paper_ID", "Target", "Indice")) %>%
+  dplyr::select(Target, Indice, Paper_ID, r, yi_r)
+
+df_MR[[10]] <- out[[2]][[4]] %>%
+  dplyr::mutate(Indice = "Efficiency", Target = "Stranger") %>%
+  dplyr::inner_join(plot[[2]], by = c("Paper_ID", "Target", "Indice")) %>%
+  dplyr::select(Target, Indice, Paper_ID, r, yi_r)
+
+df_MR[[11]] <- out[[2]][[5]] %>%
+  dplyr::mutate(Indice = "rwDDM v", Target = "Stranger") %>%
+  dplyr::inner_join(plot[[2]], by = c("Paper_ID", "Target", "Indice")) %>%
+  dplyr::select(Target, Indice, Paper_ID, r, yi_r)
+
+df_MR[[12]] <- out[[2]][[6]] %>%
+  dplyr::mutate(Indice = "rwDDM z", Target = "Stranger") %>%
+  dplyr::inner_join(plot[[2]], by = c("Paper_ID", "Target", "Indice")) %>%
+  dplyr::select(Target, Indice, Paper_ID, r, yi_r)
+```
+
+```{r}
+df_MR <- do.call(rbind, df_MR) %>%
+  dplyr::mutate(
+    Indice = case_when(
+      Indice == "d Prime" ~ "d'",
+      Indice == "Efficiency" ~ "η",
+      Indice == "rwDDM v" ~ "v",
+      Indice == "rwDDM z" ~ "z",
+      TRUE ~ Indice
+    ),
+    Target = factor(
+      Target,levels = c("Close", "Stranger")
+    ),
+    Indice = factor(
+      Indice, levels = c("RT", "ACC", "d'", "η", "v", "z")
+    )
+  ) %>%
+  dplyr::arrange(yi_r)
+```
+
+```{r}
+ggplot2::ggplot(data = df_MR, aes(x = yi_r, y = r, color = Indice, fill = Indice)) +
+  ggplot2::geom_point() +  # 添加散点
+  ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
+  ggpubr::stat_cor(label.x = 0, label.y = 0.9, r.accuracy = .01, p.accuracy = .01) +
+  ggplot2::scale_x_continuous(limits = c(-0.5, 3)) +
+   ggplot2::scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.5, 0.7, 1),) +
+  #ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::labs(y = "Monte-Carlo Split-Half Reliability", x = expression("Hedges' " * italic(g))) +
+  #ggplot2::scale_color_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
+  #ggplot2::scale_fill_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
+  #ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
+  #ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+ggplot2::ggsave(
+  plot = last_plot(),
+  filename = "./FIGURE/Meta & SHR.png",
+  width = 10,
+  height = 8,
+)
+```
+
+```{r}
+cor(df_MR$r, df_MR$yi_r)
+```
+

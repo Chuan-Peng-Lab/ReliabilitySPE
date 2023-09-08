@@ -1359,6 +1359,8 @@ df[[21]] <- read.mat(
     Subject, Matching, Identity, Session
   )
 
+rm(list_mat_e1)
+
 names(df)[21] <- "Paper s4 Exp 1"
 summary(df[[21]])
 write.csv(x = df[[21]], file = "./DATA/df_21.csv")
@@ -1427,6 +1429,8 @@ df[[22]] <- read.mat(list = list_mat_e2) %>%
   dplyr::arrange(
     Subject, Matching, Identity, Session
   )
+
+rm(list_mat_e2)
 
 names(df)[22] <- "Paper s4 Exp 1"
 summary(df[[22]])
