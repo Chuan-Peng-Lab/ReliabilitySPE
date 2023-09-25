@@ -47,6 +47,78 @@ names(iccl[[1]])[8] <- "z(RWiener)"
 rm(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz, df_ezddm, df_rwddm)
 ```
 
+```{r}
+df_Sub_Infor <- read.csv(
+  file = "./DATA/Sub_Info.csv"
+) %>%
+  dplyr::mutate(BDI = as.numeric(BDI)) %>%
+  dplyr::select(Subject, BDI)
+```
+
+```{r}
+for (i in 1:length(iccl[[1]])) {
+  iccl_ReX[[1]][[i]] <- iccl[[1]][[i]] %>%
+    dplyr::mutate(
+      Subject = c(
+        6001, 6002, 6003, 6004, 6005, 6006, 6007,
+        6009, 6010, 6011, 6012, 6013, 6014, 6016,
+        6017, 6018, 6019, 6020, 6021, 6022, 6023,
+        6024, 6025, 6026, 6027, 6028, 6029, 6030,
+        6032, 6033, 6034, 6035, 6036
+      )
+    ) %>%
+    dplyr::rename(
+      Session_1 = 1,
+      Session_2 = 2,
+      Session_3 = 3,
+      Session_4 = 4,
+      Session_5 = 5,
+      Session_6 = 6,
+    ) %>%
+    tidyr::pivot_longer(
+      cols = starts_with("Session_"),
+      names_to = "Session",
+      values_to = "SPE"
+    ) %>%
+    dplyr::rename(
+     !!names(iccl[[1]])[i] := SPE
+    ) %>%
+    dplyr::left_join(df_Sub_Infor, by = "Subject")
+}
+temp <- base::do.call(data.frame, iccl_ReX[[1]]) %>%
+  dplyr::select(
+    Subject, Session, BDI,
+    RT, ACC, 
+    d, η, 
+    v.hausekeep., z.hausekeep.,
+    v.RWiener., z.RWiener.
+  ) 
+
+write.csv(
+  x = temp,
+  file = "./OUTPUT/df_icc_Friend.csv",
+  row.names = FALSE
+)
+
+res[[3]][[1]] <- data.frame(
+  ReX::lme_ICC_2wayR(
+    data = temp[,4:11],
+    subID = temp[,"Subject"],
+    session = temp[,"Session"],
+    cov = temp[,"BDI"],
+  )
+)
+
+rm(temp)
+
+write.csv(
+  x = res[[3]][[1]],
+  "./OUTPUT/icc_ReX_P0E1_Friend.csv",
+  row.names = TRUE
+)
+```
+
+
 
 --------------------------------------------------------------------------------
 
@@ -77,4 +149,67 @@ names(iccl[[2]])[7] <- "v(RWiener)"
 names(iccl[[2]])[8] <- "z(RWiener)"
 
 rm(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
+```
+
+```{r}
+for (i in 1:length(iccl[[2]])) {
+  iccl_ReX[[2]][[i]] <- iccl[[2]][[i]] %>%
+    dplyr::mutate(
+      Subject = c(
+        6001, 6002, 6003, 6004, 6005, 6006, 6007,
+        6009, 6010, 6011, 6012, 6013, 6014, 6016,
+        6017, 6018, 6019, 6020, 6021, 6022, 6023,
+        6024, 6025, 6026, 6027, 6028, 6029, 6030,
+        6032, 6033, 6034, 6035, 6036
+      )
+    ) %>%
+    dplyr::rename(
+      Session_1 = 1,
+      Session_2 = 2,
+      Session_3 = 3,
+      Session_4 = 4,
+      Session_5 = 5,
+      Session_6 = 6,
+    ) %>%
+    tidyr::pivot_longer(
+      cols = starts_with("Session_"),
+      names_to = "Session",
+      values_to = "SPE"
+    ) %>%
+    dplyr::rename(
+     !!names(iccl[[2]])[i] := SPE
+    ) %>%
+    dplyr::left_join(df_Sub_Infor, by = "Subject")
+}
+temp <- base::do.call(data.frame, iccl_ReX[[2]]) %>%
+  dplyr::select(
+    Subject, Session, BDI,
+    RT, ACC, 
+    d, η, 
+    v.hausekeep., z.hausekeep.,
+    v.RWiener., z.RWiener.
+  ) 
+
+write.csv(
+  x = temp,
+  file = "./OUTPUT/df_icc_Stranger.csv",
+  row.names = FALSE
+)
+
+res[[3]][[2]] <- data.frame(
+  ReX::lme_ICC_2wayR(
+    data = temp[,4:11],
+    subID = temp[,"Subject"],
+    session = temp[,"Session"],
+    cov = temp[,"BDI"],
+  )
+)
+
+rm(temp)
+
+write.csv(
+  x = res[[3]][[2]],
+  "./OUTPUT/icc_ReX_P0E1_Stranger.csv",
+  row.names = TRUE
+)
 ```

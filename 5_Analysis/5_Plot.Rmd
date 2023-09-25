@@ -599,4 +599,75 @@ ggsave(filename = "./FIGURE/Fig5_regression.png",
 rm(p1, p2, p3)
 ```
 
+```{r}
+plot[[6]] <- read.csv("./OUTPUT/icc/icc_cov_cmp.csv") %>%
+  dplyr::mutate(
+    Target = case_when(
+      Target == "Friend" ~ "Close",
+      Target == "Stranger" ~ "Stranger",
+    ),
+    Target = factor(
+      Target,levels = c("Close", "Stranger")
+    ),
+    Indice = case_when(
+      Indice == "d Prime" ~ "d'",
+      Indice == "Efficiency" ~ "η",
+      Indice == "rwDDM v" ~ "v(RWiener)",
+      Indice == "rwDDM z" ~ "z(RWiener)",
+      Indice == "ezDDM v" ~ "v(hausekeep)",
+      Indice == "ezDDM z" ~ "z(hausekeep)",
+      TRUE ~ Indice
+    ),
+    Indice = factor(
+      Indice, levels = c("z(hausekeep)", "v(hausekeep)", "z(RWiener)", "v(RWiener)", "η", "d'", "ACC", "RT")
+    ),
+    cov = case_when(
+      cov == 0 ~ "Without",
+      cov == 1 ~ "With"
+    ),
+    cov = factor(cov),
+    Target_Indice = paste(Target, Indice, sep = "_"), 
+    Target_Indice = factor(Target_Indice)
+  ) %>%
+  dplyr::arrange(
+    ICC2
+  ) %>%
+  dplyr::mutate(
+    Order = row_number()
+  ) 
+```
+
+```{r}
+ggplot2::ggplot(data = plot[[6]], aes(x = reorder(Target_Indice, Order), y = ICC2, fill = cov)) +
+  ggplot2::geom_bar(stat = "Identity", position = "dodge") +
+  ggplot2::scale_y_continuous(
+    limits = c(-0.1,1.1),
+    breaks = c(0, 0.5, 0.75, 0.9, 1),
+    expand = c(0,0),
+    sec.axis = sec_axis(
+      ~., breaks = c(0.25, 0.625, 0.825, 0.95),
+      labels = c("Poor", "Moderate", "Good", "Excellent")),
+  ) +
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::scale_fill_manual(values = c("grey30", "grey70")) +
+  ggplot2::guides(fill = guide_legend(reverse = TRUE)) + # 改变图例顺序
+  ggplot2::facet_wrap(facets = ~Type) +
+  ggplot2::labs(fill = "Covariate(BDI-II Scores)", x = "", y = "") +
+  ggplot2::coord_flip() +
+  papaja::theme_apa() +
+  ggplot2::theme(
+    #legend.position = "none",
+    axis.title = element_blank(),
+    axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
+  ) 
+
+ggsave(filename = "./FIGURE/Fig6_cov.png",
+       width = 12,
+       height = 8,
+       )
+```
 
