@@ -1,0 +1,113 @@
+"","Target","Indice","Paper_ID","yi","Sample_Size","Trials","Author","Year","Study"
+"1","Close","RT","P0E1",-0.21760493315435,33,60,"Hu et al.",2023,1
+"2","Close","RT","P6E1",-1.46098422958445,46,20,"Constable & Knoblich",2020,1
+"3","Close","RT","P54E1",-0.170171482674222,32,18,"Schäfer & Frings",2019,1
+"4","Close","RT","P54E3",-0.326539814226777,35,24,"Schäfer & Frings",2019,3
+"5","Close","RT","Pn4E1",-0.555798223043027,30,30,"Golubickis & Macrae",2021,1
+"6","Close","RT","Pn13E1",-0.942834684765605,13,60,"Navon & Makovski",2021,1
+"7","Close","RT","Pn13E3",-0.103660296630951,28,60,"Navon & Makovski",2021,3
+"8","Close","RT","Pn13E4",-0.194865328882011,27,60,"Navon & Makovski",2021,4
+"9","Close","RT","Pn16E1",-0.934791020672002,20,50,"Svensson et al.",2022,1
+"10","Close","RT","Pn16E2",-0.195840362023123,24,100,"Svensson et al.",2022,2
+"11","Close","RT","Pn16E3",-0.503876247191427,25,100,"Svensson et al.",2022,3
+"12","Close","RT","Pn23E1",-0.467277913992568,105,60,"Xu et al.",2021,1
+"13","Close","RT","P95E1",-0.346529572073062,18,56,"Woźniak et al.",2018,1
+"14","Close","RT","P95E2",-0.643098346781115,18,60,"Woźniak et al.",2018,2
+"15","Close","ACC","P0E1",0.29182962895891,33,60,"Hu et al.",2023,1
+"16","Close","ACC","P6E1",1.0658965585937,46,20,"Constable & Knoblich",2020,1
+"17","Close","ACC","P54E1",0.111383558001024,32,18,"Schäfer & Frings",2019,1
+"18","Close","ACC","P54E3",0.357237657116797,35,24,"Schäfer & Frings",2019,3
+"19","Close","ACC","Pn4E1",0.730651668010488,30,30,"Golubickis & Macrae",2021,1
+"20","Close","ACC","Pn13E1",2.13157508685102,13,60,"Navon & Makovski",2021,1
+"21","Close","ACC","Pn13E3",0.201905364883319,28,60,"Navon & Makovski",2021,3
+"22","Close","ACC","Pn13E4",0.259338810967792,27,60,"Navon & Makovski",2021,4
+"23","Close","ACC","Pn16E1",1.62785350768628,20,50,"Svensson et al.",2022,1
+"24","Close","ACC","Pn16E2",1.04178699579874,24,100,"Svensson et al.",2022,2
+"25","Close","ACC","Pn16E3",1.21378004677582,25,100,"Svensson et al.",2022,3
+"26","Close","ACC","Pn23E1",0.722787084056733,105,60,"Xu et al.",2021,1
+"27","Close","ACC","P95E1",0.0284688463527109,18,56,"Woźniak et al.",2018,1
+"28","Close","ACC","P95E2",0.759376656810817,18,60,"Woźniak et al.",2018,2
+"29","Close","d","P0E1",0.140442223686073,33,60,"Hu et al.",2023,1
+"30","Close","d","P6E1",0.867019692207782,46,20,"Constable & Knoblich",2020,1
+"31","Close","d","P54E1",0.21570865910634,32,18,"Schäfer & Frings",2019,1
+"32","Close","d","P54E3",0.380782905022189,35,24,"Schäfer & Frings",2019,3
+"33","Close","d","Pn4E1",0.359981899664437,30,30,"Golubickis & Macrae",2021,1
+"34","Close","d","Pn13E1",0.70982935495955,13,60,"Navon & Makovski",2021,1
+"35","Close","d","Pn13E3",0.0106058682035463,28,60,"Navon & Makovski",2021,3
+"36","Close","d","Pn13E4",0.196730522051924,27,60,"Navon & Makovski",2021,4
+"37","Close","d","Pn16E1",0.637914000712104,20,50,"Svensson et al.",2022,1
+"38","Close","d","Pn16E2",0.674915245334358,24,100,"Svensson et al.",2022,2
+"39","Close","d","Pn16E3",0.768911795549192,25,100,"Svensson et al.",2022,3
+"40","Close","d","Pn23E1",0.818498957964668,105,60,"Xu et al.",2021,1
+"41","Close","d","P95E1",0.250771986547605,18,56,"Woźniak et al.",2018,1
+"42","Close","d","P95E2",0.149633245345402,18,60,"Woźniak et al.",2018,2
+"43","Close","eta","P0E1",-0.336652217430114,33,60,"Hu et al.",2023,1
+"44","Close","eta","P6E1",-2.35686885289501,46,20,"Constable & Knoblich",2020,1
+"45","Close","eta","P54E1",-0.271371514485124,32,18,"Schäfer & Frings",2019,1
+"46","Close","eta","P54E3",-0.465036270441091,35,24,"Schäfer & Frings",2019,3
+"47","Close","eta","Pn4E1",-1.30715730636122,30,30,"Golubickis & Macrae",2021,1
+"48","Close","eta","Pn13E1",-1.43336784122297,13,60,"Navon & Makovski",2021,1
+"49","Close","eta","Pn13E3",-0.148985023048483,28,60,"Navon & Makovski",2021,3
+"50","Close","eta","Pn13E4",-0.371364953859012,27,60,"Navon & Makovski",2021,4
+"51","Close","eta","Pn16E1",-2.56045572908941,20,50,"Svensson et al.",2022,1
+"52","Close","eta","Pn16E2",-1.074953108732,24,100,"Svensson et al.",2022,2
+"53","Close","eta","Pn16E3",-16.7144768621537,25,100,"Svensson et al.",2022,3
+"54","Close","eta","Pn23E1",-0.739045181888405,105,60,"Xu et al.",2021,1
+"55","Close","eta","P95E1",-0.336989874252816,18,56,"Woźniak et al.",2018,1
+"56","Close","eta","P95E2",-0.743987289922591,18,60,"Woźniak et al.",2018,2
+"57","Close","ezDDM v","P0E1",0.195391775771441,33,60,"Hu et al.",2023,1
+"58","Close","ezDDM v","P6E1",1.26963137490417,46,20,"Constable & Knoblich",2020,1
+"59","Close","ezDDM v","P54E1",0.219221521767088,32,18,"Schäfer & Frings",2019,1
+"60","Close","ezDDM v","P54E3",0.465629075772298,35,24,"Schäfer & Frings",2019,3
+"61","Close","ezDDM v","Pn4E1",0.742280474371772,30,30,"Golubickis & Macrae",2021,1
+"62","Close","ezDDM v","Pn13E1",1.09668089079616,13,60,"Navon & Makovski",2021,1
+"63","Close","ezDDM v","Pn13E3",0.120133649072255,28,60,"Navon & Makovski",2021,3
+"64","Close","ezDDM v","Pn13E4",0.12955945559606,27,60,"Navon & Makovski",2021,4
+"65","Close","ezDDM v","Pn16E1",1.36013427671948,20,50,"Svensson et al.",2022,1
+"66","Close","ezDDM v","Pn16E2",0.976651809796971,24,100,"Svensson et al.",2022,2
+"67","Close","ezDDM v","Pn16E3",0.944138874894984,25,100,"Svensson et al.",2022,3
+"68","Close","ezDDM v","Pn23E1",0.717600310219476,105,60,"Xu et al.",2021,1
+"69","Close","ezDDM v","P95E1",0.248588488211664,18,56,"Woźniak et al.",2018,1
+"70","Close","ezDDM v","P95E2",0.688988550446613,18,60,"Woźniak et al.",2018,2
+"71","Close","ezDDM z","P0E1",0.118395153081342,33,60,"Hu et al.",2023,1
+"72","Close","ezDDM z","P6E1",-0.527100450687437,46,20,"Constable & Knoblich",2020,1
+"73","Close","ezDDM z","P54E1",-0.304307570363624,32,18,"Schäfer & Frings",2019,1
+"74","Close","ezDDM z","P54E3",-0.123742229062016,35,24,"Schäfer & Frings",2019,3
+"75","Close","ezDDM z","Pn4E1",-0.292191571265675,30,30,"Golubickis & Macrae",2021,1
+"76","Close","ezDDM z","Pn13E1",1.17094894649084,13,60,"Navon & Makovski",2021,1
+"77","Close","ezDDM z","Pn13E3",0.168292315794298,28,60,"Navon & Makovski",2021,3
+"78","Close","ezDDM z","Pn13E4",0.0648914230171324,27,60,"Navon & Makovski",2021,4
+"79","Close","ezDDM z","Pn16E1",-0.0566314939604046,20,50,"Svensson et al.",2022,1
+"80","Close","ezDDM z","Pn16E2",0.43511243361438,24,100,"Svensson et al.",2022,2
+"81","Close","ezDDM z","Pn16E3",0.246196342596694,25,100,"Svensson et al.",2022,3
+"82","Close","ezDDM z","Pn23E1",0.372314803274659,105,60,"Xu et al.",2021,1
+"83","Close","ezDDM z","P95E1",-0.287566807870524,18,56,"Woźniak et al.",2018,1
+"84","Close","ezDDM z","P95E2",-0.202470125219757,18,60,"Woźniak et al.",2018,2
+"85","Close","rwDDM v","P0E1",0.073703457034852,33,60,"Hu et al.",2023,1
+"86","Close","rwDDM v","P6E1",0.63236915813858,46,20,"Constable & Knoblich",2020,1
+"87","Close","rwDDM v","P54E1",0.332258637908247,32,18,"Schäfer & Frings",2019,1
+"88","Close","rwDDM v","P54E3",0.424223185657728,35,24,"Schäfer & Frings",2019,3
+"89","Close","rwDDM v","Pn4E1",0.616641252963474,30,30,"Golubickis & Macrae",2021,1
+"90","Close","rwDDM v","Pn13E1",0.793700821730885,13,60,"Navon & Makovski",2021,1
+"91","Close","rwDDM v","Pn13E3",-0.00645507520870865,28,60,"Navon & Makovski",2021,3
+"92","Close","rwDDM v","Pn13E4",-0.0376120428606822,27,60,"Navon & Makovski",2021,4
+"93","Close","rwDDM v","Pn16E1",1.37822238917659,20,50,"Svensson et al.",2022,1
+"94","Close","rwDDM v","Pn16E2",1.00384113047532,24,100,"Svensson et al.",2022,2
+"95","Close","rwDDM v","Pn16E3",1.14665470895838,25,100,"Svensson et al.",2022,3
+"96","Close","rwDDM v","Pn23E1",0.497751960215728,105,60,"Xu et al.",2021,1
+"97","Close","rwDDM v","P95E1",0.263111760460224,18,56,"Woźniak et al.",2018,1
+"98","Close","rwDDM v","P95E2",0.527166647823355,18,60,"Woźniak et al.",2018,2
+"99","Close","rwDDM z","P0E1",0.0921515711919403,33,60,"Hu et al.",2023,1
+"100","Close","rwDDM z","P6E1",0.00679387437500748,46,20,"Constable & Knoblich",2020,1
+"101","Close","rwDDM z","P54E1",-0.327919815446799,32,18,"Schäfer & Frings",2019,1
+"102","Close","rwDDM z","P54E3",0.112951283992098,35,24,"Schäfer & Frings",2019,3
+"103","Close","rwDDM z","Pn4E1",-0.524872262929493,30,30,"Golubickis & Macrae",2021,1
+"104","Close","rwDDM z","Pn13E1",0.535486443347096,13,60,"Navon & Makovski",2021,1
+"105","Close","rwDDM z","Pn13E3",0.100486539880678,28,60,"Navon & Makovski",2021,3
+"106","Close","rwDDM z","Pn13E4",0.25405081376864,27,60,"Navon & Makovski",2021,4
+"107","Close","rwDDM z","Pn16E1",-0.682911346520472,20,50,"Svensson et al.",2022,1
+"108","Close","rwDDM z","Pn16E2",-0.720269732929879,24,100,"Svensson et al.",2022,2
+"109","Close","rwDDM z","Pn16E3",-0.339501627556963,25,100,"Svensson et al.",2022,3
+"110","Close","rwDDM z","Pn23E1",0.0592025909442586,105,60,"Xu et al.",2021,1
+"111","Close","rwDDM z","P95E1",-0.11459982450517,18,56,"Woźniak et al.",2018,1
+"112","Close","rwDDM z","P95E2",0.0688337595358084,18,60,"Woźniak et al.",2018,2
