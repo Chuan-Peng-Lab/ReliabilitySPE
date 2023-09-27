@@ -485,6 +485,7 @@ plot[[5]] <- plot[[2]] %>%
   dplyr::mutate(
     Indice = case_when(
       Indice == "d Prime" ~ "d'",
+      Indice == "Efficiency" ~ "η",
       Indice == "rwDDM v" ~ "v(RWiener)",
       Indice == "rwDDM z" ~ "z(RWiener)",
       Indice == "ezDDM v" ~ "v(hausekeep)",
@@ -495,14 +496,14 @@ plot[[5]] <- plot[[2]] %>%
       Target,levels = c("Close", "Stranger")
     ),
     Indice = factor(
-      Indice, levels = c("RT", "ACC", "d'", "Efficiency", "v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)")
+      Indice, levels = c("RT", "ACC", "d'", "η", "v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)")
     )
   )
 ```
 
 ```{r}
 p1 <- plot[[5]] %>%
-  dplyr::filter((Indice %in% c("RT", "ACC", "d'", "Efficiency"))) %>%
+  dplyr::filter((Indice %in% c("RT", "ACC", "d'", "η"))) %>%
   ggplot2::ggplot(data = ., aes(x = Trials, y = r, color = Indice, fill = Indice)) +
   ggplot2::geom_point() +  # 添加散点
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
@@ -592,7 +593,7 @@ p2 <- plot[[5]] %>%
 
 p3 <- p1 + p2+plot_layout(guides = 'collect')
 
-ggsave(filename = "./FIGURE/Fig5_regression.png",
+ggsave(filename = "./FIGURE/Fig5_r&trial.png",
        width = 10,
        height = 8,
        )
@@ -665,9 +666,202 @@ ggplot2::ggplot(data = plot[[6]], aes(x = reorder(Target_Indice, Order), y = ICC
     axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
   ) 
 
-ggsave(filename = "./FIGURE/Fig6_cov.png",
+ggsave(filename = "./FIGURE/Fig3c_cov.png",
        width = 12,
        height = 8,
        )
 ```
 
+```{r}
+temp_plot <- plot[[2]] %>%
+  dplyr::filter(
+    Target %in% c("Close", "Stranger")
+  ) %>%
+  dplyr::mutate(
+    Indice = case_when(
+      Indice == "Efficiency" ~ "η",
+      Indice == "d Prime" ~ "d'",
+      #Indice == "rwDDM v" ~ "v",
+      #Indice == "rwDDM z" ~ "z",
+      Indice == "rwDDM v" ~ "v(RWiener)",
+      Indice == "rwDDM z" ~ "z(RWiener)",
+      Indice == "ezDDM v" ~ "v(hausekeep)",
+      Indice == "ezDDM z" ~ "z(hausekeep)",
+      TRUE ~ Indice
+    ),
+  ) %>%
+  dplyr::select(
+    Target,
+    Indice,
+    Paper_ID,
+    r
+  )
+
+temp_meta <- res_meta[[5]] %>%
+  dplyr::select(
+    Target,
+    Indice,
+    Paper_ID,
+    yi,
+    Trials
+  )
+
+plot[[7]] <- temp_plot %>%
+  dplyr::left_join(
+    temp_meta,
+    by = c(
+      "Target",
+      "Indice",
+      "Paper_ID"
+    )
+  ) %>%
+  dplyr::mutate(
+    Target = factor(
+      Target,levels = c("Close", "Stranger")
+    ),
+    Indice = factor(
+      Indice, levels = c("RT", "ACC", "d'", "η", "v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)")
+    )
+  ) 
+
+rm(temp_meta, temp_plot)
+```
+
+```{r}
+p1 <- plot[[7]] %>%
+  dplyr::filter((Indice %in% c("RT", "ACC", "d'", "η"))) %>%
+  ggplot2::ggplot(data = ., aes(x = yi, y = r, color = Indice, fill = Indice)) +
+  ggplot2::geom_point() +  # 添加散点
+  ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
+  ggpubr::stat_cor(label.x = 0, label.y = 0.9, r.accuracy = .01, p.accuracy = .01) +
+  ggplot2::scale_x_continuous(limits = c(-0.5, 3)) +
+   ggplot2::scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.5, 0.7, 1),) +
+  #ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::labs(y = "Monte-Carlo Split-Half Reliability", x = expression("Hedges' " * italic(g))) +
+  ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
+  ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+
+p2 <- plot[[7]] %>%
+  dplyr::filter((Indice %in% c("v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)"))) %>%
+  ggplot2::ggplot(data = ., aes(x = yi, y = r, color = Indice, fill = Indice)) +
+  ggplot2::geom_point() +  # 添加散点
+  ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
+  ggpubr::stat_cor(label.x = 0, label.y = 0.9, r.accuracy = .01, p.accuracy = .01) +
+  ggplot2::scale_x_continuous(limits = c(-0.5, 3)) +
+   ggplot2::scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.5, 0.7, 1),) +
+  #ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::labs(y = "", x = expression("Hedges' " * italic(g))) +
+  ggplot2::scale_color_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
+  ggplot2::scale_fill_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+p3 <- p1 + p2 + plot_layout(guides = 'collect')
+
+ggplot2::ggsave(
+  plot = p3,
+  filename = "./FIGURE/Fig6_yi&r.png",
+  width = 10,
+  height = 8,
+)
+
+rm(p1, p2, p3)
+```
+
+# Correlation (yi & Trials)
+```{r}
+res_meta[[5]] <- dplyr::bind_rows(res_meta[[3]], res_meta[[4]]) %>%
+  dplyr::mutate(
+    Indice = case_when(
+      Indice == "d" ~ "d'",
+      Indice == "eta" ~ "η",
+      Indice == "rwDDM v" ~ "v(RWiener)",
+      Indice == "rwDDM z" ~ "z(RWiener)",
+      Indice == "ezDDM v" ~ "v(hausekeep)",
+      Indice == "ezDDM z" ~ "z(hausekeep)",
+      TRUE ~ Indice
+    ),
+    yi = case_when(
+      Indice == "RT" ~ yi * -1,
+      Indice == "ACC" ~ yi,
+      Indice == "d'" ~ yi,
+      Indice == "η" ~ yi * -1,
+      Indice == "v(hausekeep)" ~ yi,
+      Indice == "z(hausekeep)" ~ yi * -1,
+      Indice == "v(RWiener)" ~ yi,
+      Indice == "z(RWiener)" ~ yi * -1, 
+    ),
+    Target = factor(
+      Target,levels = c("Close", "Stranger")
+    ),
+    Indice = factor(
+      Indice, levels = c("RT", "ACC", "d'", "η", "v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)")
+    )
+  )
+names(res_meta)[5] <- "Correlation (yi & Trials)"
+```
+
+```{r}
+pic1 <- res_meta[[5]] %>%
+  dplyr::filter((Indice %in% c("RT", "ACC", "d'", "η"))) %>%
+  ggplot2::ggplot(data = ., aes(x = Trials, y = yi, color = Indice, fill = Indice)) +
+  ggplot2::geom_point() +  # 添加散点
+  ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
+  ggpubr::stat_cor(label.x = 3, label.y = 2, r.accuracy = .01, p.accuracy = .01) +
+  ggplot2::scale_x_continuous(
+    limits = c(0, 140),
+    breaks = c(0, 30, 60, 100, 130),
+  ) +
+  ggplot2::scale_y_continuous(
+    limits = c(-0.5, 2),
+    breaks = c(0, 0.5, 1, 1.5, 2)
+  ) +
+  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
+  ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
+  ggplot2::labs(y = expression("Hedges' " * italic(g)), x = "Trial Numbers") +  
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+pic2 <- res_meta[[5]] %>%
+  dplyr::filter((Indice %in% c("v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)"))) %>%
+  ggplot2::ggplot(data = ., aes(x = Trials, y = yi, color = Indice, fill = Indice)) +
+  ggplot2::geom_point() +  # 添加散点
+  ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
+  ggpubr::stat_cor(label.x = 3, label.y = 2, r.accuracy = .01, p.accuracy = .01) +
+  ggplot2::scale_x_continuous(
+    limits = c(0, 140),
+    breaks = c(0, 30, 60, 100, 130),
+  ) +
+  ggplot2::scale_y_continuous(
+    limits = c(-0.5, 2),
+    breaks = c(0, 0.5, 1, 1.5, 2)
+  ) +
+  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::scale_color_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
+  ggplot2::scale_fill_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
+  ggplot2::labs(y = "", x = "Trial Numbers") +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+  
+pic <- pic1 + pic2 + plot_layout(guides = 'collect')
+
+ggsave(
+  filename = "./FIGURE/Fig7_cor_yi&trials.png",
+  width = 10,
+  height = 8,
+)
+
+rm(pic1, pic2, pic)
+```
+
+```{r}
+spearman_cor <- res_meta[[5]] %>%
+  dplyr::group_by(Target, Indice) %>%
+  dplyr::summarise(cor = cor(Trials, yi, method = "spearman"))
+```

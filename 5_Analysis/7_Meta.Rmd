@@ -208,12 +208,12 @@ meta[[2]] <- plot[[2]] %>%
                 #Indice = factor(Indice,levels = c("rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v", "Efficiency", "d Prime", "ACC", "RT")),
                 Indice = case_when(Indice == "Efficiency" ~ "η",
                                    Indice == "d Prime" ~ "d'",
-                                   Indice == "rwDDM v" ~ "v",
-                                   Indice == "rwDDM z" ~ "z",
-                                   #Indice == "rwDDM v" ~ "v(RWiener)",
-                                   #Indice == "rwDDM z" ~ "z(RWiener)",
-                                   #Indice == "ezDDM v" ~ "v(hausekeep)",
-                                   #Indice == "ezDDM z" ~ "z(hausekeep)",
+                                   #Indice == "rwDDM v" ~ "v",
+                                   #Indice == "rwDDM z" ~ "z",
+                                   Indice == "rwDDM v" ~ "v(RWiener)",
+                                   Indice == "rwDDM z" ~ "z(RWiener)",
+                                   Indice == "ezDDM v" ~ "v(hausekeep)",
+                                   Indice == "ezDDM z" ~ "z(hausekeep)",
                                    TRUE ~ Indice),
                 #Indice = factor(Indice,levels = c("RT", "Efficiency", "ACC", "d'", "v", "z")),
                 Target_Indice = paste(Target, Indice, sep = "_"), 
@@ -527,6 +527,9 @@ res_meta <- list(
   list(),
   list()
 )
+
+res_meta[[1]] <- list()
+res_meta[[2]] <- list()
 
 df_meta[[5]] <- list(
   list(),
