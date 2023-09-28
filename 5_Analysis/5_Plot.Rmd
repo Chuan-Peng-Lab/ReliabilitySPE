@@ -15,7 +15,7 @@ plot <- list()
 ################################################################################
 
 
-# Normal SHR
+# Plot[[1]]: Normal SHR
 ```{r Read OUTPUT}
 # 获取所有的nmshr
 plot[[1]] <- list.files(
@@ -65,6 +65,7 @@ plot[[1]] <- list.files(
       ) 
     )
   ) %>%
+  # not suitable paper "P51E1"
   dplyr::filter(!(Paper_ID %in% c("P51E1"))) 
 
 names(plot)[1] <- "Normal SHR"
@@ -104,7 +105,7 @@ ggsave(filename = "./FIGURE/Fig1_nmshr.png",
 ################################################################################
 
 
-# Monte Carlo SHR
+# Plot[[2]]: Monte Carlo SHR
 ```{r Read OUTPUT}
 # 获取所有的mcshr
 plot[[2]] <- list.files(
@@ -194,7 +195,7 @@ ggsave(filename = "./FIGURE/Fig2_mcshr_supp.png",
 ################################################################################
 
 
-# ICC
+# Plot[[3]]: ICC
 ```{r Read OUTPUT}
 # 获取所有的icc
 plot[[3]] <- list.files(
@@ -231,63 +232,6 @@ names(plot)[3] <- "ICC"
 ```
 
 ```{r}
-p0 <- plot[[3]] %>%
-  dplyr::filter(
-    !stringr::str_detect(ICC_type, "ez")
-  ) %>%
-  dplyr::mutate(
-    ICC_type = case_when(
-      ICC_type == "Efficiency" ~ "η",
-      ICC_type == "d Prime" ~ "d'",
-      ICC_type == "rwDDM v" ~ "v",
-      ICC_type == "rwDDM z" ~ "z",
-      TRUE ~ ICC_type
-    ),
-    Target_Type = paste(
-      Target, ICC_type, sep = "_"), 
-  ) %>%
-  dplyr::filter(
-    (Paper_ID %in% c("P0E1")),
-    type == "ICC2"
-  ) %>%
-  dplyr::arrange(ICC) %>%
-  dplyr::mutate(
-    Order = row_number(),
-    Outliar = case_when(LLCI <= 0 ~ TRUE, 
-                        LLCI > 0 ~FALSE),
-    LLCI = ifelse(LLCI < -0.10, -1.1, LLCI), 
-  ) %>%
-  dplyr::mutate(Order = row_number()) %>%
-  ggplot2::ggplot(., aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
-  ggplot2::geom_errorbar(aes(color = type, ymin = LLCI, ymax = ULCI, linetype = Outliar),
-                         width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
-  ggplot2::geom_point(shape = 15, size = 3, position = position_dodge(width = 1)) +
-  ggplot2::coord_flip() + #flips the x and y axes of a plot
-  ggplot2::scale_x_discrete() +
-  ggplot2::scale_y_continuous(
-    limits = c(-0.10, 1.10),
-    breaks = c(-1, 0, 0.5, 0.75, 0.9, 1),
-    sec.axis = sec_axis(
-      ~., breaks = c(0.25, 0.625, 0.825, 0.95),
-      labels = c("Poor", "Moderate", "Good", "Excellent")),
-  ) +
-  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
-  #ggplot2::scale_linetype_manual(values = c("dashed", "solid")) +
-  ggplot2::scale_fill_manual(values = c("black", "grey60")) +
-  ggplot2::scale_color_manual(values = c("black", "grey60")) +
-  ggplot2::facet_wrap(~ type, ncol = 1) +
-  ggplot2::labs(y = "", x = "") +
-  papaja::theme_apa() +
-  ggplot2::theme(legend.position = "none",
-                 axis.title = element_blank(),
-                 axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
-                 ) 
-
 p1 <- plot[[3]] %>%
   dplyr::mutate(
     ICC_type = case_when(
@@ -313,14 +257,14 @@ p1 <- plot[[3]] %>%
                         LLCI > 0 ~TRUE),
     LLCI = ifelse(LLCI < -0.10, -1.1, LLCI), 
   ) %>%
-  ggplot2::ggplot(., aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
+ggplot2::ggplot(., aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
   ggplot2::geom_errorbar(aes(color = type, ymin = LLCI, ymax = ULCI, linetype = Outliar),
                          width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
   ggplot2::geom_point(shape = 15, size = 3, position = position_dodge(width = 1)) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
   ggplot2::scale_y_continuous(
-    limits = c(-0.10, 1.10),
+    limits = c(-0.40, 1),
     breaks = c(-1, 0, 0.5, 0.75, 0.9, 1),
     sec.axis = sec_axis(
       ~., breaks = c(0.25, 0.625, 0.825, 0.95),
@@ -332,18 +276,28 @@ p1 <- plot[[3]] %>%
   ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_text(aes(y = -0.4, x = reorder(Target_Type, Order), label = Target_Type),
+                     hjust = 0, size = 4, family='serif',) + # CREATE Y
   ggplot2::scale_linetype_manual(values = c("dashed", "solid")) +
   ggplot2::scale_fill_manual(values = c("black", "grey60")) +
   ggplot2::scale_color_manual(values = c("black", "grey60")) +
-  ggplot2::facet_wrap(~ type, ncol = 1) +
+  #ggplot2::facet_wrap(~ type, ncol = 1) +
   ggplot2::labs(y = "", x = "") +
+  ggplot2::ggtitle("(a)") +
   papaja::theme_apa() +
   ggplot2::theme(
     legend.position = "none",
-    axis.title = element_blank(),
     axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
+    axis.title.x = element_text(size = 15, family='serif'),
+    axis.text.x.top = element_text(size = 15, family='serif'),
+    axis.text.x.bottom = element_text(size = 15, family='serif'),
+    plot.title = element_text(size = 20, family = 'serif', hjust = 0),
+    axis.text.y.left = element_blank(),
+    axis.line.y.left = element_blank(),
+    axis.ticks.y.left = element_blank(),
   ) 
-  
+
+
 p2 <- plot[[3]] %>%
   dplyr::mutate(
     ICC_type = case_when(
@@ -368,15 +322,16 @@ p2 <- plot[[3]] %>%
     Outliar = case_when(LLCI <= 0 ~ FALSE, 
                         LLCI > 0 ~TRUE),
     LLCI = ifelse(LLCI < -0.10, -0.10, LLCI), 
+    ICC = ifelse(ICC < 0, -10, ICC), 
   ) %>%
-  ggplot2::ggplot(., aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
+ggplot2::ggplot(., aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
   ggplot2::geom_errorbar(aes(color = type, ymin = LLCI, ymax = ULCI, linetype = Outliar),
                          width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
   ggplot2::geom_point(shape = 15, size = 3, position = position_dodge(width = 1)) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
   ggplot2::scale_y_continuous(
-    limits = c(-0.10, 1.10),
+    limits = c(-0.40, 1),
     breaks = c(-1, 0, 0.5, 0.75, 0.9, 1),
     sec.axis = sec_axis(
     ~., breaks = c(0.25, 0.625, 0.825, 0.95),
@@ -388,41 +343,52 @@ p2 <- plot[[3]] %>%
   ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_text(aes(y = -0.4, x = reorder(Target_Type, Order), label = Target_Type),
+                     hjust = 0, size = 4, family='serif',) + # 
   ggplot2::scale_linetype_manual(values = c("dashed", "solid")) +
   ggplot2::scale_fill_manual(values = c("black", "grey60")) +
   ggplot2::scale_color_manual(values = c("black", "grey60")) +
-  ggplot2::facet_wrap(~ type, ncol = 1) +
+  #ggplot2::facet_wrap(~ type, ncol = 1) +
   ggplot2::labs(y = "", x = "") +
+  ggplot2::ggtitle("(b)") +
   papaja::theme_apa() +
   ggplot2::theme(
     legend.position = "none",
-    axis.title = element_blank(),
     axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
+    axis.title.x = element_text(size = 15, family='serif'),
+    axis.text.x.top = element_text(size = 15, family='serif'),
+    axis.text.x.bottom = element_text(size = 15, family='serif'),
+    plot.title = element_text(size = 20, family = 'serif', hjust = 0),
+    axis.text.y.left = element_blank(),
+    axis.line.y.left = element_blank(),
+    axis.ticks.y.left = element_blank(),
   ) 
 
-ggsave(plot = p0,
-       filename = "./FIGURE/Fig3_icc.png",
-       width = 10,
-       height = 8,
-       )
 
-  
 ggsave(plot = p1,
-       filename = "./FIGURE/Fig3_icc_P0.png",
+       filename = "./FIGURE/Fig3a_ICC_P0.png",
        width = 10,
        height = 8,
        )
 
 ggsave(plot = p2,
-       filename = "./FIGURE/Fig3_icc_Ps2.png",
+       filename = "./FIGURE/Fig3b_ICC_P0_Ps2.png",
        width = 10,
        height = 8,
        )
 
-rm(p0, p1, p2)
+p <- p1 + p2 + plot_layout(ncol = 2, guides = 'collect')
+
+ggsave(plot = p,
+       filename = "./FIGURE/Fig3_ICC.png",
+       width = 20,
+       height = 8,
+       )
+
+rm(p, p1, p2)
 ```
 
-# Trials Number
+# Plot[[4]]: Trials Number
 ```{r}
 plot[[4]] <- plot[[2]] %>%
   dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
@@ -432,8 +398,15 @@ plot[[4]] <- plot[[2]] %>%
   dplyr::ungroup() %>%
   dplyr::distinct(Target, Indice, cor)  %>%
   dplyr::mutate(
-    Target = factor(Target,levels = c("Close", "Stranger")),
-    Indice = factor(Indice,levels = c("RT", "ACC", "d Prime", "Efficiency", "ezDDM v", "ezDDM z", "rwDDM v", "rwDDM z"))
+    Target = factor(
+      Target,levels = c("Close", "Stranger")
+    ),
+    Indice = factor(
+      Indice,levels = c(
+        "RT", "ACC", "d Prime", "Efficiency",
+        "ezDDM v", "ezDDM z", "rwDDM v", "rwDDM z"
+      )
+    )
   )
 ```
 
@@ -459,149 +432,16 @@ ggplot2::ggplot(plot[[4]], aes(x = Indice, y = cor)) +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none")
 
-ggsave(filename = "./FIGURE/Fig4_trails.png",
+ggsave(filename = "./FIGURE/Fig4_Trails.png",
        width = 7,
        height = 7,
        )
 ```
 
+
+# Plot[[5]]: ICC with & without COV
 ```{r}
-plot[[5]] <- plot[[2]] %>%
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
-  dplyr::filter(Target == "Close" | Target == "Stranger") %>%
-  dplyr::filter(!(Paper_ID %in% c("P51E1"))) %>%
-  dplyr::mutate(
-    r_8 = case_when(
-      Target == "Close" & Indice == "RT" ~ 120,
-      Target == "Stranger" & Indice == "RT" ~ 72,
-      Target == "Close" & Indice == "ACC" ~ 127,
-      Target == "Close" & Indice == "Efficiency" ~ 107,
-      Target == "Stranger" & Indice == "Efficiency" ~ 80,
-      Target == "Close" & Indice == "ezDDM v" ~ 125,
-      Target == "Stranger" & Indice == "ezDDM v" ~ 110,
-      Target == "Close" & Indice == "rwDDM v" ~ 130,
-      TRUE ~ NA),
-  ) %>%
-  dplyr::mutate(
-    Indice = case_when(
-      Indice == "d Prime" ~ "d'",
-      Indice == "Efficiency" ~ "η",
-      Indice == "rwDDM v" ~ "v(RWiener)",
-      Indice == "rwDDM z" ~ "z(RWiener)",
-      Indice == "ezDDM v" ~ "v(hausekeep)",
-      Indice == "ezDDM z" ~ "z(hausekeep)",
-      TRUE ~ Indice
-    ),
-    Target = factor(
-      Target,levels = c("Close", "Stranger")
-    ),
-    Indice = factor(
-      Indice, levels = c("RT", "ACC", "d'", "η", "v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)")
-    )
-  )
-```
-
-```{r}
-p1 <- plot[[5]] %>%
-  dplyr::filter((Indice %in% c("RT", "ACC", "d'", "η"))) %>%
-  ggplot2::ggplot(data = ., aes(x = Trials, y = r, color = Indice, fill = Indice)) +
-  ggplot2::geom_point() +  # 添加散点
-  ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
-  ggpubr::stat_cor(label.x = 3, label.y = 1.1, r.accuracy = .01, p.accuracy = .01) +
-  ggplot2::scale_x_continuous(
-    limits = c(0, 140),
-    breaks = c(0, 30, 60, 100, 130),
-  ) +
-  ggplot2::scale_y_continuous(
-    limits = c(-0.1, 1.1),
-    breaks = c(0, 0.5, 0.8, 1),
-  ) +
-  ggplot2::geom_vline(
-    data = subset(plot[[5]], Target == "Close" & Indice == "RT"),
-    aes(xintercept = r_8),
-    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
-  ) +
-  ggplot2::geom_vline(
-    data = subset(plot[[5]], Target == "Stranger" & Indice == "RT"),
-    aes(xintercept = r_8),
-    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
-  ) +
-  ggplot2::geom_vline(
-    data = subset(
-      plot[[5]], Target == "Close" & Indice == "ACC"),
-      aes(xintercept = r_8),
-    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
-  ) +
-  ggplot2::geom_vline(
-    data = subset(plot[[5]], Target == "Close" & Indice == "Efficiency"),
-    aes(xintercept = r_8),
-    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
-  ) +
-  ggplot2::geom_vline(
-    data = subset(plot[[5]], Target == "Stranger" & Indice == "Efficiency"),
-    aes(xintercept = r_8),
-    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
-  ) +
-  ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
-  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
-  ggplot2::labs(y = "Monte-Carlo Split-Half Reliability", x = "Trial Numbers") +
-  #ggplot2::scale_color_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
-  #ggplot2::scale_fill_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
-  ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
-  ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
-  papaja::theme_apa() +
-  ggplot2::theme(legend.position = "none")
-
-p2 <- plot[[5]] %>%
-  dplyr::filter((Indice %in% c("v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)"))) %>%
-  ggplot2::ggplot(data = ., aes(x = Trials, y = r, color = Indice, fill = Indice)) +
-  ggplot2::geom_point() +  # 添加散点
-  ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
-  ggpubr::stat_cor(label.x = 3, label.y = 1.1, r.accuracy = .01, p.accuracy = .01) +
-  ggplot2::scale_x_continuous(
-    limits = c(0, 140),
-    breaks = c(0, 30, 60, 100, 130),
-  ) +
-  ggplot2::scale_y_continuous(
-    limits = c(-0.1, 1.1),
-    breaks = c(0, 0.5, 0.8, 1),
-  ) +
-  ggplot2::geom_vline(
-    data = subset(plot[[5]], Target == "Close" & Indice == "v(hausekeep)"),
-    aes(xintercept = r_8),
-    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
-  ) +
-  ggplot2::geom_vline(
-    data = subset(plot[[5]], Target == "Stranger" & Indice == "v(hausekeep)"),
-    aes(xintercept = r_8),
-    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
-  ) +
-  ggplot2::geom_vline(
-    data = subset(plot[[5]], Target == "Close" & Indice == "v(RWiener)"),
-    aes(xintercept = r_8),
-    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
-  ) +
-  ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
-  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
-  ggplot2::labs(y = "", x = "Trial Numbers") +
-  #ggplot2::scale_color_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
-  #ggplot2::scale_fill_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
-  ggplot2::scale_color_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
-  ggplot2::scale_fill_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
-  papaja::theme_apa() +
-  ggplot2::theme(legend.position = "none")
-
-p3 <- p1 + p2+plot_layout(guides = 'collect')
-
-ggsave(filename = "./FIGURE/Fig5_r&trial.png",
-       width = 10,
-       height = 8,
-       )
-rm(p1, p2, p3)
-```
-
-```{r}
-plot[[6]] <- read.csv("./OUTPUT/icc/icc_cov_cmp.csv") %>%
+plot[[5]] <- read.csv("./OUTPUT/icc/icc_cov_cmp.csv") %>%
   dplyr::mutate(
     Target = case_when(
       Target == "Friend" ~ "Close",
@@ -639,10 +479,10 @@ plot[[6]] <- read.csv("./OUTPUT/icc/icc_cov_cmp.csv") %>%
 ```
 
 ```{r}
-ggplot2::ggplot(data = plot[[6]], aes(x = reorder(Target_Indice, Order), y = ICC2, fill = cov)) +
+ggplot2::ggplot(data = plot[[5]], aes(x = reorder(Target_Indice, Order), y = ICC2, fill = cov)) +
   ggplot2::geom_bar(stat = "Identity", position = "dodge") +
   ggplot2::scale_y_continuous(
-    limits = c(-0.1,1.1),
+    limits = c(-0.4,1.1),
     breaks = c(0, 0.5, 0.75, 0.9, 1),
     expand = c(0,0),
     sec.axis = sec_axis(
@@ -654,6 +494,8 @@ ggplot2::ggplot(data = plot[[6]], aes(x = reorder(Target_Indice, Order), y = ICC
   ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_text(aes(y = -0.4, x = reorder(Target_Indice, Order), label = Target_Indice),
+                     hjust = 0, size = 4, family='serif',) + # 
   ggplot2::scale_fill_manual(values = c("grey30", "grey70")) +
   ggplot2::guides(fill = guide_legend(reverse = TRUE)) + # 改变图例顺序
   ggplot2::facet_wrap(facets = ~Type) +
@@ -664,14 +506,168 @@ ggplot2::ggplot(data = plot[[6]], aes(x = reorder(Target_Indice, Order), y = ICC
     #legend.position = "none",
     axis.title = element_blank(),
     axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
+    plot.title = element_text(size = 20, family = 'serif', hjust = 0),
+    axis.text.x.top = element_text(size = 15, family='serif'),
+    axis.text.x.bottom = element_text(size = 15, family='serif'),
+    axis.text.y.left = element_blank(),
+    axis.line.y.left = element_blank(),
+    axis.ticks.y.left = element_blank(),
+    axis.title.x = element_text(size = 15, family='serif')
   ) 
 
-ggsave(filename = "./FIGURE/Fig3c_cov.png",
+ggsave(filename = "./FIGURE/Fig5_cov.png",
        width = 12,
        height = 8,
        )
 ```
 
+# Plot[[6]]: Correlation SHR & Trials 
+```{r}
+plot[[6]] <- plot[[2]] %>%
+  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  dplyr::filter(Target == "Close" | Target == "Stranger") %>%
+  dplyr::filter(!(Paper_ID %in% c("P51E1"))) %>%
+  dplyr::mutate(
+    r_8 = case_when(
+      Target == "Close" & Indice == "RT" ~ 120,
+      Target == "Stranger" & Indice == "RT" ~ 72,
+      Target == "Close" & Indice == "ACC" ~ 127,
+      Target == "Close" & Indice == "Efficiency" ~ 107,
+      Target == "Stranger" & Indice == "Efficiency" ~ 80,
+      Target == "Close" & Indice == "ezDDM v" ~ 125,
+      Target == "Stranger" & Indice == "ezDDM v" ~ 110,
+      Target == "Close" & Indice == "rwDDM v" ~ 130,
+      TRUE ~ NA),
+  ) %>%
+  dplyr::mutate(
+    Indice = case_when(
+      Indice == "d Prime" ~ "d'",
+      Indice == "Efficiency" ~ "η",
+      Indice == "rwDDM v" ~ "v(RWiener)",
+      Indice == "rwDDM z" ~ "z(RWiener)",
+      Indice == "ezDDM v" ~ "v(hausekeep)",
+      Indice == "ezDDM z" ~ "z(hausekeep)",
+      TRUE ~ Indice
+    ),
+    Target = factor(
+      Target,levels = c("Close", "Stranger")
+    ),
+    Indice = factor(
+      Indice, levels = c(
+        "RT", "ACC", "d'", "η", 
+        "v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)"
+      )
+    )
+  )
+```
+
+```{r}
+p1 <- plot[[6]] %>%
+  dplyr::filter((Indice %in% c("RT", "ACC", "d'", "η"))) %>%
+  ggplot2::ggplot(data = ., aes(x = Trials, y = r, color = Indice, fill = Indice)) +
+  ggplot2::geom_point() +  # 添加散点
+  ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
+  ggpubr::stat_cor(label.x = 3, label.y = 1.1, r.accuracy = .01, p.accuracy = .01) +
+  ggplot2::scale_x_continuous(
+    limits = c(0, 140),
+    breaks = c(0, 30, 60, 100, 130),
+  ) +
+  ggplot2::scale_y_continuous(
+    limits = c(-0.1, 1.1),
+    breaks = c(0, 0.5, 0.8, 1),
+  ) +
+  ggplot2::geom_vline(
+    data = subset(plot[[6]], Target == "Close" & Indice == "RT"),
+    aes(xintercept = r_8),
+    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
+  ) +
+  ggplot2::geom_vline(
+    data = subset(plot[[6]], Target == "Stranger" & Indice == "RT"),
+    aes(xintercept = r_8),
+    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
+  ) +
+  ggplot2::geom_vline(
+    data = subset(
+      plot[[6]], Target == "Close" & Indice == "ACC"),
+      aes(xintercept = r_8),
+    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
+  ) +
+  ggplot2::geom_vline(
+    data = subset(plot[[6]], Target == "Close" & Indice == "Efficiency"),
+    aes(xintercept = r_8),
+    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
+  ) +
+  ggplot2::geom_vline(
+    data = subset(plot[[6]], Target == "Stranger" & Indice == "Efficiency"),
+    aes(xintercept = r_8),
+    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
+  ) +
+  ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::labs(y = "Monte-Carlo Split-Half Reliability", x = "Trial Numbers") +
+  #ggplot2::scale_color_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
+  #ggplot2::scale_fill_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
+  ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
+  ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+################################################################################
+################################################################################
+
+p2 <- plot[[6]] %>%
+  dplyr::filter((Indice %in% c("v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)"))) %>%
+  ggplot2::ggplot(data = ., aes(x = Trials, y = r, color = Indice, fill = Indice)) +
+  ggplot2::geom_point() +  # 添加散点
+  ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
+  ggpubr::stat_cor(label.x = 3, label.y = 1.1, r.accuracy = .01, p.accuracy = .01) +
+  ggplot2::scale_x_continuous(
+    limits = c(0, 140),
+    breaks = c(0, 30, 60, 100, 130),
+  ) +
+  ggplot2::scale_y_continuous(
+    limits = c(-0.1, 1.1),
+    breaks = c(0, 0.5, 0.8, 1),
+  ) +
+  ggplot2::geom_vline(
+    data = subset(plot[[6]], Target == "Close" & Indice == "v(hausekeep)"),
+    aes(xintercept = r_8),
+    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
+  ) +
+  ggplot2::geom_vline(
+    data = subset(plot[[6]], Target == "Stranger" & Indice == "v(hausekeep)"),
+    aes(xintercept = r_8),
+    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
+  ) +
+  ggplot2::geom_vline(
+    data = subset(plot[[6]], Target == "Close" & Indice == "v(RWiener)"),
+    aes(xintercept = r_8),
+    linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5
+  ) +
+  ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::labs(y = "", x = "Trial Numbers") +
+  #ggplot2::scale_color_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
+  #ggplot2::scale_fill_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
+  ggplot2::scale_color_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
+  ggplot2::scale_fill_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+
+#################################### SAVE ######################################
+p3 <- p1 + p2 + plot_layout(guides = 'collect')
+
+ggsave(filename = "./FIGURE/Fig6_r&Trial.png",
+       width = 10,
+       height = 8,
+       )
+#################################### SAVE ######################################
+
+rm(p1, p2, p3)
+```
+
+# Plot[[7]]: Correlation Hedges'g & SHR
 ```{r}
 temp_plot <- plot[[2]] %>%
   dplyr::filter(
@@ -765,7 +761,7 @@ p3 <- p1 + p2 + plot_layout(guides = 'collect')
 
 ggplot2::ggsave(
   plot = p3,
-  filename = "./FIGURE/Fig6_yi&r.png",
+  filename = "./FIGURE/Fig7_yi&r.png",
   width = 10,
   height = 8,
 )
@@ -773,9 +769,9 @@ ggplot2::ggsave(
 rm(p1, p2, p3)
 ```
 
-# Correlation (yi & Trials)
+# plot[[8]]: Correlation Hedges'g & Trials
 ```{r}
-res_meta[[5]] <- dplyr::bind_rows(res_meta[[3]], res_meta[[4]]) %>%
+plot[[8]] <- dplyr::bind_rows(res_meta[[3]], res_meta[[4]]) %>%
   dplyr::mutate(
     Indice = case_when(
       Indice == "d" ~ "d'",
@@ -803,11 +799,11 @@ res_meta[[5]] <- dplyr::bind_rows(res_meta[[3]], res_meta[[4]]) %>%
       Indice, levels = c("RT", "ACC", "d'", "η", "v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)")
     )
   )
-names(res_meta)[5] <- "Correlation (yi & Trials)"
+names(plot)[8] <- "Correlation (yi & Trials)"
 ```
 
 ```{r}
-pic1 <- res_meta[[5]] %>%
+pic1 <- plot[[8]] %>%
   dplyr::filter((Indice %in% c("RT", "ACC", "d'", "η"))) %>%
   ggplot2::ggplot(data = ., aes(x = Trials, y = yi, color = Indice, fill = Indice)) +
   ggplot2::geom_point() +  # 添加散点
@@ -828,7 +824,7 @@ pic1 <- res_meta[[5]] %>%
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none")
 
-pic2 <- res_meta[[5]] %>%
+pic2 <- plot[[8]] %>%
   dplyr::filter((Indice %in% c("v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)"))) %>%
   ggplot2::ggplot(data = ., aes(x = Trials, y = yi, color = Indice, fill = Indice)) +
   ggplot2::geom_point() +  # 添加散点
@@ -852,7 +848,7 @@ pic2 <- res_meta[[5]] %>%
 pic <- pic1 + pic2 + plot_layout(guides = 'collect')
 
 ggsave(
-  filename = "./FIGURE/Fig7_cor_yi&trials.png",
+  filename = "./FIGURE/Fig8_cor_yi&trials.png",
   width = 10,
   height = 8,
 )
@@ -861,7 +857,7 @@ rm(pic1, pic2, pic)
 ```
 
 ```{r}
-spearman_cor <- res_meta[[5]] %>%
+spearman_cor <- plot[[8]] %>%
   dplyr::group_by(Target, Indice) %>%
   dplyr::summarise(cor = cor(Trials, yi, method = "spearman"))
 ```

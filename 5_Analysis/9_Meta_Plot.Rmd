@@ -12,6 +12,11 @@ out <- list(
 
 names(out)[1] <- "Self - Close"
 names(out)[2] <- "Self - Stranger"
+
+plot_forest <- list(
+  list(),
+  list()
+)
 ```
 
 # Close
@@ -67,7 +72,7 @@ names(out[[1]])[1] <- "RT"
 ```
 
 ```{r}
-ggplot2::ggplot(out[[1]][[1]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
+plot_forest[[1]][[1]] <- ggplot2::ggplot(out[[1]][[1]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   ggplot2::geom_linerange(aes(xmin = LLCI, xmax = ULCI), linewidth = 1.5) +
   ggplot2::geom_point(shape=15, size = 5) +
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
@@ -88,13 +93,13 @@ ggplot2::ggplot(out[[1]][[1]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
-  ggplot2::ggtitle("Meta-Analysis for RT (Self - Close)") +
+  ggplot2::ggtitle("(a)") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
                  axis.text.x.top = element_text(size = 20, family='serif'),
                  axis.text.x.bottom = element_text(size = 15, family='serif'),
                  axis.title.x = element_text(size = 20, hjust = 0.75),
-                 plot.title = element_text(size = 20, family = 'serif'),
+                 plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
                  axis.ticks.x.top = element_line(color = "transparent"), #消除坐标轴上刻度凸起
@@ -158,7 +163,7 @@ names(out[[1]])[2] <- "ACC"
 ```
 
 ```{r}
-ggplot2::ggplot(out[[1]][[2]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
+plot_forest[[1]][[2]] <- ggplot2::ggplot(out[[1]][[2]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   ggplot2::geom_linerange(aes(xmin = LLCI, xmax = ULCI), linewidth = 1.5) +
   ggplot2::geom_point(shape=15, size = 5) +
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
@@ -171,20 +176,20 @@ ggplot2::ggplot(out[[1]][[2]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
-  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", size = 3, alpha = 0.5) +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -3.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1.1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
   ggplot2::geom_text(aes(x = 3, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
-  ggplot2::ggtitle("Meta-Analysis for ACC (Self - Close)") +
+  ggplot2::ggtitle("(b)") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
                  axis.text.x.top = element_text(size = 20, family='serif'),
                  axis.text.x.bottom = element_text(size = 15, family='serif'),
                  axis.title.x = element_text(size = 20, hjust = 0.75),
-                 plot.title = element_text(size = 20, family = 'serif'),
+                 plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
                  axis.ticks.x.top = element_line(color = "transparent"), #消除坐标轴上刻度凸起
@@ -248,7 +253,7 @@ names(out[[1]])[3] <- "d"
 ```
 
 ```{r}
-ggplot2::ggplot(out[[1]][[3]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
+plot_forest[[1]][[3]] <- ggplot2::ggplot(out[[1]][[3]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   ggplot2::geom_linerange(aes(xmin = LLCI, xmax = ULCI), linewidth = 1.5) +
   ggplot2::geom_point(shape=15, size = 5) +
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
@@ -261,20 +266,20 @@ ggplot2::ggplot(out[[1]][[3]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
-  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", size = 3, alpha = 0.5) +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -2.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
   ggplot2::geom_text(aes(x = 1.5, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
-  ggplot2::ggtitle("Meta-Analysis for d (Self - Close)") +
+  ggplot2::ggtitle("(c)") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
                  axis.text.x.top = element_text(size = 20, family='serif'),
                  axis.text.x.bottom = element_text(size = 15, family='serif'),
                  axis.title.x = element_text(size = 20, hjust = 0.75),
-                 plot.title = element_text(size = 20, family = 'serif'),
+                 plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
                  axis.ticks.x.top = element_line(color = "transparent"), #消除坐标轴上刻度凸起
@@ -338,7 +343,7 @@ names(out[[1]])[4] <- "eta"
 ```
 
 ```{r}
-ggplot2::ggplot(out[[1]][[4]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
+plot_forest[[1]][[4]] <- ggplot2::ggplot(out[[1]][[4]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   ggplot2::geom_linerange(aes(xmin = LLCI, xmax = ULCI), linewidth = 1.5) +
   ggplot2::geom_point(shape=15, size = 5) +
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
@@ -351,20 +356,20 @@ ggplot2::ggplot(out[[1]][[4]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
-  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", size = 3, alpha = 0.5) +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -4.5, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1.3, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
   ggplot2::geom_text(aes(x = 3.7, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
-  ggplot2::ggtitle("Meta-Analysis for η (Self - Close)") +
+  ggplot2::ggtitle("(d)") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
                  axis.text.x.top = element_text(size = 20, family='serif'),
                  axis.text.x.bottom = element_text(size = 15, family='serif'),
                  axis.title.x = element_text(size = 20, hjust = 0.75),
-                 plot.title = element_text(size = 20, family = 'serif'),
+                 plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
                  axis.ticks.x.top = element_line(color = "transparent"), #消除坐标轴上刻度凸起
@@ -428,7 +433,7 @@ names(out[[1]])[5] <- "v"
 ```
 
 ```{r}
-ggplot2::ggplot(out[[1]][[5]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
+plot_forest[[1]][[5]] <- ggplot2::ggplot(out[[1]][[5]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   ggplot2::geom_linerange(aes(xmin = LLCI, xmax = ULCI), linewidth = 1.5) +
   ggplot2::geom_point(shape=15, size = 5) +
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
@@ -441,20 +446,20 @@ ggplot2::ggplot(out[[1]][[5]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
-  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", size = 3, alpha = 0.5) +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -2.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
   ggplot2::geom_text(aes(x = 2, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
-  ggplot2::ggtitle("Meta-Analysis for v (Self - Close)") +
+  ggplot2::ggtitle("(e)") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
                  axis.text.x.top = element_text(size = 20, family='serif'),
                  axis.text.x.bottom = element_text(size = 15, family='serif'),
                  axis.title.x = element_text(size = 20, hjust = 0.75),
-                 plot.title = element_text(size = 20, family = 'serif'),
+                 plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
                  axis.ticks.x.top = element_line(color = "transparent"), #消除坐标轴上刻度凸起
@@ -518,7 +523,7 @@ names(out[[1]])[6] <- "z"
 ```
 
 ```{r}
-ggplot2::ggplot(out[[1]][[6]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
+plot_forest[[1]][[6]] <- ggplot2::ggplot(out[[1]][[6]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   ggplot2::geom_linerange(aes(xmin = LLCI, xmax = ULCI), linewidth = 1.5) +
   ggplot2::geom_point(shape=15, size = 5) +
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
@@ -531,20 +536,20 @@ ggplot2::ggplot(out[[1]][[6]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
-  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", size = 3, alpha = 0.5) +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -2.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
   ggplot2::geom_text(aes(x = 1.2, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
-  ggplot2::ggtitle("Meta-Analysis for z (Self - Close)") +
+  ggplot2::ggtitle("(f)") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
                  axis.text.x.top = element_text(size = 20, family='serif'),
                  axis.text.x.bottom = element_text(size = 15, family='serif'),
                  axis.title.x = element_text(size = 20, hjust = 0.75),
-                 plot.title = element_text(size = 20, family = 'serif'),
+                 plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
                  axis.ticks.x.top = element_line(color = "transparent"), #消除坐标轴上刻度凸起
@@ -609,7 +614,7 @@ names(out[[2]])[1] <- "RT"
 ```
 
 ```{r}
-ggplot2::ggplot(out[[2]][[1]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
+plot_forest[[2]][[1]] <- ggplot2::ggplot(out[[2]][[1]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   ggplot2::geom_linerange(aes(xmin = LLCI, xmax = ULCI), linewidth = 1.5) +
   ggplot2::geom_point(shape=15, size = 5) +
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
@@ -630,13 +635,13 @@ ggplot2::ggplot(out[[2]][[1]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
-  ggplot2::ggtitle("Meta-Analysis for RT (Self - Stranger)") +
+  ggplot2::ggtitle("(g)") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
                  axis.text.x.top = element_text(size = 20, family='serif'),
                  axis.text.x.bottom = element_text(size = 15, family='serif'),
                  axis.title.x = element_text(size = 20, hjust = 0.75),
-                 plot.title = element_text(size = 20, family = 'serif'),
+                 plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
                  axis.ticks.x.top = element_line(color = "transparent"), #消除坐标轴上刻度凸起
@@ -700,7 +705,7 @@ names(out[[2]])[2] <- "ACC"
 ```
 
 ```{r}
-ggplot2::ggplot(out[[2]][[2]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
+plot_forest[[2]][[2]] <- ggplot2::ggplot(out[[2]][[2]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   ggplot2::geom_linerange(aes(xmin = LLCI, xmax = ULCI), linewidth = 1.5) +
   ggplot2::geom_point(shape=15, size = 5) +
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
@@ -713,20 +718,20 @@ ggplot2::ggplot(out[[2]][[2]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
-  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", size = 3, alpha = 0.5) +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -3.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1.1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
   ggplot2::geom_text(aes(x = 3.1, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
-  ggplot2::ggtitle("Meta-Analysis for ACC (Self - Stranger)") +
+  ggplot2::ggtitle("(h)") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
                  axis.text.x.top = element_text(size = 20, family='serif'),
                  axis.text.x.bottom = element_text(size = 15, family='serif'),
                  axis.title.x = element_text(size = 20, hjust = 0.75),
-                 plot.title = element_text(size = 20, family = 'serif'),
+                 plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
                  axis.ticks.x.top = element_line(color = "transparent"), #消除坐标轴上刻度凸起
@@ -790,7 +795,7 @@ names(out[[2]])[3] <- "d"
 ```
 
 ```{r}
-ggplot2::ggplot(out[[2]][[3]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
+plot_forest[[2]][[3]] <- ggplot2::ggplot(out[[2]][[3]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   ggplot2::geom_linerange(aes(xmin = LLCI, xmax = ULCI), linewidth = 1.5) +
   ggplot2::geom_point(shape=15, size = 5) +
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
@@ -803,20 +808,20 @@ ggplot2::ggplot(out[[2]][[3]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
-  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", size = 3, alpha = 0.5) +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -2.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
   ggplot2::geom_text(aes(x = 1.5, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
-  ggplot2::ggtitle("Meta-Analysis for d (Self - Stranger)") +
+  ggplot2::ggtitle("(i)") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
                  axis.text.x.top = element_text(size = 20, family='serif'),
                  axis.text.x.bottom = element_text(size = 15, family='serif'),
                  axis.title.x = element_text(size = 20, hjust = 0.75),
-                 plot.title = element_text(size = 20, family = 'serif'),
+                 plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
                  axis.ticks.x.top = element_line(color = "transparent"), #消除坐标轴上刻度凸起
@@ -880,7 +885,7 @@ names(out[[2]])[4] <- "eta"
 ```
 
 ```{r}
-ggplot2::ggplot(out[[2]][[4]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
+plot_forest[[2]][[4]] <- ggplot2::ggplot(out[[2]][[4]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   ggplot2::geom_linerange(aes(xmin = LLCI, xmax = ULCI), linewidth = 1.5) +
   ggplot2::geom_point(shape=15, size = 5) +
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
@@ -893,20 +898,20 @@ ggplot2::ggplot(out[[2]][[4]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
-  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", size = 3, alpha = 0.5) +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -4.7, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1.3, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
   ggplot2::geom_text(aes(x = 5, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
-  ggplot2::ggtitle("Meta-Analysis for η (Self - Stranger)") +
+  ggplot2::ggtitle("(j)") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
                  axis.text.x.top = element_text(size = 20, family='serif'),
                  axis.text.x.bottom = element_text(size = 15, family='serif'),
                  axis.title.x = element_text(size = 20, hjust = 0.75),
-                 plot.title = element_text(size = 20, family = 'serif'),
+                 plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
                  axis.ticks.x.top = element_line(color = "transparent"), #消除坐标轴上刻度凸起
@@ -970,7 +975,7 @@ names(out[[2]])[5] <- "v"
 ```
 
 ```{r}
-ggplot2::ggplot(out[[2]][[5]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
+plot_forest[[2]][[5]] <- ggplot2::ggplot(out[[2]][[5]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   ggplot2::geom_linerange(aes(xmin = LLCI, xmax = ULCI), linewidth = 1.5) +
   ggplot2::geom_point(shape=15, size = 5) +
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
@@ -983,20 +988,20 @@ ggplot2::ggplot(out[[2]][[5]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
-  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", size = 3, alpha = 0.5) +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -2.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
   ggplot2::geom_text(aes(x = 1.5, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
-  ggplot2::ggtitle("Meta-Analysis for v (Self - Stranger)") +
+  ggplot2::ggtitle("(k)") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
                  axis.text.x.top = element_text(size = 20, family='serif'),
                  axis.text.x.bottom = element_text(size = 15, family='serif'),
                  axis.title.x = element_text(size = 20, hjust = 0.75),
-                 plot.title = element_text(size = 20, family = 'serif'),
+                 plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
                  axis.ticks.x.top = element_line(color = "transparent"), #消除坐标轴上刻度凸起
@@ -1060,7 +1065,7 @@ names(out[[2]])[6] <- "z"
 ```
 
 ```{r}
-ggplot2::ggplot(out[[2]][[6]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
+plot_forest[[2]][[6]] <- ggplot2::ggplot(out[[2]][[6]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
   ggplot2::geom_linerange(aes(xmin = LLCI, xmax = ULCI), linewidth = 1.5) +
   ggplot2::geom_point(shape=15, size = 5) +
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
@@ -1073,20 +1078,20 @@ ggplot2::ggplot(out[[2]][[6]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
-  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", size = 3, alpha = 0.5) +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -2.8, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1.2, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
   ggplot2::geom_text(aes(x = 1, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
-  ggplot2::ggtitle("Meta-Analysis for z (Self - Stranger)") +
+  ggplot2::ggtitle("(l)") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
                  axis.text.x.top = element_text(size = 20, family='serif'),
                  axis.text.x.bottom = element_text(size = 15, family='serif'),
                  axis.title.x = element_text(size = 20, hjust = 0.75),
-                 plot.title = element_text(size = 20, family = 'serif'),
+                 plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
                  axis.ticks.x.top = element_line(color = "transparent"), #消除坐标轴上刻度凸起
@@ -1098,5 +1103,42 @@ ggplot2::ggplot(out[[2]][[6]], aes(x = yi_r , y = reorder(Unique_ID, Order))) +
 ggsave(filename = "./FIGURE/Forest_Stranger_z.png", width = 16, height = 9, limitsize = FALSE)
 ```
 
+# Combine
+```{r}
+temp_p <- plot_forest[[1]][[1]] + plot_forest[[2]][[1]] +
+  plot_layout(guides = 'collect', ncol = 1)
 
+ggsave(
+  plot = last_plot(),
+  filename = "./FIGURE/Forest_RT.png",
+  width = 16, height = 18, 
+  limitsize = FALSE
+)
 
+rm(temp_p)
+```
+
+```{r}
+temp_p <- plot_forest[[1]][[1]] + 
+  plot_forest[[1]][[2]] +
+  plot_forest[[1]][[3]] +
+  plot_forest[[1]][[4]] +
+  plot_forest[[1]][[5]] +
+  plot_forest[[1]][[6]] +
+  plot_forest[[2]][[1]] +
+  plot_forest[[2]][[2]] +
+  plot_forest[[2]][[3]] +
+  plot_forest[[2]][[4]] +
+  plot_forest[[2]][[5]] +
+  plot_forest[[2]][[6]] +
+  plot_layout(guides = 'collect', ncol = 3)
+
+ggsave(
+  plot = last_plot(),
+  filename = "./FIGURE/Forest_Supp.png",
+  width = 48, height = 36, 
+  limitsize = FALSE
+)
+
+rm(temp_p)
+```

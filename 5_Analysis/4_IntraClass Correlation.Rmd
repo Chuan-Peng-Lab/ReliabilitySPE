@@ -6,10 +6,12 @@ output: html_document
 ---
 # Create NULL list
 ```{r ICC List}
+# You can use iccl caculate ICC with psycho::ICC
 iccl <- list(list(), list())
 names(iccl)[1] <- "Self - Friend"
 names(iccl)[2] <- "Self - Stranger"
 
+# You can use iccl_ReX caculate ICC with ReX::lme_ICC_2wayR
 iccl_ReX <- list(list(), list())
 names(iccl_ReX)[1] <- "Self - Friend"
 names(iccl_ReX)[2] <- "Self - Stranger"
@@ -18,7 +20,17 @@ res[[3]] <- list()
 names(res)[3] <- "ICC"
 ```
 
+# Sub_Infor
+```{r}
+df_Sub_Infor <- read.csv(
+  file = "./DATA/Sub_Info.csv"
+) %>%
+  dplyr::mutate(BDI = as.numeric(BDI)) %>%
+  dplyr::select(Subject, BDI)
+```
+
 # ICC: Self - Friend
+## df
 ```{r Self - Friend}
 df_rt <- yukiBP::icc(df = df[[1]], Indice = "rt", Target = "Friend")
 df_acc <- yukiBP::icc(df = df[[1]], Indice = "acc", Target = "Friend")
@@ -47,15 +59,9 @@ names(iccl[[1]])[8] <- "z(RWiener)"
 rm(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz, df_ezddm, df_rwddm)
 ```
 
+## ReX_ICC
 ```{r}
-df_Sub_Infor <- read.csv(
-  file = "./DATA/Sub_Info.csv"
-) %>%
-  dplyr::mutate(BDI = as.numeric(BDI)) %>%
-  dplyr::select(Subject, BDI)
-```
-
-```{r}
+################################### DF #########################################
 for (i in 1:length(iccl[[1]])) {
   iccl_ReX[[1]][[i]] <- iccl[[1]][[i]] %>%
     dplyr::mutate(
@@ -85,6 +91,9 @@ for (i in 1:length(iccl[[1]])) {
     ) %>%
     dplyr::left_join(df_Sub_Infor, by = "Subject")
 }
+################################### DF #########################################
+
+################################CORE CODES######################################
 temp <- base::do.call(data.frame, iccl_ReX[[1]]) %>%
   dplyr::select(
     Subject, Session, BDI,
@@ -93,12 +102,6 @@ temp <- base::do.call(data.frame, iccl_ReX[[1]]) %>%
     v.hausekeep., z.hausekeep.,
     v.RWiener., z.RWiener.
   ) 
-
-write.csv(
-  x = temp,
-  file = "./OUTPUT/df_icc_Friend.csv",
-  row.names = FALSE
-)
 
 res[[3]][[1]] <- data.frame(
   ReX::lme_ICC_2wayR(
@@ -109,18 +112,34 @@ res[[3]][[1]] <- data.frame(
   )
 )
 
-rm(temp)
+names(res[[3]])[1] <- "ReX_ICC: Self - Close"
+################################CORE CODES######################################
+
+
+################################   SAVE   ######################################
+write.csv(
+  x = temp,
+  file = "./OUTPUT/df_icc_Friend.csv",
+  row.names = FALSE
+)
+
 
 write.csv(
   x = res[[3]][[1]],
   "./OUTPUT/icc_ReX_P0E1_Friend.csv",
   row.names = TRUE
 )
+################################   SAVE   ######################################
+
+rm(temp)
 ```
 
 
-
+################################################################################
 --------------------------------------------------------------------------------
+################################################################################
+
+
 
 # ICC: Self - Stranger
 ```{r Self - Stranger}
@@ -136,6 +155,7 @@ df_rwddmv <- df_rwddm[[1]]
 df_rwddmz <- df_rwddm[[2]]
 ```
 
+## df
 ```{r DF for Plot ICC}
 iccl[[2]] <- list(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz) # nolint
 
@@ -151,7 +171,9 @@ names(iccl[[2]])[8] <- "z(RWiener)"
 rm(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
 ```
 
+## ReX_ICC
 ```{r}
+################################### DF #########################################
 for (i in 1:length(iccl[[2]])) {
   iccl_ReX[[2]][[i]] <- iccl[[2]][[i]] %>%
     dplyr::mutate(
@@ -181,6 +203,9 @@ for (i in 1:length(iccl[[2]])) {
     ) %>%
     dplyr::left_join(df_Sub_Infor, by = "Subject")
 }
+################################### DF #########################################
+
+################################CORE CODES######################################
 temp <- base::do.call(data.frame, iccl_ReX[[2]]) %>%
   dplyr::select(
     Subject, Session, BDI,
@@ -189,12 +214,6 @@ temp <- base::do.call(data.frame, iccl_ReX[[2]]) %>%
     v.hausekeep., z.hausekeep.,
     v.RWiener., z.RWiener.
   ) 
-
-write.csv(
-  x = temp,
-  file = "./OUTPUT/df_icc_Stranger.csv",
-  row.names = FALSE
-)
 
 res[[3]][[2]] <- data.frame(
   ReX::lme_ICC_2wayR(
@@ -205,11 +224,22 @@ res[[3]][[2]] <- data.frame(
   )
 )
 
-rm(temp)
+names(res[[3]])[2] <- "ReX_ICC: Self - Stranger"
+################################CORE CODES######################################
+
+################################   SAVE   ######################################
+write.csv(
+  x = temp,
+  file = "./OUTPUT/df_icc_Stranger.csv",
+  row.names = FALSE
+)
 
 write.csv(
   x = res[[3]][[2]],
   "./OUTPUT/icc_ReX_P0E1_Stranger.csv",
   row.names = TRUE
 )
+################################   SAVE   ######################################
+
+rm(temp)
 ```

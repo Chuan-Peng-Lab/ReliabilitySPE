@@ -1,0 +1,678 @@
+---
+title: "8_Meta"
+author: "yuki"
+date: "2023-08-24"
+output: html_document
+---
+# Meta Analysis
+```{r List for Paper ID}
+p <- list()
+p[[1]] <- "P0E1"
+p[[2]] <- "P6E1"
+p[[3]] <- "P46E2"
+p[[4]] <- "P51E1"
+p[[5]] <- "P51E2"
+p[[6]] <- "P54E1"
+p[[7]] <- "P54E3"
+p[[8]] <- "Pn4E1"
+p[[9]] <- "Pn13E1"
+p[[10]] <- "Pn13E3"
+p[[11]] <- "Pn13E4"
+p[[12]] <- "Pn16E1"
+p[[13]] <- "Pn16E2"
+p[[14]] <- "Pn16E3"
+p[[15]] <- "Pn23E1"
+p[[16]] <- "P95E1"
+p[[17]] <- "P95E2"
+p[[18]] <- "Ps1E1"
+p[[19]] <- "Ps2E1"
+p[[20]] <- "Ps3E1"
+p[[21]] <- "Ps4E1"
+p[[22]] <- "Ps4E2"
+```
+
+```{r}
+raw_meta <- list()
+for (i in 1:18) {
+  raw_meta[[i]] <- list()
+}
+```
+
+```{r, message=FALSE}
+for (i in 1:18) {
+  raw_meta[[i]][[1]] <-yukiBP::df(df = df[[i]], i = i, Indice = "rt")
+  raw_meta[[i]][[2]] <-yukiBP::df(df = df[[i]], i = i, Indice = "acc")
+  raw_meta[[i]][[3]] <-yukiBP::df(df = df[[i]], i = i, Indice = "dp")
+  raw_meta[[i]][[4]] <-yukiBP::df(df = df[[i]], i = i, Indice = "eta")
+  raw_meta[[i]][[5]] <-yukiBP::df(df = df[[i]], i = i, Indice = "ezddm")
+  raw_meta[[i]][[6]] <-yukiBP::df(df = df[[i]], i = i, Indice = "rwddm")
+  
+  raw_meta[[i]] <- base::Reduce(
+    function(x, y)
+      left_join(x, y, by = c("Identity", "Paper_ID")),
+    raw_meta[[i]]
+  )
+}
+
+raw_meta <- bind_rows(raw_meta)
+```
+
+```{r Raw Meta Data}
+df_meta <- list()
+df_meta[[1]] <- raw_meta %>%
+  dplyr::filter(
+    # 被认为是在原范式上有较大修改(4 session 4 mood)
+    !(Paper_ID %in% c("P51E1")) 
+  ) 
+
+rm(raw_meta)
+names(df_meta)[1] <- "Raw Meta Data"
+```
+
+```{r Convert Identity to STD}
+df_meta[[2]] <- df_meta[[1]] %>%
+  dplyr::mutate(
+    Identity = case_when(
+      Identity == "Self" ~ "Self",
+      Identity == "Friend" ~ "Close",
+      Identity == "Partner" ~ "Close",
+      Identity == "Mother" ~ "Close",
+      Identity == "Father" ~ "Close",
+      Identity == "Acquaintance" ~ "Stranger",
+      Identity == "Stranger" ~ "Stranger",
+      Identity == "Celebrity" ~ "Celebrity",
+      Identity == "none" ~ "NonPerson",
+    )
+  ) %>%
+  dplyr::rename(
+    ez_v_mean = v_mean.x,
+    ez_v_sd = v_sd.x,
+    ez_z_mean = z_mean.x,
+    ez_z_sd = z_sd.x,
+    rw_v_mean = v_mean.y,
+    rw_v_sd = v_sd.y,
+    rw_z_mean = z_mean.y,
+    rw_z_sd = z_sd.y,
+  )
+
+names(df_meta)[2] <- "Convert Identity to STD"
+```
+
+```{r Self - Close}
+df_meta[[3]] <- df_meta[[2]] %>%
+  dplyr::filter(
+    Identity %in% c("Self", "Close")
+  ) %>%
+  tidyr::pivot_wider(
+    id_cols = Paper_ID,
+    names_from = Identity,
+    values_from = c(
+      RT_mean, RT_sd,
+      ACC_mean, ACC_sd,
+      d_mean, d_sd,
+      eta_mean, eta_sd,
+      ez_v_mean , ez_v_sd,
+      ez_z_mean, ez_z_sd,
+      rw_v_mean, rw_v_sd,
+      rw_z_mean, rw_z_sd,
+    ),
+    names_glue = "{.value}_{Identity}"
+  ) %>%
+  tidyr::drop_na(
+    
+  ) %>%
+  dplyr::left_join(
+    desc[[1]], by = "Paper_ID"
+  ) %>%
+  dplyr::mutate(
+    ri = 0.7
+  )
+
+names(df_meta)[3] <- "Self - Close"
+```
+
+```{r Self - Stranger}
+df_meta[[4]] <- df_meta[[2]] %>%
+  dplyr::filter(
+    Identity %in% c("Self", "Stranger")
+  ) %>%
+  tidyr::pivot_wider(
+    id_cols = Paper_ID,
+    names_from = Identity,
+    values_from = c(
+      RT_mean, RT_sd,
+      ACC_mean, ACC_sd,
+      d_mean, d_sd,
+      eta_mean, eta_sd,
+      ez_v_mean , ez_v_sd,
+      ez_z_mean, ez_z_sd,
+      rw_v_mean, rw_v_sd,
+      rw_z_mean, rw_z_sd,
+    ),
+    names_glue = "{.value}_{Identity}"
+  ) %>%
+  tidyr::drop_na(
+    
+  ) %>%
+  dplyr::left_join(
+    desc[[1]], by = "Paper_ID"
+  ) %>%
+  dplyr::mutate(
+    ri = 0.7
+  )
+
+names(df_meta)[4] <- "Self - Stranger"
+```
+
+```{r res_meta}
+res_meta <- list(
+  list(),
+  list()
+)
+
+res_meta[[1]] <- list()
+res_meta[[2]] <- list()
+
+df_meta[[5]] <- list(
+  list(),
+  list()
+)
+```
+
+## Close
+
+```{r}
+res_meta[[1]][[1]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = RT_mean_Self,
+  m2i = RT_mean_Close,
+  sd1i = RT_sd_Self,
+  sd2i = RT_sd_Close,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[3]]
+) %>%
+  dplyr::mutate(
+    Indice = "RT",
+    Target = "Close"
+  )
+
+names(res_meta[[1]])[1] <- "Meta for RT"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[1]][[1]])
+)
+df_meta[[5]][[1]][[1]] <- data.frame(Indice = "RT",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[1]][[1]])
+```
+
+```{r}
+res_meta[[1]][[2]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = ACC_mean_Self,
+  m2i = ACC_mean_Close,
+  sd1i = ACC_sd_Self,
+  sd2i = ACC_sd_Close,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[3]]
+) %>%
+  dplyr::mutate(
+    Indice = "ACC",
+    Target = "Close"
+  )
+
+names(res_meta[[1]])[2] <- "Meta for ACC"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[1]][[2]])
+)
+df_meta[[5]][[1]][[2]] <- data.frame(Indice = "ACC",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[1]][[2]])
+```
+
+```{r}
+res_meta[[1]][[3]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = d_mean_Self,
+  m2i = d_mean_Close,
+  sd1i = d_sd_Self,
+  sd2i = d_sd_Close,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[3]]
+) %>%
+  dplyr::mutate(
+    Indice = "d",
+    Target = "Close"
+  )
+
+names(res_meta[[1]])[3] <- "Meta for d"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[1]][[3]])
+)
+df_meta[[5]][[1]][[3]] <- data.frame(Indice = "d",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[1]][[3]])
+```
+
+```{r}
+res_meta[[1]][[4]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = eta_mean_Self,
+  m2i = eta_mean_Close,
+  sd1i = eta_sd_Self,
+  sd2i = eta_sd_Close,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[3]]
+) %>%
+  dplyr::mutate(
+    Indice = "eta",
+    Target = "Close"
+  )
+
+names(res_meta[[1]])[4] <- "Meta for eta"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[1]][[4]])
+)
+df_meta[[5]][[1]][[4]] <- data.frame(Indice = "eta",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[1]][[4]])
+```
+
+```{r}
+res_meta[[1]][[5]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = ez_v_mean_Self,
+  m2i = ez_v_mean_Close,
+  sd1i = ez_v_sd_Self,
+  sd2i = ez_v_sd_Close,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[3]]
+) %>%
+  dplyr::mutate(
+    Indice = "ezDDM v",
+    Target = "Close"
+  )
+
+names(res_meta[[1]])[5] <- "Meta for ezDDM v"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[1]][[5]])
+)
+df_meta[[5]][[1]][[5]] <- data.frame(Indice = "ezDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[1]][[5]])
+```
+
+```{r}
+res_meta[[1]][[6]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = ez_z_mean_Self,
+  m2i = ez_z_mean_Close,
+  sd1i = ez_z_sd_Self,
+  sd2i = ez_z_sd_Close,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[3]]
+) %>%
+  dplyr::mutate(
+    Indice = "ezDDM z",
+    Target = "Close"
+  )
+
+names(res_meta[[1]])[6] <- "Meta for ezDDM z"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[1]][[6]])
+)
+df_meta[[5]][[1]][[6]] <- data.frame(Indice = "ezDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[1]][[6]])
+```
+
+```{r}
+res_meta[[1]][[7]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = rw_v_mean_Self,
+  m2i = rw_v_mean_Close,
+  sd1i = rw_v_sd_Self,
+  sd2i = rw_v_sd_Close,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[3]]
+) %>%
+  dplyr::mutate(
+    Indice = "rwDDM v",
+    Target = "Close"
+  )
+
+names(res_meta[[1]])[7] <- "Meta for rwDDM v"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[1]][[7]])
+)
+df_meta[[5]][[1]][[7]] <- data.frame(Indice = "rwDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[1]][[7]])
+```
+
+```{r}
+res_meta[[1]][[8]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = rw_z_mean_Self,
+  m2i = rw_z_mean_Close,
+  sd1i = rw_z_sd_Self,
+  sd2i = rw_z_sd_Close,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[3]]
+) %>%
+  dplyr::mutate(
+    Indice = "rwDDM z",
+    Target = "Close"
+  )
+
+names(res_meta[[1]])[8] <- "Meta for rwDDM z"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[1]][[8]])
+)
+df_meta[[5]][[1]][[8]] <- data.frame(Indice = "rwDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[1]][[8]])
+```
+
+## Stranger
+```{r}
+res_meta[[2]][[1]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = RT_mean_Self,
+  m2i = RT_mean_Stranger,
+  sd1i = RT_sd_Self,
+  sd2i = RT_sd_Stranger,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[4]]
+) %>%
+  dplyr::mutate(
+    Indice = "RT",
+    Target = "Stranger"
+  )
+
+names(res_meta[[2]])[1] <- "Meta for RT"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[2]][[1]])
+)
+df_meta[[5]][[2]][[1]] <- data.frame(Indice = "RT",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[2]][[1]])
+```
+
+```{r}
+res_meta[[2]][[2]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = ACC_mean_Self,
+  m2i = ACC_mean_Stranger,
+  sd1i = ACC_sd_Self,
+  sd2i = ACC_sd_Stranger,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[4]]
+) %>%
+  dplyr::mutate(
+    Indice = "ACC",
+    Target = "Stranger"
+  )
+
+names(res_meta[[2]])[2] <- "Meta for ACC"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[2]][[2]])
+)
+df_meta[[5]][[2]][[2]] <- data.frame(Indice = "ACC",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[2]][[2]])
+```
+
+```{r}
+res_meta[[2]][[3]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = d_mean_Self,
+  m2i = d_mean_Stranger,
+  sd1i = d_sd_Self,
+  sd2i = d_sd_Stranger,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[4]]
+) %>%
+  dplyr::mutate(
+    Indice = "d",
+    Target = "Stranger"
+  )
+
+names(res_meta[[2]])[3] <- "Meta for d"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[2]][[3]])
+)
+df_meta[[5]][[2]][[3]] <- data.frame(Indice = "d",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[2]][[3]])
+```
+
+```{r}
+res_meta[[2]][[4]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = eta_mean_Self,
+  m2i = eta_mean_Stranger,
+  sd1i = eta_sd_Self,
+  sd2i = eta_sd_Stranger,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[4]]
+) %>%
+  dplyr::mutate(
+    Indice = "eta",
+    Target = "Stranger"
+  )
+
+names(res_meta[[2]])[4] <- "Meta for eta"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[2]][[4]])
+)
+df_meta[[5]][[2]][[4]] <- data.frame(Indice = "eta",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[2]][[4]])
+```
+
+```{r}
+res_meta[[2]][[5]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = ez_v_mean_Self,
+  m2i = ez_v_mean_Stranger,
+  sd1i = ez_v_sd_Self,
+  sd2i = ez_v_sd_Stranger,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[4]]
+) %>%
+  dplyr::mutate(
+    Indice = "ezDDM v",
+    Target = "Stranger"
+  )
+
+names(res_meta[[2]])[5] <- "Meta for ezDDM v"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[2]][[5]])
+)
+df_meta[[5]][[2]][[5]] <- data.frame(Indice = "ezDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[2]][[5]])
+```
+
+```{r}
+res_meta[[2]][[6]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = ez_z_mean_Self,
+  m2i = ez_z_mean_Stranger,
+  sd1i = ez_z_sd_Self,
+  sd2i = ez_z_sd_Stranger,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[4]]
+) %>%
+  dplyr::mutate(
+    Indice = "ezDDM z",
+    Target = "Stranger"
+  )
+
+names(res_meta[[2]])[6] <- "Meta for z"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[2]][[6]])
+)
+df_meta[[5]][[2]][[6]] <- data.frame(Indice = "z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[2]][[6]])
+```
+
+```{r}
+res_meta[[2]][[7]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = rw_v_mean_Self,
+  m2i = rw_v_mean_Stranger,
+  sd1i = rw_v_sd_Self,
+  sd2i = rw_v_sd_Stranger,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[4]]
+) %>%
+  dplyr::mutate(
+    Indice = "rwDDM v",
+    Target = "Stranger"
+  )
+
+names(res_meta[[2]])[7] <- "Meta for ezDDM v"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[2]][[7]])
+)
+df_meta[[5]][[2]][[7]] <- data.frame(Indice = "ezDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[2]][[7]])
+```
+
+```{r}
+res_meta[[2]][[8]] <- metafor::escalc(
+  measure = "SMCRH",
+  m1i = rw_z_mean_Self,
+  m2i = rw_z_mean_Stranger,
+  sd1i = rw_z_sd_Self,
+  sd2i = rw_z_sd_Stranger,
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[4]]
+) %>%
+  dplyr::mutate(
+    Indice = "rwDDM z",
+    Target = "Stranger"
+  )
+
+names(res_meta[[2]])[8] <- "Meta for rwDDM z"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[2]][[8]])
+)
+df_meta[[5]][[2]][[8]] <- data.frame(Indice = "rwDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
+rm(prd)
+
+metafor::rma(yi, vi, data = res_meta[[2]][[8]])
+```
+
+
+```{r}
+df_meta[[6]] <- list(list(), list())
+
+df_meta[[6]][[1]] <- dplyr::bind_rows(
+  df_meta[[5]][[1]]
+)
+
+df_meta[[6]][[2]] <- dplyr::bind_rows(
+  df_meta[[5]][[2]]
+)
+
+
+names(df_meta)[5] <- "Process of Meta Analysis"
+names(df_meta)[6] <- "Result of Meta Analysis"
+
+names(df_meta[[6]])[1] <- "Self - Close"
+names(df_meta[[6]])[2] <- "Self - Stranger"
+
+write.csv(x = df_meta[[6]][[1]], file = "./OUTPUT/meta/meta_close.csv")
+write.csv(x = df_meta[[6]][[2]], file = "./OUTPUT/meta/meta_stranger.csv")
+```
+
+```{r}
+res_meta[[3]] <- dplyr::bind_rows(
+  res_meta[[1]]
+) %>%
+  dplyr::select(
+    Target,
+    Indice,
+    Paper_ID,
+    yi,
+  ) %>%
+  dplyr::left_join(
+    desc[[1]],
+    by = "Paper_ID"
+  )
+
+res_meta[[4]] <- dplyr::bind_rows(
+  res_meta[[2]]
+) %>%
+  dplyr::select(
+    Target,
+    Indice,
+    Paper_ID,
+    yi,
+  ) %>%
+  dplyr::left_join(
+    desc[[1]],
+    by = "Paper_ID"
+  )
+
+write.csv(
+  x = res_meta[[3]],
+  file = "./OUTPUT/meta/meta_close_FEP.csv"
+)
+write.csv(
+  x = res_meta[[4]],
+  file = "./OUTPUT/meta/meta_stranger_FEP.csv"
+)
+```
+
