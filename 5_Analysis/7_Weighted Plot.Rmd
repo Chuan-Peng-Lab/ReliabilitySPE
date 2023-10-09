@@ -283,7 +283,7 @@ p1 <- meta[[1]] %>%
   ggplot2::geom_text(aes(y = -1.5, x = reorder(Target_Indice, Order), label = Target_Indice),
                      hjust = 0, size = 4, family='serif',) + # 
   #ggplot2::facet_wrap(~Method, ncol = 1) +
-  ggplot2::ggtitle("(a)") +
+  ggplot2::ggtitle("(a) First-Second Split-half") +
   ggplot2::labs(y = "", x = "") +
   #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
   papaja::theme_apa() +
@@ -320,7 +320,7 @@ p2 <- meta[[1]] %>%
   ggplot2::geom_text(aes(y = -1.5, x = reorder(Target_Indice, Order), label = Target_Indice),
                      hjust = 0, size = 4, family='serif',) + # 
   #ggplot2::facet_wrap(~Method, ncol = 1) +
-  ggplot2::ggtitle("(b)") +
+  ggplot2::ggtitle("(b) Odd-Even Split-half") +
   ggplot2::labs(y = "", x = "") +
   #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
   papaja::theme_apa() +
@@ -357,7 +357,7 @@ p3 <- meta[[1]] %>%
   ggplot2::geom_text(aes(y = -1.5, x = reorder(Target_Indice, Order), label = Target_Indice),
                      hjust = 0, size = 4, family='serif',) + # 
   #ggplot2::facet_wrap(~Method, ncol = 1) +
-  ggplot2::ggtitle("(c)") +
+  ggplot2::ggtitle("(c) Permuted Split-half") +
   ggplot2::labs(y = "", x = "") +
   #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
   papaja::theme_apa() +
@@ -393,7 +393,7 @@ p4 <- meta[[2]] %>%
   ggplot2::geom_text(aes(y = -1.5, x = reorder(Target_Indice, Order), label = Target_Indice),
                      hjust = 0, size = 4, family='serif',) + # 
   #ggplot2::facet_wrap(~Method, ncol = 1) +
-  ggplot2::ggtitle("(d)") +
+  ggplot2::ggtitle("(d) Monte Carlo Split-half") +
   ggplot2::labs(y = "", x = "") +
   #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
   papaja::theme_apa() +
