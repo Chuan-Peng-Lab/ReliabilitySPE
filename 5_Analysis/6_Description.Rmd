@@ -1,0 +1,175 @@
+---
+title: "6_Description"
+author: "yuki"
+date: "2023-07-07"
+output: html_document
+---
+```{r}
+library(bruceR)
+library(utils)
+```
+
+```{r}
+desc <- list()
+```
+
+# Label
+```{r}
+desc[[1]] <- readxl::read_excel("./Label.xlsx") %>%
+  dplyr::select(Paper_ID, Sample_Size, Trials, Author, Year, Study)
+names(desc)[1] <- "Label"
+```
+
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+
+# nmshr
+```{r}
+# Trial number of each df
+trial_num <- list()
+for (i in 1:18) {
+  temp <- df[[i]] %>%
+    dplyr::group_by(Subject, Matching, Identity, Session) %>%
+    dplyr::summarise(n = n())
+
+  trial_num[[i]] <- max(temp$n)
+}
+desc[[2]] <- trial_num
+names(desc)[2] <- "Number of Trial"
+rm(trial_num)
+
+# Subject number of each df
+sub_num <- list()
+for (i in 1:18) {
+  temp <- df[[i]] %>%
+    dplyr::distinct(Subject) %>%
+    dplyr::summarise(n = n())
+
+  sub_num[[i]] <- max(temp$n)
+}
+desc[[3]] <- sub_num
+names(desc)[3] <- "Number of Subject"
+rm(sub_num)
+
+rm(temp, i)
+```
+
+```{r}
+desc[[4]] <- plot[[1]] %>%
+  dplyr::filter(Target == "Close" | Target == "Stranger") %>%
+  dplyr::group_by(Target, Indice, Method) %>%
+  dplyr::summarise(mean_r = mean(r),
+                   sd_r = sd(r)) 
+names(desc)[4] <- "nmshr Description"
+```
+
+```{r}
+temp <- plot[[1]] %>%
+  dplyr::filter(Target == "Close" | Target == "Stranger") %>%
+  dplyr::mutate(Target = factor(Target, levels = c("Close", "Stranger"))) %>%
+  base::split(.$Indice) 
+
+for (i in 1:length(temp)) {
+  output <- utils::capture.output({
+    bruceR::TTEST(data = temp[[i]],
+                  x = "Target",
+                  y = "r")
+  })
+  path <- paste0("./OUTPUT/TTEST/", names(temp[i]), ".md")
+  writeLines(output, path)
+}
+
+rm(temp, i, path)
+```
+
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+
+# mcshr
+```{r}
+desc[[5]] <- plot[[2]] %>%
+  dplyr::filter(Target == "Close" | Target == "Stranger") %>%
+  dplyr::group_by(Target, Indice) %>%
+  dplyr::summarise(mean_r = mean(r),
+                   mean_LLCI = mean(LLCI),
+                   mean_ULCI = mean(ULCI)) 
+names(desc)[5] <- "mcshr Description"
+```
+
+```{r}
+temp <- plot[[2]] %>%
+  dplyr::filter(Target == "Close" | Target == "Stranger") %>%
+  dplyr::mutate(Target = factor(Target, levels = c("Close", "Stranger"))) %>%
+  base::split(.$Indice) 
+
+for (i in 1:length(temp)) {
+  output <- utils::capture.output({
+    bruceR::TTEST(data = temp[[i]],
+                  x = "Target",
+                  y = "r")
+  })
+  path <- paste0("./OUTPUT/TTEST/", names(temp[i]), ".md")
+  writeLines(output, path)
+}
+
+rm(temp, i, path)
+```
+
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+
+# ICC
+```{r}
+desc[[6]] <- plot[[3]] 
+names(desc)[6] <- "ICC Description"
+```
+
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+# Trials
+```{r}
+options(scipen = 999)
+desc[[7]] <- plot[[2]] %>%
+  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  dplyr::filter(Target == "Close" | Target == "Stranger") %>%
+  dplyr::mutate(Target = factor(Target, levels = c("Close", "Stranger"))) 
+
+# 按照分组变量拆分数据集
+grouped_data <- split(desc[[7]], list(desc[[7]]$Target, desc[[7]]$Indice))
+
+# 创建一个空的向量来存储结果
+r_8 <- vector("numeric", length(grouped_data))
+
+# 对每个组进行回归分析
+for (i in 1:length(grouped_data)) {
+  grouped_data[[i]]
+  
+  # 计算回归方程
+  regression <- lm(Trials ~ r, data = grouped_data[[i]])
+  
+  temp <- summary(regression)
+  grouped_data[[i]]$r_p <- temp$coefficients[8]
+  
+  # 计算r = 0.8时的Trials值
+  grouped_data[[i]]$r_8 <- predict(regression, data.frame(r = 0.8))
+}
+
+desc[[7]] <- do.call(rbind, grouped_data) 
+rownames(desc[[7]]) <- NULL
+names(desc)[7] <- "Regression predict Trials Number"
+rm(grouped_data, r_8, i, regression, group)
+```
+
+

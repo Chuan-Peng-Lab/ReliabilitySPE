@@ -1,0 +1,345 @@
+---
+title: "Untitled"
+author: "yuki"
+date: "2023-05-31"
+output: html_document
+---
+# Get HDDM Generated Data
+```{python}
+import hddm
+import ssms
+import pandas
+import random
+```
+
+```{python}
+a = 2
+t = 0.3
+z = 0.7
+v = 1
+
+# Simulate Data
+data = ssms.basic_simulators.simulator(model = 'ddm',
+                                       theta = [v, a, z, t],
+                                       n_samples = 30)
+
+df = pandas.DataFrame({'q': data['rts'][:, 0], 
+                       'resp': data['choices'][:, 0]})
+
+df.to_csv('./data/data500.csv', index=False)
+```
+
+--------------------------------------------------------------------------------
+################################################################################
+--------------------------------------------------------------------------------
+
+# Read Data from HDDM Generator
+```{r}
+# import data, plot, and ...
+library(tidyverse)
+library(tinylabels) # papaja needs
+library(papaja)
+library(patchwork)
+# EZ DDM, devtools::install_github("hauselin/hausekeep")
+library(hausekeep)
+# RWiener, devtools::install_github("cran/RWiener")
+library(RWiener)
+# fast_dm, devtools::install_github("AdrianJusepeitis/FastDMinR")
+library(FastDMinR)
+```
+
+```{r}
+sml <- list()
+
+for (i in 1:500) {
+  # 构建文件名
+  file_name <- paste0("../DATA/simulate/data", i, ".csv")
+  
+  # 读取 CSV 文件
+  data <- read.csv(file_name) %>%
+    dplyr::mutate(resprw = case_when(resp ==  1 ~  "upper",
+                                     resp ==  -1 ~  "lower"),
+                  resp = case_when(resp ==  1 ~  1,
+                                   resp ==  -1 ~  0),
+                  sub = 1,
+                  cnd = 1,
+                  )
+  
+  # 将数据添加到列表 sml
+  sml <- append(sml, list(data))
+}
+rm(data, file_name, i)
+```
+
+```{r}
+res_ddm <- list()
+out_ddm <- list()
+```
+
+# Run 3 DDM Packages
+```{r, message=FALSE, include=FALSE, warning=FALSE}
+start_time <- Sys.time()
+for (i in 1:500) {
+  res_ddm <- list()
+    ##############################################################################
+    # RWiener
+    temp <- wdm(sml[[i]], yvar = c("q", "resprw"))
+  
+    result <- data.frame("RWiener",
+                         temp$coefficients[1],
+                         temp$coefficients[2],
+                         temp$coefficients[3],
+                         temp$coefficients[4])
+    colnames(result) <- c("Package",
+                          "a",
+                          "t",
+                          "z",
+                          "v")
+    rownames(result) <- NULL
+  
+    res_ddm[[1]] <- result
+    names(res_ddm)[1] <- "RWiener"
+    rm(temp, result)
+    # RWiener
+    ##############################################################################
+  
+    ##############################################################################
+    # FastDMinR, method = "ks"
+    temp <- FastDMinR::fast_dm(data = sml[[i]],            
+                           Subject = "sub",
+                           Conditions = "cnd",
+                           TIME = "q",
+                           RESPONSE = "resp",
+                           precision = 5.0,
+                           method = "ks",
+                           fix_to = list(p = 0, d = 0, sv = 0, st0 = 0, szr = 0),
+                           depend_on_condition = list(a = "cnd"),
+                           invariant = c("zr", "v", "t0"))
+    result <- data.frame("FastDMinR_ks",
+                         temp$indiv_estimates[3],
+                         temp$indiv_estimates[5],
+                         temp$indiv_estimates[2],
+                         temp$indiv_estimates[4])
+    colnames(result) <- c("Package",
+                          "a",
+                          "t",
+                          "z",
+                          "v")
+    
+    res_ddm[[2]] <- result
+    names(res_ddm)[2] <- "FastDMinR, method = ks"
+    rm(temp, result)
+    # FastDMinR, method = "ks"
+    ##############################################################################
+
+    ##############################################################################
+    # FastDMinR, method = "ml"
+    temp <- FastDMinR::fast_dm(data = sml[[i]],            
+                           Subject = "sub",
+                           Conditions = "cnd",
+                           TIME = "q",
+                           RESPONSE = "resp",
+                           precision = 5.0,
+                           method = "ml",
+                           fix_to = list(p = 0, d = 0, sv = 0, st0 = 0, szr = 0),
+                           depend_on_condition = list(a = "cnd"),
+                           invariant = c("zr", "v", "t0"))
+    result <- data.frame("FastDMinR_ml",
+                         temp$indiv_estimates[3],
+                         temp$indiv_estimates[5],
+                         temp$indiv_estimates[2],
+                         temp$indiv_estimates[4])
+    colnames(result) <- c("Package",
+                          "a",
+                          "t",
+                          "z",
+                          "v")
+    
+    res_ddm[[3]] <- result
+    names(res_ddm)[3] <- "FastDMinR, method = ml"
+    rm(temp, result)
+    # FastDMinR, method = "ml"
+    ##############################################################################
+   
+    ##############################################################################
+    # FastDMinR, method = "cs"
+    temp <- FastDMinR::fast_dm(data = sml[[i]],            
+                           Subject = "sub",
+                           Conditions = "cnd",
+                           TIME = "q",
+                           RESPONSE = "resp",
+                           precision = 5.0,
+                           method = "cs",
+                           fix_to = list(p = 0, d = 0, sv = 0, st0 = 0, szr = 0),
+                           depend_on_condition = list(a = "cnd"),
+                           invariant = c("zr", "v", "t0"))
+    result <- data.frame("FastDMinR_cs",
+                         temp$indiv_estimates[3],
+                         temp$indiv_estimates[5],
+                         temp$indiv_estimates[2],
+                         temp$indiv_estimates[4])
+    colnames(result) <- c("Package",
+                          "a",
+                          "t",
+                          "z",
+                          "v")
+    
+    res_ddm[[4]] <- result
+    names(res_ddm)[4] <- "FastDMinR, method = cs"
+    rm(temp, result)
+    # FastDMinR, method = "cs"
+    ##############################################################################  
+    
+    ##############################################################################  
+    # hausekeep, fit_ezddm
+    temp <- hausekeep::fit_ezddm(data = sml[[i]],
+                                 rts = "q",
+                                 responses = "resp") %>%
+    dplyr::mutate(Package = "hausekeep",
+                  z = a / 2,
+                  t = t0_Ter) %>%
+    dplyr::select(Package,
+                  a,
+                  t,
+                  z,
+                  v)
+  
+    res_ddm[[5]] <- temp
+    names(res_ddm)[5] <- "hausekeep::fit_ezddm"
+    rm(temp)
+    # hausekeep, fit_ezddm
+    ##############################################################################  
+  
+  out_ddm[[i]] <- do.call(rbind, res_ddm) 
+  names(out_ddm)[i] <- i
+}
+end_time <- Sys.time()
+```
+
+# Plot
+```{r}
+plot <- do.call(rbind, Map(cbind, round = names(out_ddm), out_ddm)) %>%
+  dplyr::mutate(
+    # hausekeep和其他包的结果有数量级上的差异，故修正一下
+    a = ifelse(Package == "hausekeep", a * 10, a),
+    z = ifelse(Package == "hausekeep", z * 10, z),
+    v = ifelse(Package == "hausekeep", v * 10, v),
+  ) %>%
+  tidyr::pivot_longer(cols = c(a, t, z, v), names_to = "indice", values_to = "value") 
+rownames(plot) <- NULL
+```
+
+```{r}
+plot_a <- plot %>%
+  dplyr::filter(indice == "a") %>%
+  ggplot2::ggplot(aes(x = Package, y = value, fill = indice), data = .) +
+    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "#F3533A") + 
+    ggdist::stat_halfeye(adjust = 0.2,justification = -0.1, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5, color = "#F3533A") + 
+    ggplot2::coord_flip() +
+    ggplot2::scale_y_continuous(limits = c(1, 11),
+                       sec.axis = sec_axis(~., breaks = 2,
+                                               labels = "a"), # nolint
+                                  breaks = seq(1, 11, by = 1)
+                                  ) +
+    ggplot2::geom_hline(yintercept = 2, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+    papaja::theme_apa() +
+    labs(x = "", y = "") +
+    ggplot2::theme(legend.position = "none",
+                   axis.text.x.top = element_text(size = 24)) +
+    ggplot2::scale_fill_manual(values = "#F3533A") 
+plot_a
+```
+
+```{r}
+plot_t <- plot %>%
+  dplyr::filter(indice == "t") %>%
+  ggplot2::ggplot(aes(x = Package, y = value, fill = indice), data = .) +
+    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "#FA9F42") + 
+    ggdist::stat_halfeye(adjust = 0.2,justification = -0.1, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5, color = "#FA9F42") + 
+    ggplot2::coord_flip() +
+    ggplot2::scale_y_continuous(limits = c(-1.5, 1),
+                       sec.axis = sec_axis(~., breaks = 0.3,
+                                               labels = "t"), # nolint
+                                  breaks = seq(-1.5, 1, by = 0.3)
+                                  ) +
+    ggplot2::geom_hline(yintercept = 0.3, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+    papaja::theme_apa() +
+    labs(x = "", y = "") +
+    ggplot2::theme(legend.position = "none",
+                   axis.line.y = element_blank(),  # 隐藏 y 轴线
+                   axis.text.y = element_blank(),  # 隐藏 y 轴刻度标签
+                   axis.ticks.y = element_blank(),
+                   axis.text.x.top = element_text(size = 24)
+                   ) +
+    ggplot2::scale_fill_manual(values = "#FA9F42") 
+plot_t
+```
+
+```{r}
+plot_v <- plot %>%
+  dplyr::filter(indice == "v") %>%
+  ggplot2::ggplot(aes(x = Package, y = value, fill = indice), data = .) +
+    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "#8AD879") + 
+    ggdist::stat_halfeye(adjust = 0.2,justification = -0.1, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5, color = "#8AD879") + 
+    ggplot2::coord_flip() +
+    ggplot2::scale_y_continuous(limits = c(0, 6),
+                       sec.axis = sec_axis(~., breaks = 1,
+                                               labels = "v"), # nolint
+                                  breaks = seq(0, 6, by = 1)
+                                  ) +
+    ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+    papaja::theme_apa() +
+    labs(x = "", y = "") +
+    ggplot2::theme(legend.position = "none",
+                   axis.text.x.top = element_text(size = 24)) +
+    ggplot2::scale_fill_manual(values = "#8AD879") 
+plot_v
+```
+
+```{r}
+plot_z <- plot %>%
+  dplyr::filter(indice == "z") %>%
+  ggplot2::ggplot(aes(x = Package, y = value, fill = indice), data = .) +
+    ggplot2::geom_boxplot(width = 0.1, position = position_nudge(x = -0.05), alpha = 0.5, outlier.color = NA, color = "#5ACFC9") + 
+    ggdist::stat_halfeye(adjust = 0.2,justification = -0.1, alpha = 0.5, width = 0.5, .width = 0, point_colour = NA,) +
+    ggdist::stat_dots(side = "left",justification = 1.15, alpha = 0.5, color = "#5ACFC9") + 
+    ggplot2::coord_flip() +
+    ggplot2::scale_y_continuous(limits = c(0, 3),
+                       sec.axis = sec_axis(~., breaks = 0.7,
+                                               labels = "z",
+                                                ), # nolint
+                                  breaks = seq(0, 3, by = 0.7)
+                                  ) +
+    ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+    papaja::theme_apa() +
+    labs(x = "", y = "") +
+    ggplot2::theme(legend.position = "none",
+                   axis.line.y = element_blank(),  # 隐藏 y 轴线
+                   axis.text.y = element_blank(),  # 隐藏 y 轴刻度标签
+                   axis.ticks.y = element_blank(),
+                   axis.text.x.top = element_text(size = 24)) +
+    ggplot2::scale_fill_manual(values = "#5ACFC9") 
+plot_z
+```
+
+
+```{r}
+plot_atvz <- plot_a + plot_t + plot_v + plot_z + 
+  plot_layout(guides = 'collect', ncol = 2)
+
+plot_atvz
+ggsave(plot = plot_atvz, filename = "./Pack_Com.png", width = 9, height = 6)
+```
+
+# DESC
+```{r}
+desc <- plot %>%
+  dplyr::group_by(Package, indice) %>%
+  dplyr::summarize(mean_value = mean(value),
+            lower_ci = mean_value - qt(0.975, df = n() - 1) * sd(value) / sqrt(n()),
+            upper_ci = mean_value + qt(0.975, df = n() - 1) * sd(value) / sqrt(n()))
+```
+

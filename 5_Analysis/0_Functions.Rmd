@@ -1,0 +1,128 @@
+# Read MATLAB .mat
+```{r function read.mat}
+read.mat <- function(list) {
+  
+  res <- list()
+  
+  for (i in 1:length(list)) {
+
+    list_mat <- list[[i]]
+
+    df_rt <- data.frame(
+      RT_1 = list_mat$TestRt[,1],
+      RT_2 = list_mat$TestRt[,2],
+      RT_3 = list_mat$TestRt[,3],
+      RT_4 = list_mat$TestRt[,4]
+      ) %>%
+      tidyr::pivot_longer(
+        cols = starts_with("RT_"),
+        names_to = "Block",
+        names_prefix = "RT_",
+        values_to = "RT"
+      ) 
+      
+    df_acc <- data.frame(
+      ACC_1 = list_mat$Correct[, 1],
+      ACC_2 = list_mat$Correct[, 2],
+      ACC_3 = list_mat$Correct[, 3],
+      ACC_4 = list_mat$Correct[, 4]
+      ) %>%
+      tidyr::pivot_longer(
+        cols = starts_with("ACC_"),
+        names_to = "Block",
+        names_prefix = "ACC_",
+        values_to = "ACC"
+      ) %>%
+      dplyr::select(-Block)
+    
+    df_sha <- data.frame(
+      Shape_1 = list_mat$Tshape[, 1],
+      Shape_2 = list_mat$Tshape[, 2],
+      Shape_3 = list_mat$Tshape[, 3],
+      Shape_4 = list_mat$Tshape[, 4]
+      ) %>%
+      tidyr::pivot_longer(
+        cols = starts_with("Shape_"),
+        names_to = "Block",
+        names_prefix = "Shape_",
+        values_to = "Shape"
+      ) %>%
+      dplyr::select(-Block)
+    
+    df_lab <- data.frame(
+      Label_1 = list_mat$Tlabel[, 1],
+      Label_2 = list_mat$Tlabel[, 2],
+      Label_3 = list_mat$Tlabel[, 3],
+      Label_4 = list_mat$Tlabel[, 4]
+      ) %>%
+      tidyr::pivot_longer(
+        cols = starts_with("Label_"),
+        names_to = "Block",
+        names_prefix = "Label_",
+        values_to = "Label"
+      ) %>%
+      dplyr::select(-Block)
+    
+    df_mat <- data.frame(
+      Subject = list_mat$num,
+      Session = list_mat$ses,
+      df_sha, df_lab,
+      df_rt, df_acc
+    )
+    
+    res[[i]] <- df_mat
+  }
+
+  df <- do.call(rbind, res)
+
+  return(df)
+
+}
+```
+
+# Get ICC Output DataFrame
+```{r icc_output}
+icc_output <- function(list, Target) {
+
+  # run psych::ICC
+  output <- lapply(list, function(x) {
+    psych::ICC(x, lmer = FALSE)
+    })
+
+  # 提取其中的结果表格
+  result <- list()
+    for (i in 1:length(output)){
+      result[[i]] <- output[[i]][[1]]
+    }
+
+  #
+  final <- rbindlist(result)
+  final$ICC_type <- rep(
+    c("RT", "ACC",
+    "d Prime", "Efficiency",
+    "ezDDM v", "ezDDM z",
+    "rwDDM v", "rwDDM z"),
+    each = nrow(final) / 8
+  )
+  colnames(final)[7] <- "LLCI"
+  colnames(final)[8] <- "ULCI"
+
+  final <- final %>%
+    dplyr::mutate(.,
+    ICC_type = factor(
+      ICC_type, levels = c(
+        "RT", "ACC",
+        "d Prime", "Efficiency",
+        "ezDDM v","ezDDM z",
+        "rwDDM v", "rwDDM z"
+        )
+      )
+    ) %>%
+    dplyr::arrange(., type) %>%
+    dplyr::mutate(Target = "Target") %>%
+    dplyr::select(type, ICC_type, ICC, LLCI, ULCI)
+  final$Target <- Target
+
+  return(final)
+}
+```

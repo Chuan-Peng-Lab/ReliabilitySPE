@@ -1,0 +1,31 @@
+---
+title: "2_Split_Half"
+author: "yuki"
+date: "2023-04-30"
+output: html_document
+---
+# Create NULL list
+```{r Split Half List}
+shl <- list(list(), list(), list(), list())
+names(shl)[1] <- "First-Second"
+names(shl)[2] <- "Odd-Even"
+names(shl)[3] <- "Permuted"
+names(shl)[4] <- "Monte Carlo"
+```
+
+# First-Second
+```{r First-Second SHR}
+shl[[1]] <- yukiSH::sh_tool(df.split = df[[6]], method = "fs", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session") # nolint 
+```
+# Odd-Even
+```{r Odd-Even SHR}
+shl[[2]] <- yukiSH::sh_tool(df.split = df[[6]], method = "od", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session") # nolint 
+```
+# Permuted
+```{r Permuted SHR}
+shl[[3]] <- yukiSH::sh_tool(df.split = df[[6]], method = "permuted", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session") # nolint 
+```
+# Monte Carlo
+```{r Monte Carlo SHR}
+shl[[4]] <- yukiSH::sh_tool(df.split = df[[6]], method = "mc", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session", iteration = 100, nc = 16) # nolint 
+```

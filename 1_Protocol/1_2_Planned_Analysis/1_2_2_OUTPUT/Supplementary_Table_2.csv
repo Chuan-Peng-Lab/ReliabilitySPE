@@ -1,19 +1,19 @@
-Indices,Method,r
-RT,First-Second,.01
-RT,Odd-Even,-.01
-RT,Permuted,.08
-ACC,First-Second,.02
-ACC,Odd-Even,-.03
-ACC,Permuted,-.10
-Dprime,First-Second,.03
-Dprime,Odd-Even,-.07
-Dprime,Permuted,-.07
-Efficiency,First-Second,.07
-Efficiency,Odd-Even,-.03
-Efficiency,Permuted,-.01
-ezDDM: v,First-Second,.03
-ezDDM: v,Odd-Even,-.01
-ezDDM: v,Permuted,-.11
-ezDDM: z,First-Second,.01
-ezDDM: z,Odd-Even,.03
-ezDDM: z,Permuted,-.14
+"Indice","Method","r","Target","Paper_ID"
+"RT","First-Second",0.01243434342225,"Stranger","Simulated"
+"RT","Odd-Even",-0.0108816158225733,"Stranger","Simulated"
+"RT","Permuted",0.0752011187957642,"Stranger","Simulated"
+"ACC","First-Second",0.0152322475994207,"Stranger","Simulated"
+"ACC","Odd-Even",-0.0317732745978012,"Stranger","Simulated"
+"ACC","Permuted",-0.099434467036074,"Stranger","Simulated"
+"Dprime","First-Second",0.0274188463990134,"Stranger","Simulated"
+"Dprime","Odd-Even",-0.065001867567516,"Stranger","Simulated"
+"Dprime","Permuted",-0.0692648467930721,"Stranger","Simulated"
+"Efficiency","First-Second",0.0722176737293697,"Stranger","Simulated"
+"Efficiency","Odd-Even",-0.0324266780936841,"Stranger","Simulated"
+"Efficiency","Permuted",-0.00949234724481987,"Stranger","Simulated"
+"ezDDM: v","First-Second",0.0344024240276205,"Stranger","Simulated"
+"ezDDM: v","Odd-Even",-0.0138383798964479,"Stranger","Simulated"
+"ezDDM: v","Permuted",-0.106988340533099,"Stranger","Simulated"
+"ezDDM: z","First-Second",0.0147764520612197,"Stranger","Simulated"
+"ezDDM: z","Odd-Even",0.0298301091005863,"Stranger","Simulated"
+"ezDDM: z","Permuted",-0.135608938025162,"Stranger","Simulated"
