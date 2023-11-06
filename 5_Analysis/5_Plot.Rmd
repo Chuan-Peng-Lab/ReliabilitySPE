@@ -105,17 +105,17 @@ ggsave(filename = "./FIGURE/Fig1_nmshr.png",
 ################################################################################
 
 
-# Plot[[2]]: Monte Carlo SHR
+# Plot[[2]]: Permuted SHR
 ```{r Read OUTPUT}
 # 获取所有的mcshr
 plot[[2]] <- list.files(
-  file.path("./OUTPUT/mcshr_5k/"),
-  pattern = "mcshr_.*\\.csv$",
+  file.path("./OUTPUT/pershr_5k/"),
+  pattern = "pershr_.*\\.csv$",
   ) %>%
   # 对读取到的所有.out文件x都执行函数read.table
   lapply(
     function(x) read.csv(
-      file.path("./OUTPUT/mcshr_5k/", x),
+      file.path("./OUTPUT/pershr_5k/", x),
       header = TRUE
     )
   ) %>% # nolint
@@ -157,7 +157,7 @@ plot[[2]] <- list.files(
     # 被认为是在原范式上有较大修改(4 session 4 mood)
     !(Paper_ID %in% c("P51E1")) 
   ) 
-names(plot)[2] <- "Monte Carlo SHR"
+names(plot)[2] <- "Permuted SHR"
 ```
 
 ```{r Plot SHR for Simulated Data, message= FALSE, warning = FALSE}
@@ -604,7 +604,7 @@ p1 <- plot[[6]] %>%
   ) +
   ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
-  ggplot2::labs(y = "Monte-Carlo Split-Half Reliability", x = "Trial Numbers") +
+  ggplot2::labs(y = "Permuted Split-Half Reliability", x = "Trial Numbers") +
   #ggplot2::scale_color_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
   #ggplot2::scale_fill_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
   ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
@@ -734,7 +734,7 @@ p1 <- plot[[7]] %>%
    ggplot2::scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.5, 0.7, 1),) +
   #ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
-  ggplot2::labs(y = "Monte-Carlo Split-Half Reliability", x = expression("Hedges' " * italic(g))) +
+  ggplot2::labs(y = "Permuted Split-Half Reliability", x = expression("Hedges' " * italic(g))) +
   ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
   ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
   papaja::theme_apa() +
