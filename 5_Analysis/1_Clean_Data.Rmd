@@ -34,7 +34,7 @@ library(doParallel)
 # My packages: yukiSH & yukiBP
 # You can install them with ".tar.gz" or  from GitHub
 
-# install.packages("./PACKAGES/yukiSH_0.0.2.tar.gz") # nolint
+# install.packages("./PACKAGES/yukiSH_0.0.3.tar.gz") # nolint
 # devtools::install_github("yuki-961004/yukiSH") # nolint
 library(yukiSH)
 

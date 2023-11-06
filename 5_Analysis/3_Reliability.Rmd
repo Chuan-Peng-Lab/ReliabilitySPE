@@ -17,12 +17,12 @@ names(res)[1] <- "Normal SHR"
 
 ```{r nmshr one by one, message=FALSE, warning=FALSE}
 Start_Time <- Sys.time()
-df_rt <- yukiBP::shr(list = shl[1:3], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "rt", mc = FALSE, nc = 8) # nolint
-df_acc <- yukiBP::shr(list = shl[1:3], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "acc", mc = FALSE, nc = 8) # nolint
-df_dp <- yukiBP::shr(list = shl[1:3], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "dp", mc = FALSE, nc = 8) # nolint
-df_eff <- yukiBP::shr(list = shl[1:3], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "eff", mc = FALSE, nc = 8) # nolint
-df_ezddm <- yukiBP::shr(list = shl[1:3], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "ezddm", mc = FALSE, nc = 8) # nolint
-df_rwddm <- yukiBP::shr(list = shl[1:3], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "rwddm", mc = FALSE, nc = 8) # nolint
+df_rt <- yukiBP::shr(list = shl[1:2], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "rt", mc = FALSE, nc = 8) # nolint
+df_acc <- yukiBP::shr(list = shl[1:2], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "acc", mc = FALSE, nc = 8) # nolint
+df_dp <- yukiBP::shr(list = shl[1:2], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "dp", mc = FALSE, nc = 8) # nolint
+df_eff <- yukiBP::shr(list = shl[1:2], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "eff", mc = FALSE, nc = 8) # nolint
+df_ezddm <- yukiBP::shr(list = shl[1:2], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "ezddm", mc = FALSE, nc = 8) # nolint
+df_rwddm <- yukiBP::shr(list = shl[1:2], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P0S1", Indice = "rwddm", mc = FALSE, nc = 8) # nolint
 End_Time <- Sys.time()
 ```
 
@@ -90,22 +90,21 @@ df[[18]]   "Ps1E1"    "Self", "Stranger"
 --------------------------------------------------------------------------------
 ################################################################################
 
-
-# Monte Carlo
+# Permuted
 ```{r Name Self - Friend}
 res[[2]] <- list()
-names(res)[2] <- "Monte-Carlo SHR"
+names(res)[2] <- "Permuted SHR"
 ```
 
 ```{r mcshr one by one, message=FALSE, warning=FALSE}
 Start_Time <- Sys.time()
-df_rt <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "rt", mc = TRUE, nc = 16) # nolint
-df_acc <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "acc", mc = TRUE, nc = 16) # nolint
-df_dp <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "dp", mc = TRUE, nc = 16) # nolint
-df_eff <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "eff", mc = TRUE, nc = 16) # nolint
-df_ezddm <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "ezddm", mc = TRUE, nc = 16) # nolint
+df_rt <- yukiBP::shr(list = shl[[3]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P6S1", Indice = "rt", mc = TRUE, nc = 16) # nolint
+df_acc <- yukiBP::shr(list = shl[[3]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "acc", mc = TRUE, nc = 16) # nolint
+df_dp <- yukiBP::shr(list = shl[[3]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "dp", mc = TRUE, nc = 16) # nolint
+df_eff <- yukiBP::shr(list = shl[[3]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "eff", mc = TRUE, nc = 16) # nolint
+df_ezddm <- yukiBP::shr(list = shl[[3]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "ezddm", mc = TRUE, nc = 16) # nolint
 RWiener_Time <- Sys.time()
-df_rwddm <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "rwddm", mc = TRUE, nc = 16) # nolint
+df_rwddm <- yukiBP::shr(list = shl[[3]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "rwddm", mc = TRUE, nc = 16) # nolint
 End_Time <- Sys.time()
 ```
 
@@ -143,9 +142,86 @@ rm(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm)
 ```
 
 ```{r Save mcshr_friend}
-write.csv(x = res[[2]], file = "./OUTPUT/mcshr_P0S1.csv", row.names = FALSE)
+write.csv(x = res[[2]], file = "./OUTPUT/pershr_P0S1.csv", row.names = FALSE)
 ```
 
+df[[1]]   "P0E1"    "Self", "Friend", "Stranger"
+df[[2]]   "P6E1"    "Self", "Partner", "Stranger"
+df[[3]]   "P46E2"    "Self", "Stranger"
+df[[4]]   "P51E1"   "Self", "Celebrity", "Stranger"
+df[[5]]   "P51E2"   "Self", "Celebrity"
+df[[6]]   "P54E1"   "Self", "Mother","none", "Acquaintance"
+df[[7]]   "P54E3"   "Self", "Mother", "Acquaintance"
+df[[8]]   "Pn4E1"   "Self", "Friend", "Stranger"
+df[[9]]   "Pn13E1"   "Self", "Friend", "Stranger"
+df[[10]]   "Pn13E3"   "Self", "Father", "Stranger"
+df[[11]]   "Pn13E4"   "Self", "Friend", "Stranger"
+df[[12]]   "Pn16E1"   "Self", "Friend"
+df[[13]]   "Pn16E2"   "Self", "Friend"
+df[[14]]   "Pn16E3"   "Self", "Friend"
+df[[15]]   "Pn23E1"   "Self", "Friend", "Stranger"
+df[[16]]   "P95E1"   "Self", "Friend", "Stranger"
+df[[17]]   "P95E2"   "Self", "Friend", "Stranger"
+df[[18]]   "Ps1E1"    "Self", "Stranger"
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+# Monte Carlo
+```{r Name Self - Friend}
+res[[3]] <- list()
+names(res)[3] <- "Monte-Carlo SHR"
+```
+
+```{r mcshr one by one, message=FALSE, warning=FALSE}
+Start_Time <- Sys.time()
+df_rt <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Friend", "Stranger"), Paper_ID = "P6S1", Indice = "rt", mc = TRUE, nc = 16) # nolint
+df_acc <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "acc", mc = TRUE, nc = 16) # nolint
+df_dp <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "dp", mc = TRUE, nc = 16) # nolint
+df_eff <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "eff", mc = TRUE, nc = 16) # nolint
+df_ezddm <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "ezddm", mc = TRUE, nc = 16) # nolint
+RWiener_Time <- Sys.time()
+df_rwddm <- yukiBP::shr(list = shl[[4]], Target = c("Self", "Partner", "Stranger"), Paper_ID = "P6S1", Indice = "rwddm", mc = TRUE, nc = 16) # nolint
+End_Time <- Sys.time()
+```
+
+```{r Rbind 6 Indices}
+res[[3]] <- rbind(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm) %>%
+  dplyr::mutate(
+    Indice = case_when(
+      Indice == "rt" ~ "RT",
+      Indice == "acc" ~ "ACC",
+      Indice == "dp" ~ "d Prime",
+      Indice == "eff" ~ "Efficiency",
+      Indice == "ez_v" ~ "ezDDM v",
+      Indice == "ez_z" ~ "ezDDM z",
+      Indice == "rw_v" ~ "rwDDM v",
+      Indice == "rw_z" ~ "rwDDM z",
+    )
+  ) %>%
+  dplyr::mutate(
+    Indice = factor(
+      Indice, levels = c(
+        "RT", "ACC", "d Prime", "Efficiency",
+        "ezDDM v", "ezDDM z", "rwDDM v", "rwDDM z"
+      )
+    ),
+    Target = factor(Target),
+   ) %>%
+  dplyr::select(
+    Target, Indice, r, LLCI, ULCI, Paper_ID
+  ) %>%
+  dplyr::arrange(
+    Target, Indice
+  )
+
+rm(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm)
+```
+
+```{r Save mcshr_friend}
+write.csv(x = res[[3]], file = "./OUTPUT/mcshr_P0S1.csv", row.names = FALSE)
+```
 df[[1]]   "P0E1"    "Self", "Friend", "Stranger"
 df[[2]]   "P6E1"    "Self", "Partner", "Stranger"
 df[[3]]   "P46E2"    "Self", "Stranger"
