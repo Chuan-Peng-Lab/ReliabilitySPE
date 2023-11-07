@@ -1,0 +1,107 @@
+---
+title: "10_AATtools"
+author: "yuki"
+date: "2023-11-07"
+output: html_document
+---
+```{r}
+meta <- list()
+```
+
+
+```{r}
+meta[[1]] <- plot[[1]] %>%
+  dplyr::left_join(
+    desc[[1]], by = "Paper_ID"
+  ) %>%
+  dplyr::mutate(
+    unique_ID = paste(Target, Indice, Method, sep="_")
+  ) %>%
+  dplyr::mutate(
+    .,
+    Indice = case_when(
+      Indice == "Efficiency" ~ "η",
+      Indice == "d Prime" ~ "d'",
+      #Indice == "rwDDM v" ~ "v",
+      #Indice == "rwDDM z" ~ "z",
+      Indice == "rwDDM v" ~ "v(RWiener)",
+      Indice == "rwDDM z" ~ "z(RWiener)",
+      Indice == "ezDDM v" ~ "v(hausekeep)",
+      Indice == "ezDDM z" ~ "z(hausekeep)",
+      TRUE ~ Indice
+    ),
+    Target_Indice = paste(Target, Indice, sep = "_"), 
+    Target_Indice = factor(Target_Indice),
+    Method = factor(Method),
+    Target = factor(Target),
+    Indice = factor(Indice)
+  ) 
+
+temp <- base::split(x = meta[[1]], f = list(meta[[1]]$unique_ID))
+
+result_df <- data.frame(unique_ID = character(0), wtmr = numeric(0))
+
+for (i in seq_along(temp)) {
+  # 计算AATtools::cormean
+  wtmr <- AATtools::cormean(r = temp[[i]]$r, n = temp[[i]]$Trials, wts = "df")
+  
+  # 获取子集的元素名
+  element_name <- names(temp)[i]
+  
+  # 将结果添加到数据框中
+  result_df <- rbind(result_df, data.frame(unique_ID = element_name, wtmr = wtmr))
+}
+
+meta[[1]] <- result_df %>%
+  tidyr::separate(.,unique_ID, into = c("Target", "Indice", "Method"), sep = "_")
+
+rm(temp, result_df, element_name, i, wtmr)
+```
+
+```{r}
+meta[[2]] <- plot[[2]] %>%
+  dplyr::left_join(
+    desc[[1]], by = "Paper_ID"
+  ) %>%
+  dplyr::mutate(
+    unique_ID = paste(Target, Indice, sep="_")
+  ) %>%
+  dplyr::mutate(
+    .,
+    Indice = case_when(
+      Indice == "Efficiency" ~ "η",
+      Indice == "d Prime" ~ "d'",
+      #Indice == "rwDDM v" ~ "v",
+      #Indice == "rwDDM z" ~ "z",
+      Indice == "rwDDM v" ~ "v(RWiener)",
+      Indice == "rwDDM z" ~ "z(RWiener)",
+      Indice == "ezDDM v" ~ "v(hausekeep)",
+      Indice == "ezDDM z" ~ "z(hausekeep)",
+      TRUE ~ Indice
+    ),
+    Target_Indice = paste(Target, Indice, sep = "_"), 
+    Target_Indice = factor(Target_Indice),
+    Target = factor(Target),
+    Indice = factor(Indice)
+  ) 
+
+temp <- base::split(x = meta[[2]], f = list(meta[[2]]$unique_ID))
+
+result_df <- data.frame(unique_ID = character(0), wtmr = numeric(0))
+
+for (i in seq_along(temp)) {
+  # 计算AATtools::cormean
+  wtmr <- AATtools::cormean(r = temp[[i]]$r, n = temp[[i]]$Trials, wts = "df")
+  
+  # 获取子集的元素名
+  element_name <- names(temp)[i]
+  
+  # 将结果添加到数据框中
+  result_df <- rbind(result_df, data.frame(unique_ID = element_name, wtmr = wtmr))
+}
+
+meta[[2]] <- result_df %>%
+  tidyr::separate(.,unique_ID, into = c("Target", "Indice"), sep = "_")
+
+rm(temp, result_df, element_name, i, wtmr)
+```
