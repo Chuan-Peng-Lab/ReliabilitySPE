@@ -231,6 +231,7 @@ plot[[3]] <- list.files(
 names(plot)[3] <- "ICC"
 ```
 
+## old
 ```{r}
 p1 <- plot[[3]] %>%
   dplyr::mutate(
@@ -383,6 +384,153 @@ ggsave(plot = p,
        filename = "./FIGURE/Fig3_ICC.png",
        width = 20,
        height = 8,
+       )
+
+rm(p, p1, p2)
+```
+
+## new
+```{r}
+p1 <- plot[[3]] %>%
+  dplyr::mutate(
+    ICC_type = case_when(
+      ICC_type == "Efficiency" ~ "η",
+      ICC_type == "d Prime" ~ "d'",
+      ICC_type == "rwDDM v" ~ "v(RWiener)",
+      ICC_type == "rwDDM z" ~ "z(RWiener)",
+      ICC_type == "ezDDM v" ~ "v(hausekeep)",
+      ICC_type == "ezDDM z" ~ "z(hausekeep)",
+      TRUE ~ ICC_type
+    ),
+    Target_Type = paste(
+      Target, ICC_type, sep = "_"), 
+  ) %>%
+  dplyr::filter(
+    (Paper_ID %in% c("P0E1")),
+    type == "ICC2"
+  ) %>%
+  dplyr::arrange(ICC) %>%
+  dplyr::mutate(
+    Order = row_number(),
+  ) %>%
+ggplot2::ggplot(., aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
+  ggplot2::geom_bar(stat = "identity", color = "black", fill = "grey") +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(
+    limits = c(-0.60, 1),
+    breaks = c(-1, 0, 0.5, 0.75, 0.9, 1),
+    sec.axis = sec_axis(
+      ~., breaks = c(0.25, 0.625, 0.825, 0.95),
+      labels = c("Poor", "Moderate", "Good", "Excellent")),
+  ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_text(aes(y = -0.6, x = reorder(Target_Type, Order), label = Target_Type),
+                     hjust = 0, size = 4, family='serif',) + # CREATE Y
+  ggplot2::scale_linetype_manual(values = c("dashed", "solid")) +
+  ggplot2::scale_fill_manual(values = c("black", "grey60")) +
+  ggplot2::scale_color_manual(values = c("black", "grey60")) +
+  #ggplot2::facet_wrap(~ type, ncol = 1) +
+  ggplot2::labs(y = "Intraclass Correlation Coefficient 2", x = "") +
+  ggplot2::ggtitle("(a)") +
+  papaja::theme_apa() +
+  ggplot2::theme(
+    legend.position = "none",
+    axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
+    axis.title.x = element_text(size = 15, family='serif'),
+    axis.text.x.top = element_text(size = 15, family='serif'),
+    axis.text.x.bottom = element_text(size = 15, family='serif'),
+    plot.title = element_text(size = 20, family = 'serif', hjust = 0),
+    axis.text.y.left = element_blank(),
+    axis.line.y.left = element_blank(),
+    axis.ticks.y.left = element_blank(),
+  ) 
+
+
+p2 <- plot[[3]] %>%
+  dplyr::mutate(
+    ICC_type = case_when(
+      ICC_type == "Efficiency" ~ "η",
+      ICC_type == "d Prime" ~ "d'",
+      ICC_type == "rwDDM v" ~ "v(RWiener)",
+      ICC_type == "rwDDM z" ~ "z(RWiener)",
+      ICC_type == "ezDDM v" ~ "v(hausekeep)",
+      ICC_type == "ezDDM z" ~ "z(hausekeep)",
+      TRUE ~ ICC_type
+    ),
+    Target_Type = paste(
+      Target, ICC_type, sep = "_"), 
+  ) %>%
+  dplyr::filter(
+    (Paper_ID %in% c("Ps2E1")),
+    type == "ICC2"
+  ) %>%
+  dplyr::arrange(ICC) %>%
+  dplyr::mutate(
+    Order = row_number(),
+  ) %>%
+ggplot2::ggplot(., aes(x = reorder(Target_Type, Order), y = ICC, group = Paper_ID, color = type)) + # nolint
+  ggplot2::geom_bar(stat = "identity", color = "black", fill = "grey") +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(
+    limits = c(-0.60, 1),
+    breaks = c(-1, 0, 0.5, 0.75, 0.9, 1),
+    sec.axis = sec_axis(
+    ~., breaks = c(0.25, 0.625, 0.825, 0.95),
+    labels = c("Poor", "Moderate", "Good", "Excellent")),
+  ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_text(aes(y = -0.6, x = reorder(Target_Type, Order), label = Target_Type),
+                     hjust = 0, size = 4, family='serif',) + # 
+  ggplot2::scale_linetype_manual(values = c("dashed", "solid")) +
+  ggplot2::scale_fill_manual(values = c("black", "grey60")) +
+  ggplot2::scale_color_manual(values = c("black", "grey60")) +
+  #ggplot2::facet_wrap(~ type, ncol = 1) +
+  ggplot2::labs(y = "Intraclass Correlation Coefficient 2", x = "") +
+  ggplot2::ggtitle("(b)") +
+  papaja::theme_apa() +
+  ggplot2::theme(
+    legend.position = "none",
+    axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
+    axis.title.x = element_text(size = 15, family='serif'),
+    axis.text.x.top = element_text(size = 15, family='serif'),
+    axis.text.x.bottom = element_text(size = 15, family='serif'),
+    plot.title = element_text(size = 20, family = 'serif', hjust = 0),
+    axis.text.y.left = element_blank(),
+    axis.line.y.left = element_blank(),
+    axis.ticks.y.left = element_blank(),
+  ) 
+
+
+ggsave(plot = p1,
+       filename = "./FIGURE/Fig3a_ICC_P0(bar).png",
+       width = 10,
+       height = 8,
+       )
+
+ggsave(plot = p2,
+       filename = "./FIGURE/Fig3b_ICC_P0_Ps2(bar).png",
+       width = 10,
+       height = 8,
+       )
+
+p <- p1 + p2 + plot_layout(ncol = 1, guides = 'collect')
+
+ggsave(plot = p,
+       filename = "./FIGURE/Fig3_ICC(bar).png",
+       width = 10,
+       height = 12,
        )
 
 rm(p, p1, p2)
@@ -604,7 +752,7 @@ p1 <- plot[[6]] %>%
   ) +
   ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
-  ggplot2::labs(y = "Permuted Split-Half Reliability", x = "Trial Numbers") +
+  ggplot2::labs(y = "Permutated Split-Half Reliability", x = "Trial Numbers") +
   #ggplot2::scale_color_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
   #ggplot2::scale_fill_manual(values = c("grey50", "grey50", "grey50", "grey50")) +
   ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
@@ -734,7 +882,7 @@ p1 <- plot[[7]] %>%
    ggplot2::scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.5, 0.7, 1),) +
   #ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
-  ggplot2::labs(y = "Permuted Split-Half Reliability", x = expression("Hedges' " * italic(g))) +
+  ggplot2::labs(y = "Permutated Split-Half Reliability", x = expression("Hedges' " * italic(g))) +
   ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
   ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
   papaja::theme_apa() +
