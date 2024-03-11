@@ -58,7 +58,7 @@ rm(temp, i)
 ```
 
 ```{r}
-desc[[4]] <- plot[[1]] %>%
+desc[[4]] <- plot[[2]] %>%
   dplyr::filter(Target == "Close" | Target == "Stranger") %>%
   dplyr::group_by(Target, Indice, Method) %>%
   dplyr::summarise(mean_r = mean(r),
@@ -67,7 +67,7 @@ names(desc)[4] <- "nmshr Description"
 ```
 
 ```{r}
-temp <- plot[[1]] %>%
+temp <- plot[[2]] %>%
   dplyr::filter(Target == "Close" | Target == "Stranger") %>%
   dplyr::mutate(Target = factor(Target, levels = c("Close", "Stranger"))) %>%
   base::split(.$Indice) 
@@ -91,9 +91,9 @@ rm(temp, i, path)
 ################################################################################
 
 
-# mcshr
+# pershr
 ```{r}
-desc[[5]] <- plot[[2]] %>%
+desc[[5]] <- plot[[1]] %>%
   dplyr::filter(Target == "Close" | Target == "Stranger") %>%
   dplyr::group_by(Target, Indice) %>%
   dplyr::summarise(mean_r = mean(r),
@@ -103,7 +103,7 @@ names(desc)[5] <- "mcshr Description"
 ```
 
 ```{r}
-temp <- plot[[2]] %>%
+temp <- plot[[1]] %>%
   dplyr::filter(Target == "Close" | Target == "Stranger") %>%
   dplyr::mutate(Target = factor(Target, levels = c("Close", "Stranger"))) %>%
   base::split(.$Indice) 
@@ -141,7 +141,7 @@ names(desc)[6] <- "ICC Description"
 # Trials
 ```{r}
 options(scipen = 999)
-desc[[7]] <- plot[[2]] %>%
+desc[[7]] <- plot[[1]] %>%
   dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::filter(Target == "Close" | Target == "Stranger") %>%
   dplyr::mutate(Target = factor(Target, levels = c("Close", "Stranger"))) 
@@ -172,4 +172,19 @@ names(desc)[7] <- "Regression predict Trials Number"
 rm(grouped_data, r_8, i, regression, group)
 ```
 
+
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+# Predict Trials
+```{r}
+desc[[8]] <- plot[[1]] %>%
+  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  dplyr::mutate(
+    rate = (0.8 * r - 0.8) / (0.8 * r - r),
+    Needed = abs(rate * Trials)
+  )
+```
 

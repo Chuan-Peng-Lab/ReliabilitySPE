@@ -821,3 +821,22 @@ spearman_cor <- plot[[8]] %>%
   dplyr::group_by(Target, Indice) %>%
   dplyr::summarise(cor = cor(Trials, yi, method = "spearman"))
 ```
+
+## Figure S10: Needed Trials
+```{r}
+desc[[8]] %>%
+  dplyr::filter(Target %in% c("Close", "Stranger")) %>%
+  dplyr::mutate(
+    Needed = case_when(
+      Needed >= 300 ~ 300,
+      TRUE ~ Needed
+    )
+  ) %>%
+  ggplot2::ggplot(data = ., mapping = aes(x = Indice, y = Needed, color = Indice)) +
+  ggplot2::geom_point() +
+  ggplot2::coord_flip() +
+  ggplot2::scale_y_reverse() +
+  ggplot2::facet_wrap(~ Target) +
+  papaja::theme_apa()
+```
+
