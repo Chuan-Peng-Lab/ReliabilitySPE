@@ -1,0 +1,169 @@
+---
+title: "Untitled"
+author: "yuki"
+date: "2024-03-11"
+output: html_document
+---
+# Create NULL List
+```{r Create NULL List}
+plot <- list()
+```
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+# Plot[[1]]: Permuted SHR
+```{r Read OUTPUT}
+# 获取所有的mcshr
+plot[[1]] <- list.files(
+  file.path("./OUTPUT/pershr_5k/"),
+  pattern = "pershr_.*\\.csv$",
+  ) %>%
+  # 对读取到的所有.out文件x都执行函数read.table
+  lapply(
+    function(x) read.csv(
+      file.path("./OUTPUT/pershr_5k/", x),
+      header = TRUE
+    )
+  ) %>% # nolint
+  # 对所有被read.table处理过的数据执行dplyr的清洗
+  lapply(
+    function(df) dplyr::filter(
+      df, Indice != "Indice"
+    )
+  ) %>%
+  bind_rows(
+    
+  ) %>%
+  dplyr::mutate(
+    Target = case_when(
+    Target == "Friend" ~ "Close",
+    Target == "Partner" ~ "Close",
+    Target == "Mother" ~ "Close",
+    Target == "Father" ~ "Close",
+    Target == "Acquaintance" ~ "Stranger",
+    Target == "Stranger" ~ "Stranger",
+    Target == "Celebrity" ~ "Celebrity",
+    Target == "none" ~ "NonPerson",
+    )
+  ) %>%
+  #dplyr::filter(!stringr::str_detect(Indice, "ez")) %>%
+  dplyr::mutate(
+    Target = factor(
+      Target,levels = c(
+        "Close", "Stranger",
+        "Celebrity", "NonPerson")
+    ),
+    Indice = factor(
+      Indice,levels = c(
+        "rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v",
+        "Efficiency", "d Prime", "ACC", "RT")
+    )
+  ) %>%
+  dplyr::filter(
+    # 被认为是在原范式上有较大修改(4 session 4 mood)
+    !(Paper_ID %in% c("P51E1")) 
+  ) 
+names(plot)[1] <- "Permuted SHR"
+```
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+# Plot[[2]]: Normal SHR
+```{r Read OUTPUT}
+# 获取所有的nmshr
+plot[[2]] <- list.files(
+  file.path("./OUTPUT/nmshr/"),
+  pattern = "nmshr_.*\\.csv$",
+  ) %>%
+  # 对读取到的所有.out文件x都执行函数read.table
+  lapply(
+    function(x) read.csv(
+      file.path("./OUTPUT/nmshr/", x),
+      header = TRUE
+    )
+  ) %>% 
+  # 对所有被read.table处理过的数据执行dplyr的清洗
+  lapply(
+    function(df) dplyr::filter(
+      df, Indice != "Indice"
+    )
+  ) %>%
+  bind_rows(
+  ) %>%
+  dplyr::mutate(
+    Target = case_when(
+      Target == "Friend" ~ "Close",
+      Target == "Partner" ~ "Close",
+      Target == "Mother" ~ "Close",
+      Target == "Father" ~ "Close",
+      Target == "Acquaintance" ~ "Stranger",
+      Target == "Stranger" ~ "Stranger",
+      Target == "Celebrity" ~ "Celebrity",
+      Target == "none" ~ "NonPerson",
+    )
+  ) %>%
+  dplyr::mutate(
+    Target = factor(
+      Target,
+      levels = c(
+        "Close", "Stranger",
+        "Celebrity", "NonPerson"
+      ),
+    ),
+    Indice = factor(
+      Indice,
+      levels = c(
+        "rwDDM z", "rwDDM v", "ezDDM z", "ezDDM v",
+        "Efficiency", "d Prime", "ACC", "RT"
+      ) 
+    )
+  ) %>%
+  # not suitable paper "P51E1"
+  dplyr::filter(!(Paper_ID %in% c("P51E1"))) 
+
+names(plot)[2] <- "Normal SHR"
+```
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+# Plot[[3]]: ICC
+```{r Read OUTPUT}
+# 获取所有的icc
+plot[[3]] <- list.files(
+  file.path("./OUTPUT/icc/"),
+  pattern = "icc_R.*\\.csv$"
+  ) %>%
+  # 对读取到的所有.out文件x都执行函数read.table
+  lapply(
+    function(x) read.csv(
+      file.path("./OUTPUT/icc/", x),
+      header = TRUE)
+  ) %>% # nolint
+  # 对所有被read.table处理过的数据执行dplyr的清洗
+  lapply(
+    function(df) dplyr::filter(
+      df, Indice != "Indice")
+  ) %>%
+  bind_rows(
+    
+  ) %>%
+  dplyr::mutate(
+    Target = case_when(
+      Target == "Friend" ~ "Close",
+      Target == "Partner" ~ "Close",
+      Target == "Mother" ~ "Close",
+      Target == "Father" ~ "Close",
+      Target == "Acquaintance" ~ "Stranger",
+      Target == "Stranger" ~ "Stranger",
+      Target == "Celebrity" ~ "Celebrity",
+      Target == "none" ~ "NonPerson",
+      )
+    ) 
+names(plot)[3] <- "ICC"
+```
