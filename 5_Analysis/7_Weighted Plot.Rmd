@@ -571,9 +571,12 @@ rm(p0, p1, p2, p3, p4)
 ```{r}
 p1 <- meta[[1]] %>%
   dplyr::filter(Method == "First-Second") %>%
-  dplyr::arrange(yi) %>%
-  dplyr::mutate(Order = row_number()) %>%
-  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = yi)) +
+  dplyr::arrange(wtmr) %>%
+  dplyr::mutate(
+    Order = row_number(),
+    Target_Indice = paste(Target, Indice, sep="_")
+  ) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
   ggplot2::geom_bar(stat = "identity", color = "black", fill = "grey") +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
@@ -607,9 +610,12 @@ p1 <- meta[[1]] %>%
 
 p2 <- meta[[1]] %>%
   dplyr::filter(Method == "Odd-Even") %>%
-  dplyr::arrange(yi) %>%
-  dplyr::mutate(Order = row_number()) %>%
-  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = yi)) +
+  dplyr::arrange(wtmr) %>%
+  dplyr::mutate(
+    Order = row_number(),
+    Target_Indice = paste(Target, Indice, sep="_")
+  ) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
   ggplot2::geom_bar(stat = "identity", color = "black", fill = "grey") +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
@@ -642,9 +648,12 @@ p2 <- meta[[1]] %>%
                  axis.title.x = element_text(size = 12, family='serif'))
 
 p4 <- meta[[2]] %>%
-  dplyr::arrange(yi) %>%
-  dplyr::mutate(Order = row_number()) %>%
-  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = yi)) +
+  dplyr::arrange(wtmr) %>%
+  dplyr::mutate(
+    Order = row_number(),
+    Target_Indice = paste(Target, Indice, sep="_")
+  ) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
   ggplot2::geom_bar(stat = "identity", color = "black", fill = "grey") +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +

@@ -39,7 +39,7 @@ result_df <- data.frame(unique_ID = character(0), wtmr = numeric(0))
 
 for (i in seq_along(temp)) {
   # 计算AATtools::cormean
-  wtmr <- AATtools::cormean(r = temp[[i]]$r, n = temp[[i]]$Trials, wts = "df")
+  wtmr <- AATtools::cormean(r = temp[[i]]$r, n = temp[[i]]$Sample_Size, wts = "df")
   
   # 获取子集的元素名
   element_name <- names(temp)[i]
@@ -86,7 +86,7 @@ result_df <- data.frame(unique_ID = character(0), wtmr = numeric(0))
 
 for (i in seq_along(temp)) {
   # 计算AATtools::cormean
-  wtmr <- AATtools::cormean(r = temp[[i]]$r, n = temp[[i]]$Trials, wts = "df")
+  wtmr <- AATtools::cormean(r = temp[[i]]$r, n = temp[[i]]$Sample_Size, wts = "df")
   
   # 获取子集的元素名
   element_name <- names(temp)[i]
