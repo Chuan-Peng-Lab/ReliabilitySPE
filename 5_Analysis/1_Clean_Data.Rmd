@@ -4,45 +4,6 @@ author: "yuki"
 date: "2023-03-25"
 output: html_document
 ---
-# Package
-```{r Package, warning = FALSE,message = FALSE}
-# clean data
-library(tidyr)
-library(dplyr)
-library(stringr)
-library(R.matlab) # Paper s4 is from MATLAB
-library(data.table) # some functions need it
-# for ICC
-library(psych)
-#devtools::install_github("TingsterX/ReX")
-library(ReX)
-# for DDM
-library(hausekeep) # ez ddm
-library(RWiener) # RW ddm
-# Plot
-library(ggplot2)
-library(see)
-library(patchwork)
-# Parallel Computing
-library(foreach)
-library(parallel)
-library(iterators)
-library(doParallel)
-# Meta Analysis
-#library(metafor) 
-library(AATtools)
-
-# My packages: yukiSH & yukiBP
-# You can install them with ".tar.gz" or  from GitHub
-
-# install.packages("./PACKAGES/yukiSH_0.0.3.tar.gz") # nolint
-# devtools::install_github("yuki-961004/yukiSH") # nolint
-library(yukiSH)
-
-# install.packages("./PACKAGES/yukiBP_0.1.5.tar.gz") # nolint
-# devtools::install_github("yuki-961004/yukiBP") # nolint
-library(yukiBP)
-```
 
 # Data.Frame List
 ```{r Data.Frame List}
