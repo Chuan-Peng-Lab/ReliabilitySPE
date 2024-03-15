@@ -79,7 +79,6 @@ df[[16]] <- read.csv(
 
 names(df)[16] <- "Paper 95 Exp 1"
 summary(df[[16]])
-write.csv(x = df[[16]], file = "./DATA/df_16.csv")
 ```
 
 ## Experiment 2 (Identtiy = 3)
@@ -156,7 +155,6 @@ df[[17]] <- read.csv(
 
 names(df)[17] <- "Paper 95 Exp 2"
 summary(df[[17]])
-write.csv(x = df[[17]], file = "./DATA/df_17.csv")
 ```
 
 # Paper s1 (Face)
@@ -242,7 +240,6 @@ rm(df_Subject_ID, df_Ps1_E1)
 
 names(df)[18] <- "Paper s1 Exp 1"
 summary(df[[18]])
-write.csv(x = df[[18]], file = "./DATA/df_18.csv")
 ```
 
 # Paper s2
@@ -306,7 +303,6 @@ df[[19]] <- read.csv(
 
 names(df)[19] <- "Paper s2 Exp 1"
 summary(df[[19]])
-write.csv(x = df[[19]], file = "./DATA/df_19.csv")
 ```
 
 # Paper s3
@@ -365,7 +361,6 @@ df[[20]] <- read.csv(
 
 names(df)[20] <- "Paper s3 Exp 1"
 summary(df[[20]])
-write.csv(x = df[[20]], file = "./DATA/df_20.csv")
 ```
 
 # Paper s4
@@ -433,11 +428,10 @@ df[[21]] <- read.mat(
     Subject, Matching, Identity, Session
   )
 
-rm(list_mat_e1)
+rm(list_mat_e1, mat_data)
 
 names(df)[21] <- "Paper s4 Exp 1"
 summary(df[[21]])
-write.csv(x = df[[21]], file = "./DATA/df_21.csv")
 ```
 
 # Paper s4
@@ -504,11 +498,10 @@ df[[22]] <- read.mat(list = list_mat_e2) %>%
     Subject, Matching, Identity, Session
   )
 
-rm(list_mat_e2)
+rm(list_mat_e2, mat_data)
 
 names(df)[22] <- "Paper s4 Exp 1"
 summary(df[[22]])
-write.csv(x = df[[22]], file = "./DATA/df_22.csv")
 ```
 
 # Paper s5
@@ -568,7 +561,6 @@ df[[23]] <- read.csv(
 
 names(df)[23] <- "Paper s5 Exp 1"
 summary(df[[23]])
-write.csv(x = df[[23]], file = "./DATA/df_23.csv")
 ```
 
 ## Experiment 2 (Identtiy = 3)
@@ -627,7 +619,6 @@ df[[24]] <- read.csv(
 
 names(df)[24] <- "Paper s5 Exp 2"
 summary(df[[24]])
-write.csv(x = df[[24]], file = "./DATA/df_24.csv")
 ```
 
 ## Experiment 3 (Identtiy = 3)
@@ -686,7 +677,6 @@ df[[25]] <- read.csv(
 
 names(df)[25] <- "Paper s5 Exp 3"
 summary(df[[25]])
-write.csv(x = df[[25]], file = "./DATA/df_25.csv")
 ```
 
 ## Experiment 4 (Identtiy = 3)
@@ -745,5 +735,4 @@ df[[26]] <- read.csv(
 
 names(df)[26] <- "Paper s5 Exp 4"
 summary(df[[26]])
-write.csv(x = df[[26]], file = "./DATA/df_26.csv")
 ```

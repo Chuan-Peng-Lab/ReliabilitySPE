@@ -4,23 +4,40 @@ author: "yuki"
 date: "2024-03-14"
 output: html_document
 ---
-Step 1: 把正确率低于0.5的被试找出来
-Step 2: 把正确率低的被试删掉, 重新写入csv
-Step 3: 从"./DATA/df[n].csv"读取
-Step 1: 再次检验是否还存在正确率低的被试
+Step 0: initial number of subjects
+
+Step 1: filter subjects (mean_ACC < 0.5)
+Step 2: drop subjects (mean_ACC < 0.5), write.csv
+Step 3: read.csv
+
+Step 1: double check the mean_ACC of subjects
+
+```{r Step 0}
+# 创建一个空列表来存储结果
+subject_counts <- list()
+
+# 循环遍历列表中的每个数据框
+for (i in seq_along(df)) {
+  # 计算当前数据框中不同的 Subject 的数量，并存储到结果列表中
+  subject_counts[[i]] <- length(unique(df[[i]]$Subject))
+}
+```
+
 
 # Check ACC
-```{r Step 1}
+```{r Step 1, message=FALSE, warning=FALSE}
 min_ACC_list <- list()
 
-for (i in 1:26) {
+for (i in 1:length(df)) {
   min_ACC <- df[[i]] %>%
-    dplyr::group_by(Subject, Matching, Identity, Session) %>%
+    dplyr::filter(Matching == "Matching") %>%
+    dplyr::group_by(Subject) %>%
     #dplyr::group_by(Subject) %>%
     dplyr::summarise(mean_ACC = mean(ACC)) %>%
     dplyr::ungroup() %>%
     dplyr::filter(mean_ACC < 0.5) %>%
-    dplyr::arrange(mean_ACC)
+    dplyr::arrange(mean_ACC) %>%
+    dplyr::distinct(Subject, .keep_all = TRUE)
   
   min_ACC_list[[i]] <- min_ACC
   cat(
@@ -52,7 +69,6 @@ rm(filtered_df, i)
 
 
 ```{r Step 3}
-df <- list()
 df[[1]] <- read.csv("./DATA/df_1.csv")
 df[[2]] <- read.csv("./DATA/df_2.csv")
 df[[3]] <- read.csv("./DATA/df_3.csv")

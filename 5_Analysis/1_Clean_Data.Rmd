@@ -54,7 +54,6 @@ df[[1]] <- read.csv(
 
 names(df)[1] <- "Paper 0 Exp 1"
 summary(df[[1]])
-write.csv(x = df[[1]], file = "./DATA/df_1.csv")
 ```
 
 # Paper 6 
@@ -123,7 +122,6 @@ df[[2]] <- read.csv(
 
 names(df)[2] <- "Paper 6 Exp 1"
 summary(df[[2]])
-write.csv(x = df[[2]], file = "./DATA/df_2.csv")
 ```
 
 # Paper 46 (Dark Light Box)
@@ -188,7 +186,6 @@ df[[3]] <- read.csv(
 
 names(df)[3] <- "Paper 46 Exp 2"
 summary(df[[3]])
-write.csv(x = df[[3]], file = "./DATA/df_3.csv")
 ```
 
 # Paper 51 
@@ -253,7 +250,6 @@ df[[4]] <- read.csv(
 
 names(df)[4] <- "Paper 51 Exp 1"
 summary(df[[4]])
-write.csv(x = df[[4]], file = "./DATA/df_4.csv")
 ```
 
 ## Experiment 2 (Identtiy = 2)
@@ -315,7 +311,6 @@ df[[5]] <- read.csv(
 
 names(df)[5] <- "Paper 51 Exp 2"
 summary(df[[5]])
-write.csv(x = df[[5]], file = "./DATA/df_5.csv")
 ```
 
 # Paper 54 
@@ -375,7 +370,6 @@ df[[6]] <- read.csv(
 
 names(df)[6] <- "Paper 54 Exp 1"
 summary(df[[6]])
-write.csv(x = df[[6]], file = "./DATA/df_6.csv")
 ```
 
 ## Experiment 3 (Identtiy = 3)
@@ -433,7 +427,6 @@ df[[7]] <- read.csv(
 
 names(df)[7] <- "Paper 54 Exp 3"
 summary(df[[7]])
-write.csv(x = df[[7]], file = "./DATA/df_7.csv")
 ```
 
 # Paper n4
@@ -488,7 +481,6 @@ df[[8]] <- read.csv(
 
 names(df)[8] <- "Papaer n4 Exp 1"
 summary(df[[8]])
-write.csv(x = df[[8]], file = "./DATA/df_8.csv")
 ```
 
 # Paper n13
@@ -554,7 +546,6 @@ df[[9]] <- read.csv(
 
 names(df)[9] <- "Papaer n13 Exp 1"
 summary(df[[9]])
-write.csv(x = df[[9]], file = "./DATA/df_9.csv")
 ```
 
 ## Experiment 3 (Identtiy = 3)
@@ -617,7 +608,6 @@ df[[10]] <- read.csv(
 
 names(df)[10] <- "Papaer n13 Exp 3"
 summary(df[[10]])
-write.csv(x = df[[10]], file = "./DATA/df_10.csv")
 ```
 
 ## Experiment 4 (Identtiy = 3)
@@ -681,7 +671,6 @@ df[[11]] <- read.csv(
 
 names(df)[11] <- "Papaer n13 Exp 4"
 summary(df[[11]])
-write.csv(x = df[[11]], file = "./DATA/df_11.csv")
 ```
 
 # Paper n16
@@ -733,7 +722,6 @@ df[[12]] <- read.csv(
 
 names(df)[12] <- "Papaer n16 Exp 1"
 summary(df[[12]])
-write.csv(x = df[[12]], file = "./DATA/df_12.csv")
 ```
 
 ## Experiment 2 (Identtiy = 2)
@@ -783,7 +771,6 @@ df[[13]] <- read.csv(
 
 names(df)[13] <- "Papaer n16 Exp 2"
 summary(df[[13]])
-write.csv(x = df[[13]], file = "./DATA/df_13.csv")
 ```
 
 ## Experiment 3 (Identtiy = 2)
@@ -834,7 +821,6 @@ df[[14]] <- read.csv(
 
 names(df)[14] <- "Papaer n16 Exp 3"
 summary(df[[14]])
-write.csv(x = df[[14]], file = "./DATA/df_14.csv")
 ```
 
 # Paper n23
@@ -889,7 +875,6 @@ df[[15]] <- read.csv(
 
 names(df)[15] <- "Papaer n23 Exp 1"
 summary(df[[15]])
-write.csv(x = df[[15]], file = "./DATA/df_15.csv")
 ```
 
 
