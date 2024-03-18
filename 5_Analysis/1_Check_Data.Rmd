@@ -84,6 +84,7 @@ df[[12]] <- read.csv("./DATA/df_12.csv")
 df[[13]] <- read.csv("./DATA/df_13.csv")
 df[[14]] <- read.csv("./DATA/df_14.csv")
 df[[15]] <- read.csv("./DATA/df_15.csv")
+
 df[[16]] <- read.csv("./DATA/df_16.csv")
 df[[17]] <- read.csv("./DATA/df_17.csv")
 df[[18]] <- read.csv("./DATA/df_18.csv")
@@ -95,6 +96,12 @@ df[[23]] <- read.csv("./DATA/df_23.csv")
 df[[24]] <- read.csv("./DATA/df_24.csv")
 df[[25]] <- read.csv("./DATA/df_25.csv")
 df[[26]] <- read.csv("./DATA/df_26.csv")
+
+df[[27]] <- read.csv("./DATA/df_27.csv")
+df[[28]] <- read.csv("./DATA/df_28.csv")
+df[[29]] <- read.csv("./DATA/df_29.csv")
+df[[30]] <- read.csv("./DATA/df_30.csv")
+df[[31]] <- read.csv("./DATA/df_31.csv")
 ```
 
 

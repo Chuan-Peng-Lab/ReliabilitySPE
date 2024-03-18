@@ -26,7 +26,7 @@ library(yukiBP)
 ```
 
 ```{r List for Data Frame}
-df <- list()
+#df <- list()
 df[[1]] <- read.csv("./DATA/df_1.csv")
 df[[2]] <- read.csv("./DATA/df_2.csv")
 df[[3]] <- read.csv("./DATA/df_3.csv")
@@ -49,6 +49,15 @@ df[[19]] <- read.csv("./DATA/df_19.csv")
 df[[20]] <- read.csv("./DATA/df_20.csv")
 df[[21]] <- read.csv("./DATA/df_21.csv")
 df[[22]] <- read.csv("./DATA/df_22.csv")
+df[[23]] <- read.csv("./DATA/df_23.csv")
+df[[24]] <- read.csv("./DATA/df_24.csv")
+df[[25]] <- read.csv("./DATA/df_25.csv")
+df[[26]] <- read.csv("./DATA/df_26.csv")
+df[[27]] <- read.csv("./DATA/df_27.csv")
+df[[28]] <- read.csv("./DATA/df_28.csv")
+df[[29]] <- read.csv("./DATA/df_29.csv")
+df[[30]] <- read.csv("./DATA/df_30.csv")
+df[[31]] <- read.csv("./DATA/df_31.csv")
 ```
 
 ```{r List for Paper ID}
@@ -68,6 +77,7 @@ p[[12]] <- "Pn16E1"
 p[[13]] <- "Pn16E2"
 p[[14]] <- "Pn16E3"
 p[[15]] <- "Pn23E1"
+
 p[[16]] <- "P95E1"
 p[[17]] <- "P95E2"
 p[[18]] <- "Ps1E1"
@@ -75,6 +85,16 @@ p[[19]] <- "Ps2E1"
 p[[20]] <- "Ps3E1"
 p[[21]] <- "Ps4E1"
 p[[22]] <- "Ps4E2"
+p[[23]] <- "Ps5E1"
+p[[24]] <- "Ps5E2"
+p[[25]] <- "Ps5E3"
+p[[26]] <- "Ps5E4"
+
+p[[27]] <- "Pt1E1"
+p[[28]] <- "Pt2E1"
+p[[29]] <- "Pt3E1"
+p[[30]] <- "Pt6E1"
+p[[31]] <- "Pt6E2"
 ```
 
 ```{r List for Target}
@@ -94,6 +114,7 @@ t[[12]] <- c("Self", "Friend")
 t[[13]] <- c("Self", "Friend")
 t[[14]] <- c("Self", "Friend")
 t[[15]] <- c("Self", "Friend", "Stranger")
+
 t[[16]] <- c("Self", "Friend", "Stranger")
 t[[17]] <- c("Self", "Friend", "Stranger")
 t[[18]] <- c("Self", "Stranger")
@@ -101,6 +122,16 @@ t[[19]] <- c("Self", "Stranger")
 t[[20]] <- c("Self", "Friend", "Stranger")
 t[[21]] <- c("Self", "Friend", "Stranger")
 t[[22]] <- c("Self", "Friend", "Stranger")
+t[[23]] <- c("Self", "Mother", "Stranger")
+t[[24]] <- c("Self", "Mother", "Stranger")
+t[[25]] <- c("Self", "Mother", "Stranger")
+t[[26]] <- c("Self", "Mother", "Stranger")
+
+t[[27]] <- c("Self", "Stranger")
+t[[28]] <- c("Self", "Friend", "Stranger")
+t[[29]] <- c("Self", "Friend", "Stranger")
+t[[30]] <- c("Self", "Stranger")
+t[[31]] <- c("Self", "Stranger")
 ```
 
 ```{r lazy_nmshr}
@@ -156,54 +187,6 @@ lazy_nmshr <- function(Target, Paper_ID, nc) {
 }
 ```
 
-```{r lazy_mcshr}
-lazy_mcshr <- function(Target, Paper_ID, nc) {
-
-  # 计算8个参数的分半信度
-  df_rt <- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "rt", mc = TRUE, nc = nc) # nolint
-  df_acc <- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "acc", mc = TRUE, nc = nc) # nolint
-  df_dp <- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "dp", mc = TRUE, nc = nc) # nolint
-  df_eff <- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "eff", mc = TRUE, nc = nc) # nolint
-  df_ezddm <- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "ezddm", mc = TRUE, nc = nc) # nolint
-  df_rwddm <- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "rwddm", mc = TRUE, nc = nc) # nolint
-
-  # 合并8个参数到一个表格内
-  result <- rbind(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm) %>%
-    dplyr::mutate(
-      Indice = case_when(
-        Indice == "rt" ~ "RT",
-        Indice == "acc" ~ "ACC",
-        Indice == "dp" ~ "d Prime",
-        Indice == "eff" ~ "Efficiency",
-        Indice == "ez_v" ~ "ezDDM v",
-        Indice == "ez_z" ~ "ezDDM z",
-        Indice == "rw_v" ~ "rwDDM v",
-        Indice == "rw_z" ~ "rwDDM z",
-      )
-    ) %>%
-    dplyr::mutate(
-      Indice = factor(
-        Indice, levels = c(
-          "RT", "ACC", "d Prime", "Efficiency",
-          "ezDDM v", "ezDDM z", "rwDDM v", "rwDDM z"
-        )
-      ),
-        Target = factor(Target),
-    ) %>%
-    dplyr::select(
-      Target, Indice, r, LLCI, ULCI, Paper_ID
-    ) %>%
-    dplyr::arrange(
-      Target, Indice
-    )
-
-  # 保存生成的表格
-  Path <- paste0("./mcshr_", Paper_ID, ".csv")
-  write.csv(x = result, file = Path, row.names = FALSE)
-
-}
-```
-
 ```{r lazy_pershr}
 lazy_pershr <- function(Target, Paper_ID, nc) {
 
@@ -252,8 +235,56 @@ lazy_pershr <- function(Target, Paper_ID, nc) {
 }
 ```
 
+```{r lazy_mcshr}
+lazy_mcshr <- function(Target, Paper_ID, nc) {
+
+  # 计算8个参数的分半信度
+  df_rt <- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "rt", mc = TRUE, nc = nc) # nolint
+  df_acc <- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "acc", mc = TRUE, nc = nc) # nolint
+  df_dp <- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "dp", mc = TRUE, nc = nc) # nolint
+  df_eff <- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "eff", mc = TRUE, nc = nc) # nolint
+  df_ezddm <- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "ezddm", mc = TRUE, nc = nc) # nolint
+  df_rwddm <- yukiBP::shr(list = shl[[4]], Target = Target, Paper_ID = Paper_ID, Indice = "rwddm", mc = TRUE, nc = nc) # nolint
+
+  # 合并8个参数到一个表格内
+  result <- rbind(df_rt, df_acc, df_dp, df_eff, df_ezddm, df_rwddm) %>%
+    dplyr::mutate(
+      Indice = case_when(
+        Indice == "rt" ~ "RT",
+        Indice == "acc" ~ "ACC",
+        Indice == "dp" ~ "d Prime",
+        Indice == "eff" ~ "Efficiency",
+        Indice == "ez_v" ~ "ezDDM v",
+        Indice == "ez_z" ~ "ezDDM z",
+        Indice == "rw_v" ~ "rwDDM v",
+        Indice == "rw_z" ~ "rwDDM z",
+      )
+    ) %>%
+    dplyr::mutate(
+      Indice = factor(
+        Indice, levels = c(
+          "RT", "ACC", "d Prime", "Efficiency",
+          "ezDDM v", "ezDDM z", "rwDDM v", "rwDDM z"
+        )
+      ),
+        Target = factor(Target),
+    ) %>%
+    dplyr::select(
+      Target, Indice, r, LLCI, ULCI, Paper_ID
+    ) %>%
+    dplyr::arrange(
+      Target, Indice
+    )
+
+  # 保存生成的表格
+  Path <- paste0("./mcshr_", Paper_ID, ".csv")
+  write.csv(x = result, file = Path, row.names = FALSE)
+
+}
+```
+
 ```{r}
-for (i in 1:18) {
+for (i in 20) {
   shl <- list(list(), list(), list(), list())
 
   gc()
@@ -263,13 +294,13 @@ for (i in 1:18) {
   # Odd-Even
   shl[[2]] <- yukiSH::sh_tool(df.split = df[[i]], method = "od", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session") # nolint
   # Permuted
-  shl[[3]] <- yukiSH::sh_tool(df.split = df[[i]], method = "permuted", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session", iteration = 5000, nc = 16) # nolint
+  shl[[3]] <- yukiSH::sh_tool(df.split = df[[i]], method = "permuted", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session", iteration = 10, nc = 16) # nolint
   # Monte Carlo
-  shl[[4]] <- yukiSH::sh_tool(df.split = df[[i]], method = "mc", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session", iteration = 5000, nc = 16) # nolint 
+  #shl[[4]] <- yukiSH::sh_tool(df.split = df[[i]], method = "mc", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session", iteration = 10, nc = 16) # nolint 
 
-  lazy_nmshr(Target = t[[i]], Paper_ID = p[[i]], nc = 10)
-  lazy_pershr(Target = t[[i]], Paper_ID = p[[i]], nc = 10)
-  lazy_mcshr(Target = t[[i]], Paper_ID = p[[i]], nc = 10)
+  lazy_nmshr(Target = t[[i]], Paper_ID = p[[i]], nc = 16)
+  lazy_pershr(Target = t[[i]], Paper_ID = p[[i]], nc = 16)
+  #lazy_mcshr(Target = t[[i]], Paper_ID = p[[i]], nc = 16)
 }
 ```
 

@@ -191,7 +191,7 @@ df[[29]] <- read.csv(
       Matching, levels = c("Matching", "Nonmatching")
     ),
     Identity = factor(
-      Identity, levels = c("Self", "Stranger")
+      Identity, levels = c("Self", "Friend", "Stranger")
     ),
     Session = as.factor(Session),
     RT_ms = as.numeric(RT_ms),
