@@ -58,6 +58,9 @@ df[[28]] <- read.csv("./DATA/df_28.csv")
 df[[29]] <- read.csv("./DATA/df_29.csv")
 df[[30]] <- read.csv("./DATA/df_30.csv")
 df[[31]] <- read.csv("./DATA/df_31.csv")
+df[[32]] <- read.csv("./DATA/df_32.csv")
+df[[33]] <- read.csv("./DATA/df_33.csv")
+df[[34]] <- read.csv("./DATA/df_34.csv")
 ```
 
 ```{r List for Paper ID}
@@ -95,6 +98,9 @@ p[[28]] <- "Pt2E1"
 p[[29]] <- "Pt3E1"
 p[[30]] <- "Pt6E1"
 p[[31]] <- "Pt6E2"
+p[[32]] <- "Pt9E1"
+p[[33]] <- "Pt9E2"
+p[[34]] <- "Pt9E3"
 ```
 
 ```{r List for Target}
@@ -132,6 +138,9 @@ t[[28]] <- c("Self", "Friend", "Stranger")
 t[[29]] <- c("Self", "Friend", "Stranger")
 t[[30]] <- c("Self", "Stranger")
 t[[31]] <- c("Self", "Stranger")
+t[[32]] <- c("Self", "Friend", "None")
+t[[33]] <- c("Self", "Friend", "None")
+t[[34]] <- c("Self", "Friend", "None")
 ```
 
 ```{r lazy_nmshr}
@@ -284,7 +293,7 @@ lazy_mcshr <- function(Target, Paper_ID, nc) {
 ```
 
 ```{r}
-for (i in 20) {
+for (i in 32:34) {
   shl <- list(list(), list(), list(), list())
 
   gc()
@@ -294,14 +303,17 @@ for (i in 20) {
   # Odd-Even
   shl[[2]] <- yukiSH::sh_tool(df.split = df[[i]], method = "od", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session") # nolint
   # Permuted
-  shl[[3]] <- yukiSH::sh_tool(df.split = df[[i]], method = "permuted", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session", iteration = 10, nc = 16) # nolint
+  shl[[3]] <- yukiSH::sh_tool(df.split = df[[i]], method = "permuted", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session", iteration = 10, nc = 8) # nolint
   # Monte Carlo
   #shl[[4]] <- yukiSH::sh_tool(df.split = df[[i]], method = "mc", sub = "Subject", var1 = "Matching", var2 = "Identity", var3 = "Session", iteration = 10, nc = 16) # nolint 
 
-  lazy_nmshr(Target = t[[i]], Paper_ID = p[[i]], nc = 16)
-  lazy_pershr(Target = t[[i]], Paper_ID = p[[i]], nc = 16)
+  lazy_nmshr(Target = t[[i]], Paper_ID = p[[i]], nc = 8)
+  lazy_pershr(Target = t[[i]], Paper_ID = p[[i]], nc = 8)
   #lazy_mcshr(Target = t[[i]], Paper_ID = p[[i]], nc = 16)
 }
+
+rm(shl)
+gc()
 ```
 
 

@@ -367,3 +367,268 @@ df[[31]] <- temp %>%
 names(df)[31] <- "Paper t6 Exp 2"
 summary(df[[31]])
 ```
+
+# Paper t9
+## Experiment 1 (Identtiy = 3)
+"Self", "Friend", "None"
+```{r}
+###############################Save Raw Data####################################
+# 获取文件列表
+file_list <- list.files(
+  path = "../4_Data_Extraction/4_2_Open_Data/Paper_t9/Source/Data - Experiment 1/",
+  pattern = "^SelfPriorExp_3.*\\.dat$",
+  full.names = TRUE
+)
+
+# 读取dat文件并存入list中
+data_list <- lapply(file_list, read.table, header = FALSE, sep = " ")
+
+combined_data <- do.call(rbind, data_list)
+
+write.csv(
+  x = combined_data, 
+  file = "../4_Data_Extraction/4_2_Open_Data/Paper_t9/Pt9_Exp1_raw.csv",
+  row.names = FALSE
+)
+
+rm(file_list, data_list, combined_data)
+
+##################################Clean Data####################################
+
+df[[32]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_t9/Pt9_Exp1_raw.csv") %>%
+  dplyr::select(
+    Subject = V1,
+    Shape = V7,
+    Label1 = V10,
+    Label2 = V11,
+    Label3 = V12,
+    Matching = V14,
+    ACC = V15,
+    RT_ms = V16,
+  ) %>%
+  dplyr::mutate(
+    Session = 1,
+    Shape = case_when(
+      Shape == "shape1.jpg" ~ Label1,
+      Shape == "shape2.jpg" ~ Label2,
+      Shape == "shape3.jpg" ~ Label3,
+    ),
+    Identity = case_when(
+      Shape == "You" ~ "Self",
+      Shape == "none" ~ "None",
+      TRUE ~ "Friend"
+    ),
+    Matching = case_when(
+      Matching == 1 ~ "Matching",
+      Matching == 2 ~ "Nonmatching"),
+    RT_ms = as.numeric(RT_ms),
+    RT_sec = RT_ms / 1000,
+  ) %>%
+  dplyr::mutate(
+    Subjcet = as.numeric(Subject),
+    Matching = factor(
+      Matching, levels = c("Matching", "Nonmatching")
+    ),
+    Identity = factor(
+      Identity, levels = c("Self", "Friend", "None")
+    ),
+    Session = as.factor(Session),
+    RT_ms = as.numeric(RT_ms),
+    RT_sec = as.numeric(RT_sec),
+    ACC = as.numeric(ACC),
+  ) %>%
+  dplyr::select(
+    Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC
+  ) %>%
+  dplyr::mutate(
+    RT_sec = round(RT_sec, 3),
+    RT_ms = round(RT_ms, 0)
+  ) %>%
+  dplyr::filter(
+    RT_sec >= 0.2 & RT_sec <= 1.5,
+    ACC == 1 | ACC == 0
+  ) %>%
+  dplyr::arrange(
+    Subject, Matching, Identity, Session
+  )
+
+names(df)[32] <- "Paper t9 Exp 1"
+summary(df[[32]])
+```
+
+
+# Paper t9
+## Experiment 2 (Identtiy = 3)
+"Self", "Friend", "None"
+```{r}
+###############################Save Raw Data####################################
+# 获取文件列表
+file_list <- list.files(
+  path = "../4_Data_Extraction/4_2_Open_Data/Paper_t9/Source/Data - Experiment 2/",
+  pattern = "^SelfPriorExp_1.*\\.dat$",
+  full.names = TRUE
+)
+
+# 读取dat文件并存入list中
+data_list <- lapply(file_list, read.table, header = FALSE, sep = " ")
+
+combined_data <- do.call(rbind, data_list)
+
+write.csv(
+  x = combined_data, 
+  file = "../4_Data_Extraction/4_2_Open_Data/Paper_t9/Pt9_Exp2_raw.csv",
+  row.names = FALSE
+)
+
+rm(file_list, data_list, combined_data)
+
+##################################Clean Data####################################
+
+df[[33]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_t9/Pt9_Exp2_raw.csv") %>%
+  dplyr::select(
+    Subject = V1,
+    Shape = V7,
+    Label1 = V10,
+    Label2 = V11,
+    Label3 = V12,
+    Matching = V14,
+    ACC = V15,
+    RT_ms = V16,
+  ) %>%
+  dplyr::mutate(
+    Session = 1,
+    Shape = case_when(
+      Shape == "shape1.jpg" ~ Label1,
+      Shape == "shape2.jpg" ~ Label2,
+      Shape == "shape3.jpg" ~ Label3,
+    ),
+    Identity = case_when(
+      Shape == "You" ~ "Self",
+      Shape == "none" ~ "None",
+      TRUE ~ "Friend"
+    ),
+    Matching = case_when(
+      Matching == 1 ~ "Matching",
+      Matching == 2 ~ "Nonmatching"),
+    RT_ms = as.numeric(RT_ms),
+    RT_sec = RT_ms / 1000,
+  ) %>%
+  dplyr::mutate(
+    Subjcet = as.numeric(Subject),
+    Matching = factor(
+      Matching, levels = c("Matching", "Nonmatching")
+    ),
+    Identity = factor(
+      Identity, levels = c("Self", "Friend", "None")
+    ),
+    Session = as.factor(Session),
+    RT_ms = as.numeric(RT_ms),
+    RT_sec = as.numeric(RT_sec),
+    ACC = as.numeric(ACC),
+  ) %>%
+  dplyr::select(
+    Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC
+  ) %>%
+  dplyr::mutate(
+    RT_sec = round(RT_sec, 3),
+    RT_ms = round(RT_ms, 0)
+  ) %>%
+  dplyr::filter(
+    RT_sec >= 0.2 & RT_sec <= 1.5,
+    ACC == 1 | ACC == 0
+  ) %>%
+  dplyr::arrange(
+    Subject, Matching, Identity, Session
+  )
+
+names(df)[33] <- "Paper t9 Exp 2"
+summary(df[[33]])
+```
+
+# Paper t9
+## Experiment 3 (Identtiy = 3)
+"Self", "Friend", "None"
+```{r}
+###############################Save Raw Data####################################
+# 获取文件列表
+file_list <- list.files(
+  path = "../4_Data_Extraction/4_2_Open_Data/Paper_t9/Source/Data - Experiment 3/",
+  pattern = "^SelfPriorExp_2.*\\.dat$",
+  full.names = TRUE
+)
+
+# 读取dat文件并存入list中
+data_list <- lapply(file_list, read.table, header = FALSE, sep = " ")
+
+combined_data <- do.call(rbind, data_list)
+
+write.csv(
+  x = combined_data, 
+  file = "../4_Data_Extraction/4_2_Open_Data/Paper_t9/Pt9_Exp3_raw.csv",
+  row.names = FALSE
+)
+
+rm(file_list, data_list, combined_data)
+
+##################################Clean Data####################################
+
+df[[34]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_t9/Pt9_Exp3_raw.csv") %>%
+  dplyr::select(
+    Subject = V1,
+    Shape = V7,
+    Label1 = V10,
+    Label2 = V11,
+    Label3 = V12,
+    Matching = V14,
+    ACC = V15,
+    RT_ms = V16,
+  ) %>%
+  dplyr::mutate(
+    Session = 1,
+    Shape = case_when(
+      Shape == "shape1.jpg" ~ Label1,
+      Shape == "shape2.jpg" ~ Label2,
+      Shape == "shape3.jpg" ~ Label3,
+    ),
+    Identity = case_when(
+      Shape == "You" ~ "Self",
+      Shape == "none" ~ "None",
+      TRUE ~ "Friend"
+    ),
+    Matching = case_when(
+      Matching == 1 ~ "Matching",
+      Matching == 2 ~ "Nonmatching"),
+    RT_ms = as.numeric(RT_ms),
+    RT_sec = RT_ms / 1000,
+  ) %>%
+  dplyr::mutate(
+    Subjcet = as.numeric(Subject),
+    Matching = factor(
+      Matching, levels = c("Matching", "Nonmatching")
+    ),
+    Identity = factor(
+      Identity, levels = c("Self", "Friend", "None")
+    ),
+    Session = as.factor(Session),
+    RT_ms = as.numeric(RT_ms),
+    RT_sec = as.numeric(RT_sec),
+    ACC = as.numeric(ACC),
+  ) %>%
+  dplyr::select(
+    Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC
+  ) %>%
+  dplyr::mutate(
+    RT_sec = round(RT_sec, 3),
+    RT_ms = round(RT_ms, 0)
+  ) %>%
+  dplyr::filter(
+    RT_sec >= 0.2 & RT_sec <= 1.5,
+    ACC == 1 | ACC == 0
+  ) %>%
+  dplyr::arrange(
+    Subject, Matching, Identity, Session
+  )
+
+names(df)[34] <- "Paper t9 Exp 3"
+summary(df[[34]])
+```

@@ -16,7 +16,7 @@ desc <- list()
 # Label
 ```{r}
 desc[[1]] <- readxl::read_excel("./Label.xlsx") %>%
-  dplyr::select(Paper_ID, Sample_Size, Trials, Author, Year, Study)
+  dplyr::select(Paper_ID, Sample_Size = Remain, Trials, Author, Year, Exp)
 names(desc)[1] <- "Label"
 ```
 

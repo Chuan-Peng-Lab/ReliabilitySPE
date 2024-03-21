@@ -98,7 +98,7 @@ p_shr <- aggr[[1]] %>%
   ) %>%
 ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
   ggplot2::geom_errorbar(aes(ymin = LLCI, ymax = ULCI, linetype = Outliar),
-                         width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
+                         width = 0.1, linewidth = 1, position = position_dodge(width = 1)) + # nolint
   #ggplot2::geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), linewidth = 1, color = "black", linetype = Outliar) +
   ggplot2::geom_point(shape = 15, size = 3, color = "black") +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
