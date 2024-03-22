@@ -315,7 +315,7 @@ summary(df[[5]])
 
 # Paper 54 
 ## Experiment 1 (Identtiy = 4)
-"Self", "Mother","none", "Acquaintance"
+"Self", "Mother","None", "Acquaintance"
 ```{r Paper 54 Experiment 1}
 df[[6]] <- read.csv(
   "../4_Data_Extraction/4_2_Open_Data/Paper_54/P54_Exp1_raw.csv"
@@ -332,7 +332,7 @@ df[[6]] <- read.csv(
     Identity = case_when(
       flanker == "Ich" ~ "Self",
       flanker == "Mutter" ~ "Mother",
-      flanker == "none" ~ "none",
+      flanker == "none" ~ "None",
       flanker == "Bekannter" ~ "Acquaintance"
     ),
     Session = 1,
@@ -346,7 +346,7 @@ df[[6]] <- read.csv(
       Matching, levels = c("Matching", "Nonmatching")
     ),
     Identity = factor(
-      Identity, levels = c("Self", "Mother", "none", "Acquaintance")
+      Identity, levels = c("Self", "Mother", "None", "Acquaintance")
     ),
     Session = as.factor(Session),
     RT_ms = as.numeric(RT_ms),

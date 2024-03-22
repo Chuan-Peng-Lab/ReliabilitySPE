@@ -1,49 +1,49 @@
-"Target","Indice","Method","r","Paper_ID"
-"Acquaintance","RT","First-Second",0.00739086302086684,"P54E1"
-"Acquaintance","RT","Odd-Even",0.217675106339084,"P54E1"
-"Acquaintance","ACC","First-Second",0.150141832336371,"P54E1"
-"Acquaintance","ACC","Odd-Even",0.00533066125204575,"P54E1"
-"Acquaintance","d Prime","First-Second",0.0270008750379786,"P54E1"
-"Acquaintance","d Prime","Odd-Even",0.050828635544739,"P54E1"
-"Acquaintance","Efficiency","First-Second",0.213551249436328,"P54E1"
-"Acquaintance","Efficiency","Odd-Even",0.226418185476396,"P54E1"
-"Acquaintance","ezDDM v","First-Second",0.0775833903068299,"P54E1"
-"Acquaintance","ezDDM v","Odd-Even",0.156471388991671,"P54E1"
-"Acquaintance","ezDDM z","First-Second",0.084913292641408,"P54E1"
-"Acquaintance","ezDDM z","Odd-Even",0.198966506846607,"P54E1"
-"Acquaintance","rwDDM v","First-Second",-0.0817904102629069,"P54E1"
-"Acquaintance","rwDDM v","Odd-Even",-0.134653667031871,"P54E1"
-"Acquaintance","rwDDM z","First-Second",0.0752267327738869,"P54E1"
-"Acquaintance","rwDDM z","Odd-Even",-0.0914498457564523,"P54E1"
-"Mother","RT","First-Second",-0.140265265078919,"P54E1"
-"Mother","RT","Odd-Even",-0.305115350259513,"P54E1"
-"Mother","ACC","First-Second",0.381442073445194,"P54E1"
-"Mother","ACC","Odd-Even",0.0176326739107765,"P54E1"
-"Mother","d Prime","First-Second",-0.0416406456265053,"P54E1"
-"Mother","d Prime","Odd-Even",0.0802210289962869,"P54E1"
-"Mother","Efficiency","First-Second",0.113059280669567,"P54E1"
-"Mother","Efficiency","Odd-Even",-0.694491875217471,"P54E1"
-"Mother","ezDDM v","First-Second",0.00320149990995835,"P54E1"
-"Mother","ezDDM v","Odd-Even",0.221226241277861,"P54E1"
-"Mother","ezDDM z","First-Second",0.433187527166533,"P54E1"
-"Mother","ezDDM z","Odd-Even",0.166915035314066,"P54E1"
-"Mother","rwDDM v","First-Second",-0.0120259349413231,"P54E1"
-"Mother","rwDDM v","Odd-Even",0.0423263214438163,"P54E1"
-"Mother","rwDDM z","First-Second",0.0209654397144793,"P54E1"
-"Mother","rwDDM z","Odd-Even",0.0767477668439487,"P54E1"
-"none","RT","First-Second",0.287403364349045,"P54E1"
-"none","RT","Odd-Even",0.366183314562187,"P54E1"
-"none","ACC","First-Second",0.311296728642548,"P54E1"
-"none","ACC","Odd-Even",0.283408194496831,"P54E1"
-"none","d Prime","First-Second",-0.208822707372539,"P54E1"
-"none","d Prime","Odd-Even",0.124499121785584,"P54E1"
-"none","Efficiency","First-Second",0.450041025399042,"P54E1"
-"none","Efficiency","Odd-Even",0.493986711775251,"P54E1"
-"none","ezDDM v","First-Second",0.145994728314742,"P54E1"
-"none","ezDDM v","Odd-Even",0.349198826173438,"P54E1"
-"none","ezDDM z","First-Second",-0.00256536191132849,"P54E1"
-"none","ezDDM z","Odd-Even",0.0835530995916821,"P54E1"
-"none","rwDDM v","First-Second",0.199702234474707,"P54E1"
-"none","rwDDM v","Odd-Even",-0.0187039820723807,"P54E1"
-"none","rwDDM z","First-Second",0.00134015726617282,"P54E1"
-"none","rwDDM z","Odd-Even",-0.248415369690091,"P54E1"
+Target,Indice,Method,r,Paper_ID
+Acquaintance,RT,First-Second,0.007390863,P54E1
+Acquaintance,RT,Odd-Even,0.217675106,P54E1
+Acquaintance,ACC,First-Second,0.150141832,P54E1
+Acquaintance,ACC,Odd-Even,0.005330661,P54E1
+Acquaintance,d Prime,First-Second,0.027000875,P54E1
+Acquaintance,d Prime,Odd-Even,0.050828636,P54E1
+Acquaintance,Efficiency,First-Second,0.213551249,P54E1
+Acquaintance,Efficiency,Odd-Even,0.226418185,P54E1
+Acquaintance,ezDDM v,First-Second,0.07758339,P54E1
+Acquaintance,ezDDM v,Odd-Even,0.156471389,P54E1
+Acquaintance,ezDDM z,First-Second,0.084913293,P54E1
+Acquaintance,ezDDM z,Odd-Even,0.198966507,P54E1
+Acquaintance,rwDDM v,First-Second,-0.08179041,P54E1
+Acquaintance,rwDDM v,Odd-Even,-0.134653667,P54E1
+Acquaintance,rwDDM z,First-Second,0.075226733,P54E1
+Acquaintance,rwDDM z,Odd-Even,-0.091449846,P54E1
+Mother,RT,First-Second,-0.140265265,P54E1
+Mother,RT,Odd-Even,-0.30511535,P54E1
+Mother,ACC,First-Second,0.381442073,P54E1
+Mother,ACC,Odd-Even,0.017632674,P54E1
+Mother,d Prime,First-Second,-0.041640646,P54E1
+Mother,d Prime,Odd-Even,0.080221029,P54E1
+Mother,Efficiency,First-Second,0.113059281,P54E1
+Mother,Efficiency,Odd-Even,-0.694491875,P54E1
+Mother,ezDDM v,First-Second,0.0032015,P54E1
+Mother,ezDDM v,Odd-Even,0.221226241,P54E1
+Mother,ezDDM z,First-Second,0.433187527,P54E1
+Mother,ezDDM z,Odd-Even,0.166915035,P54E1
+Mother,rwDDM v,First-Second,-0.012025935,P54E1
+Mother,rwDDM v,Odd-Even,0.042326321,P54E1
+Mother,rwDDM z,First-Second,0.02096544,P54E1
+Mother,rwDDM z,Odd-Even,0.076747767,P54E1
+None,RT,First-Second,0.287403364,P54E1
+None,RT,Odd-Even,0.366183315,P54E1
+None,ACC,First-Second,0.311296729,P54E1
+None,ACC,Odd-Even,0.283408194,P54E1
+None,d Prime,First-Second,-0.208822707,P54E1
+None,d Prime,Odd-Even,0.124499122,P54E1
+None,Efficiency,First-Second,0.450041025,P54E1
+None,Efficiency,Odd-Even,0.493986712,P54E1
+None,ezDDM v,First-Second,0.145994728,P54E1
+None,ezDDM v,Odd-Even,0.349198826,P54E1
+None,ezDDM z,First-Second,-0.002565362,P54E1
+None,ezDDM z,Odd-Even,0.0835531,P54E1
+None,rwDDM v,First-Second,0.199702234,P54E1
+None,rwDDM v,Odd-Even,-0.018703982,P54E1
+None,rwDDM z,First-Second,0.001340157,P54E1
+None,rwDDM z,Odd-Even,-0.24841537,P54E1
