@@ -119,6 +119,7 @@ summary(df[[36]])
 "Self", "Friend", "Stranger"
 ```{r}
 df[[37]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_19/P19_Exp1_raw.csv") %>%
+  dplyr::filter(Session == 3) %>%
   dplyr::select(
     Subject,
     Session,
@@ -178,6 +179,7 @@ summary(df[[37]])
 "Self", "Friend", "Stranger"
 ```{r}
 df[[38]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_19/P19_Exp2_raw.csv") %>%
+  dplyr::filter(Session == 3) %>%
   dplyr::select(
     Subject,
     Session,
@@ -296,6 +298,7 @@ summary(df[[39]])
 "Self", "Friend", "Stranger"
 ```{r message=FALSE, warning=FALSE}
 temp <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_44/P44_Exp1_raw.csv") %>%
+  #dplyr::filter(Group == 5) # 5 = sham
   dplyr::select(
     Subject,
     Shape = Figura,
@@ -371,7 +374,7 @@ df[[40]] <- temp %>%
     ACC = as.numeric(ACC),
   ) %>%
   dplyr::select(
-    Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC
+    Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC,
   ) %>%
   dplyr::mutate(
     RT_sec = round(RT_sec, 3),
