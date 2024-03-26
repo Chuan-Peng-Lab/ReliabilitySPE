@@ -221,7 +221,7 @@ df[[4]] <- read.csv(
   ACC = as.numeric(respond3.ACC),
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
@@ -282,7 +282,7 @@ df[[5]] <- read.csv(
     ACC = as.numeric(respond3.ACC)
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
@@ -341,7 +341,7 @@ df[[6]] <- read.csv(
     ACC = as.numeric(fl.ACC)
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
@@ -398,7 +398,7 @@ df[[7]] <- read.csv(
     ACC = as.numeric(ACC)
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
@@ -452,7 +452,7 @@ df[[8]] <- read.csv(
     ACC = as.numeric(correct)
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
@@ -518,7 +518,7 @@ df[[9]] <- read.csv(
     ACC = as.numeric(ACC),
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
@@ -579,7 +579,7 @@ df[[10]] <- read.csv(
     ACC = as.numeric(ACC),
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
@@ -643,7 +643,7 @@ df[[11]] <- read.csv(
     ACC = as.numeric(ACC),
     ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
       ),
@@ -693,7 +693,7 @@ df[[12]] <- read.csv(
     RT_sec = RT_ms / 1000
     ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
       ),
@@ -743,7 +743,7 @@ df[[13]] <- read.csv(
     RT_sec = RT_ms / 1000
     ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
       ),
@@ -792,7 +792,7 @@ df[[14]] <- read.csv(
     RT_sec = RT_ms / 1000
     ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
       ),
@@ -846,7 +846,7 @@ df[[15]] <- read.csv(
     RT_sec = RT_ms / 1000,
     ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
       ),

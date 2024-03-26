@@ -40,7 +40,7 @@ df[[27]] <- read.csv(
     RT_sec = RT_ms / 1000
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
@@ -121,7 +121,7 @@ df[[28]] <- temp %>%
     Subject = Subject_ID
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
@@ -186,7 +186,7 @@ df[[29]] <- read.csv(
     RT_ms = RT_sec * 1000
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
@@ -251,7 +251,7 @@ df[[30]] <- read.csv(
     RT_ms = RT_sec * 1000
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
@@ -425,7 +425,7 @@ df[[32]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_t9/Pt9_Exp1_raw.c
     RT_sec = RT_ms / 1000,
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
@@ -514,7 +514,7 @@ df[[33]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_t9/Pt9_Exp2_raw.c
     RT_sec = RT_ms / 1000,
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
@@ -602,7 +602,7 @@ df[[34]] <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_t9/Pt9_Exp3_raw.c
     RT_sec = RT_ms / 1000,
   ) %>%
   dplyr::mutate(
-    Subjcet = as.numeric(Subject),
+    Subject = as.numeric(Subject),
     Matching = factor(
       Matching, levels = c("Matching", "Nonmatching")
     ),
