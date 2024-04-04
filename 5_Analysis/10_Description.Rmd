@@ -180,7 +180,7 @@ rm(grouped_data, r_8, i, regression, group)
 
 # Predict Trials
 ```{r}
-desc[[8]] <- plot[[1]] %>%
+desc[[8]] <- plot[[9]] %>%
   dplyr::left_join(desc[[1]], by = "Paper_ID")
 
 # 定义需要生成列的rate值范围
