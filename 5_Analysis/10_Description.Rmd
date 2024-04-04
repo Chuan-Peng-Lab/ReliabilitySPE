@@ -181,10 +181,71 @@ rm(grouped_data, r_8, i, regression, group)
 # Predict Trials
 ```{r}
 desc[[8]] <- plot[[1]] %>%
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  dplyr::left_join(desc[[1]], by = "Paper_ID")
+
+# 定义需要生成列的rate值范围
+rate_values <- seq(0.1, 0.9, by = 0.1)
+
+# 循环生成列
+for (rate_value in rate_values) {
+  column_name <- paste0("rate_", rate_value * 10)
+  Needed_column_name <- paste0("Needed_", rate_value * 10)
+  
+  desc[[8]] <- desc[[8]] %>%
+    dplyr::mutate(
+      !!column_name := ((rate_value * r - rate_value) / (rate_value * r - r)),
+      !!Needed_column_name := abs(!!sym(column_name) * Trials)
+    )
+}
+
+rm(rate_value, rate_values, Needed_column_name, column_name)
+
+desc[[8]] <- desc[[8]] %>%
+  dplyr::select(
+    Paper_ID, Target, Indice, r, Sample_Size, Trials, contains("Needed_")
+  ) %>%
+  tidyr::pivot_longer(
+    cols = starts_with("Needed_"), names_to = "r_Expect", values_to = "Trial_Expect"
+  ) %>%
   dplyr::mutate(
-    rate = (0.8 * r - 0.8) / (0.8 * r - r),
-    Needed = abs(rate * Trials)
+    Indice = case_when(
+      Indice == "d Prime" ~ "d'",
+      Indice == "Efficiency" ~ "η",
+      Indice == "rwDDM v" ~ "v(RWiener)",
+      Indice == "rwDDM z" ~ "z(RWiener)",
+      Indice == "ezDDM v" ~ "v(hausekeep)",
+      Indice == "ezDDM z" ~ "z(hausekeep)",
+      TRUE ~ Indice
+    ),
+    r_Expect = case_when(
+      r_Expect == "Needed_1" ~ 0.1,
+      r_Expect == "Needed_2" ~ 0.2,
+      r_Expect == "Needed_3" ~ 0.3,
+      r_Expect == "Needed_4" ~ 0.4,
+      r_Expect == "Needed_5" ~ 0.5,
+      r_Expect == "Needed_6" ~ 0.6,
+      r_Expect == "Needed_7" ~ 0.7,
+      r_Expect == "Needed_8" ~ 0.8,
+      r_Expect == "Needed_9" ~ 0.9,
+    ),
+  ) %>%
+  dplyr::left_join(aggr[[1]], by = c("Target", "Indice")) %>%
+  dplyr::mutate(
+    r_round = round(r, 1),
+    wtmr_round = round(wtmr, 1),
+    Target = factor(
+      Target,levels = c("Close", "Stranger")
+    ),
+    Indice = factor(
+      Indice, 
+      levels = c(
+        "RT", "ACC", "d'", "η", "v(RWiener)", 
+        "z(RWiener)", "v(hausekeep)", "z(hausekeep)"
+      )
+    )
   )
+  
+
+names(desc)[8] <- "Spearman-Brown"
 ```
 

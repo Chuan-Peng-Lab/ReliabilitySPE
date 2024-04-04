@@ -4,6 +4,13 @@ author: "yuki"
 date: "2024-03-11"
 output: html_document
 ---
+# Desc
+```{r}
+desc[[1]] <- readxl::read_excel("./Label.xlsx") %>%
+  dplyr::select(Paper_ID, Sample_Size = Remain, Trials, Author, Year, Exp)
+names(desc)[1] <- "Label"
+```
+
 # Create NULL List
 ```{r Create NULL List}
 plot <- list()
@@ -18,12 +25,14 @@ plot <- list()
 # 获取所有的mcshr
 plot[[1]] <- list.files(
   file.path("./OUTPUT/pershr_5k/"),
+  #file.path("./OUTPUT/pershr_10/"),
   pattern = "pershr_.*\\.csv$",
   ) %>%
   # 对读取到的所有.out文件x都执行函数read.table
   lapply(
     function(x) read.csv(
       file.path("./OUTPUT/pershr_5k/", x),
+      #file.path("./OUTPUT/pershr_10/", x),
       header = TRUE
     )
   ) %>% # nolint
@@ -45,7 +54,7 @@ plot[[1]] <- list.files(
     Target == "Acquaintance" ~ "Stranger",
     Target == "Stranger" ~ "Stranger",
     Target == "Celebrity" ~ "Celebrity",
-    Target == "none" ~ "NonPerson",
+    Target == "None" ~ "NonPerson",
     )
   ) %>%
   #dplyr::filter(!stringr::str_detect(Indice, "ez")) %>%
@@ -64,6 +73,7 @@ plot[[1]] <- list.files(
   dplyr::filter(
     # 被认为是在原范式上有较大修改(4 session 4 mood)
     !(Paper_ID %in% c("P51E1")) 
+    #!(Paper_ID %in% c("P51E1", "P95E1", "P95E2", "Ps1E1")) 
   ) 
 names(plot)[1] <- "Permuted SHR"
 ```

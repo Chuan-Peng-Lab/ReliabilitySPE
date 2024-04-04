@@ -69,6 +69,9 @@ df[[38]] <- read.csv("./DATA/df_38.csv")
 df[[39]] <- read.csv("./DATA/df_39.csv")
 df[[40]] <- read.csv("./DATA/df_40.csv")
 df[[41]] <- read.csv("./DATA/df_41.csv")
+df[[42]] <- read.csv("./DATA/df_42.csv")
+df[[43]] <- read.csv("./DATA/df_43.csv")
+df[[44]] <- read.csv("./DATA/df_44.csv")
 ```
 
 ```{r List for Paper ID}
@@ -117,6 +120,9 @@ p[[38]] <- "P19E2"
 p[[39]] <- "P34E1"
 p[[40]] <- "P44E1"
 p[[41]] <- "Pt27E1"
+p[[42]] <- "Pt13E1"
+p[[43]] <- "Pt13E2"
+p[[44]] <- "Pt28E1"
 ```
 
 ```{r List for Target}
@@ -165,7 +171,9 @@ t[[38]] <- c("Self", "Friend", "Stranger")
 t[[39]] <- c("Self", "Friend", "Stranger")
 t[[40]] <- c("Self", "Friend", "Stranger")
 t[[41]] <- c("Self", "Friend", "Stranger")
-
+t[[42]] <- c("Self", "Friend")
+t[[43]] <- c("Self", "Stranger")
+t[[44]] <- c("Self", "Friend", "Stranger")
 ```
 
 ```{r lazy_nmshr}
@@ -318,7 +326,7 @@ lazy_mcshr <- function(Target, Paper_ID, nc) {
 ```
 
 ```{r}
-for (i in 37:41) {
+for (i in 20:40) {
   shl <- list(list(), list(), list(), list())
 
   gc()

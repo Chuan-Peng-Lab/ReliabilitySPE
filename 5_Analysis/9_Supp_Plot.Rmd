@@ -1043,19 +1043,179 @@ spearman_cor <- plot[[8]] %>%
 
 ## Figure S10: Needed Trials
 ```{r}
-desc[[8]] %>%
-  dplyr::filter(Target %in% c("Close", "Stranger")) %>%
-  dplyr::mutate(
-    Needed = case_when(
-      Needed >= 300 ~ 300,
-      TRUE ~ Needed
-    )
+pic1 <- desc[[8]] %>%
+  dplyr::filter((Indice %in% c("RT", "ACC", "d'", "η"))) %>%
+  ggplot2::ggplot(data = ., aes(x = Trials, y = yi, color = Indice, fill = Indice)) +
+  ggplot2::geom_point() +  # 添加散点
+  ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
+  ggpubr::stat_cor(label.x = 3, label.y = 2, r.accuracy = .01, p.accuracy = .01) +
+  ggplot2::scale_x_continuous(
+    limits = c(0, 140),
+    breaks = c(0, 30, 60, 100, 130),
+  ) +
+  ggplot2::scale_y_continuous(
+    limits = c(-0.5, 2),
+    breaks = c(0, 0.5, 1, 1.5, 2)
+  ) +
+  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
+  ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
+  ggplot2::labs(y = expression("Hedges' " * italic(g)), x = "Trial Numbers") +  
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+pic2 <- plot[[8]] %>%
+  dplyr::filter((Indice %in% c("v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)"))) %>%
+  ggplot2::ggplot(data = ., aes(x = Trials, y = yi, color = Indice, fill = Indice)) +
+  ggplot2::geom_point() +  # 添加散点
+  ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
+  ggpubr::stat_cor(label.x = 3, label.y = 2, r.accuracy = .01, p.accuracy = .01) +
+  ggplot2::scale_x_continuous(
+    limits = c(0, 140),
+    breaks = c(0, 30, 60, 100, 130),
+  ) +
+  ggplot2::scale_y_continuous(
+    limits = c(-0.5, 2),
+    breaks = c(0, 0.5, 1, 1.5, 2)
+  ) +
+  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::scale_color_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
+  ggplot2::scale_fill_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
+  ggplot2::labs(y = "", x = "Trial Numbers") +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+  
+pic <- pic1 + pic2 + plot_layout(guides = 'collect')
+
+ggsave(
+  filename = "./FIGURE/Figure_S9cor_yi&trials.png",
+  width = 10,
+  height = 8,
+)
+
+rm(pic1, pic2, pic)
+```
+
+```{r}
+pic1 <- desc[[8]] %>%
+  dplyr::filter(
+    Target %in% c("Close", "Stranger"),
+    (Indice %in% c("RT", "ACC", "d'", "η")),
   ) %>%
-  ggplot2::ggplot(data = ., mapping = aes(x = Indice, y = Needed, color = Indice)) +
-  ggplot2::geom_point() +
-  ggplot2::coord_flip() +
-  ggplot2::scale_y_reverse() +
-  ggplot2::facet_wrap(~ Target) +
+  dplyr::mutate(
+    Trial_Expect = case_when(
+      Trial_Expect >= 300 ~ 300,
+      TRUE ~ Trial_Expect
+    ),
+    Over = case_when(
+      Trial_Expect == 300 ~ T,
+      Trial_Expect < 300 ~ F
+    ),
+    r_round = case_when(
+      r_round <= 0 ~ 0,
+      TRUE ~ r_round
+    ),
+  ) %>%
+  ggplot2::ggplot(
+    data = ., 
+    mapping = aes(
+      x = r_Expect, y = Trial_Expect, 
+      color = r_round, group = r_round
+    )
+  ) +
+  ggplot2::geom_point(
+    aes(shape = ifelse(Over, "T", 'F')), 
+    size = 1, 
+    position = position_dodge(width = 0.2)
+  ) +
+  ggplot2::scale_shape_manual(values = c("T" = 21, "F" = 16), guide = FALSE) +
+  ggplot2::geom_smooth(
+    data = . %>% filter(abs(r_round - wtmr_round) <= 0.1),
+    mapping = aes(x = r_Expect, y = Trial_Expect, group = NULL),
+    color = "grey", linetype = "dashed", se = FALSE,
+    method = "lm", formula = y ~ poly(x, 2)
+  ) +
+  ggplot2::scale_x_continuous(
+    limits = c(0, 1),
+    breaks = c(0, 0.5, 0.7, 0.9),
+  ) +
+  ggplot2::scale_y_continuous(
+    limits = c(0, 300),
+    breaks = c(0, 50, 100, 150, 200, 250, 300)
+  ) +
+  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::scale_color_gradient(low = "#b2182b", high = "#2166ac", breaks = seq(0, 1, by = 0.1)) +
+  ggplot2::labs(
+    y = "Expected Trial Numbers", 
+    x = "Expected Spli-Half Reliability",
+    color = "Original r"
+  ) +
   papaja::theme_apa()
+
+pic2 <- desc[[8]] %>%
+  dplyr::filter(
+    Target %in% c("Close", "Stranger"),
+    Indice %in% c("v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)")
+  ) %>%
+  dplyr::mutate(
+    Trial_Expect = case_when(
+      Trial_Expect >= 300 ~ 300,
+      TRUE ~ Trial_Expect
+    ),
+    Over = case_when(
+      Trial_Expect == 300 ~ T,
+      Trial_Expect < 300 ~ F
+    ),
+    r_round = case_when(
+      r_round <= 0 ~ 0,
+      TRUE ~ r_round
+    ),
+  ) %>%
+  ggplot2::ggplot(
+    data = ., 
+    mapping = aes(
+      x = r_Expect, y = Trial_Expect, 
+      color = r_round, group = r_round
+    )
+  ) +
+  ggplot2::geom_point(
+    aes(shape = ifelse(Over, "T", 'F')), 
+    size = 1, 
+    position = position_dodge(width = 0.2)
+  ) +
+  ggplot2::scale_shape_manual(values = c("T" = 21, "F" = 16), guide = FALSE) +
+  ggplot2::geom_smooth(
+    data = . %>% filter(abs(r_round - wtmr_round) <= 0.1),
+    mapping = aes(x = r_Expect, y = Trial_Expect, group = NULL),
+    color = "grey", linetype = "dashed", se = FALSE,
+    method = "lm", formula = y ~ poly(x, 2)
+  ) +
+  ggplot2::scale_x_continuous(
+    limits = c(0, 1),
+    breaks = c(0, 0.5, 0.7, 0.9),
+  ) +
+  ggplot2::scale_y_continuous(
+    limits = c(0, 300),
+    breaks = c(0, 50, 100, 150, 200, 250, 300)
+  ) +
+  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::scale_color_gradient(low = "#b2182b", high = "#2166ac", breaks = seq(0, 1, by = 0.1)) +
+  ggplot2::labs(
+    y = "Expected Trial Numbers", 
+    x = "Expected Spli-Half Reliability",
+    color = "Original r"
+  ) +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+pic <- pic1 + pic2 + plot_layout(guides = 'collect')
+
+ggsave(
+  filename = "./FIGURE/Figure_S10Spear_Brown.png",
+  width = 12,
+  height = 8,
+)
+
+rm(pic1, pic2, pic)
 ```
 
