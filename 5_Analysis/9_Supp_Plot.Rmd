@@ -828,14 +828,29 @@ temp_plot <- plot[[1]] %>%
     r
   )
 
-temp_meta <- res_meta[[5]] %>%
+close <- read.csv("./OUTPUT/meta/meta_close_FEP.csv")
+stranger <- read.csv("./OUTPUT/meta/meta_stranger_FEP.csv")
+temp_meta <- bind_rows(close, stranger) %>%
   dplyr::select(
     Target,
     Indice,
     Paper_ID,
     yi,
     Trials
-  )
+  ) %>%
+  dplyr::mutate(
+    Indice = case_when(
+      Indice == "eta" ~ "η",
+      Indice == "d" ~ "d'",
+      #Indice == "rwDDM v" ~ "v",
+      #Indice == "rwDDM z" ~ "z",
+      Indice == "rwDDM v" ~ "v(RWiener)",
+      Indice == "rwDDM z" ~ "z(RWiener)",
+      Indice == "ezDDM v" ~ "v(hausekeep)",
+      Indice == "ezDDM z" ~ "z(hausekeep)",
+      TRUE ~ Indice
+    ),
+  ) 
 
 plot[[7]] <- temp_plot %>%
   dplyr::left_join(
@@ -847,6 +862,16 @@ plot[[7]] <- temp_plot %>%
     )
   ) %>%
   dplyr::mutate(
+    yi = case_when(
+      Indice == "RT" ~ yi * -1,
+      Indice == "ACC" ~ yi,
+      Indice == "d'" ~ yi,
+      Indice == "η" ~ yi * -1,
+      Indice == "v(hausekeep)" ~ yi,
+      Indice == "z(hausekeep)" ~ yi,
+      Indice == "v(RWiener)" ~ yi,
+      Indice == "z(RWiener)" ~ yi, 
+    ),
     Target = factor(
       Target,levels = c("Close", "Stranger")
     ),
@@ -855,7 +880,7 @@ plot[[7]] <- temp_plot %>%
     )
   ) 
 
-rm(temp_meta, temp_plot)
+rm(temp_meta, temp_plot, close, stranger)
 ```
 
 ```{r}
@@ -865,7 +890,7 @@ p1 <- plot[[7]] %>%
   ggplot2::geom_point() +  # 添加散点
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
   ggpubr::stat_cor(label.x = 0, label.y = 0.9, r.accuracy = .01, p.accuracy = .01) +
-  ggplot2::scale_x_continuous(limits = c(-0.5, 3)) +
+  ggplot2::scale_x_continuous(limits = c(-0.5, 2)) +
    ggplot2::scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.5, 0.7, 1),) +
   #ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
@@ -882,7 +907,7 @@ p2 <- plot[[7]] %>%
   ggplot2::geom_point() +  # 添加散点
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
   ggpubr::stat_cor(label.x = 0, label.y = 0.9, r.accuracy = .01, p.accuracy = .01) +
-  ggplot2::scale_x_continuous(limits = c(-0.5, 3)) +
+  ggplot2::scale_x_continuous(limits = c(-0.5, 2)) +
    ggplot2::scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.5, 0.7, 1),) +
   #ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
@@ -906,10 +931,10 @@ rm(p1, p2, p3)
 
 ## Figure S9: Correlation Hedges'g & Trials
 ```{r}
-res_meta[[3]] <- read.csv("./OUTPUT/meta/meta_close_FEP.csv")
-res_meta[[4]] <- read.csv("./OUTPUT/meta/meta_stranger_FEP.csv")
+close <- read.csv("./OUTPUT/meta/meta_close_FEP.csv")
+stranger <- read.csv("./OUTPUT/meta/meta_stranger_FEP.csv")
 
-plot[[8]] <- dplyr::bind_rows(res_meta[[3]], res_meta[[4]]) %>%
+plot[[8]] <- dplyr::bind_rows(close, stranger) %>%
   dplyr::mutate(
     Indice = case_when(
       Indice == "d" ~ "d'",
@@ -926,9 +951,9 @@ plot[[8]] <- dplyr::bind_rows(res_meta[[3]], res_meta[[4]]) %>%
       Indice == "d'" ~ yi,
       Indice == "η" ~ yi * -1,
       Indice == "v(hausekeep)" ~ yi,
-      Indice == "z(hausekeep)" ~ yi * -1,
+      Indice == "z(hausekeep)" ~ yi,
       Indice == "v(RWiener)" ~ yi,
-      Indice == "z(RWiener)" ~ yi * -1, 
+      Indice == "z(RWiener)" ~ yi, 
     ),
     Target = factor(
       Target,levels = c("Close", "Stranger")
@@ -937,6 +962,9 @@ plot[[8]] <- dplyr::bind_rows(res_meta[[3]], res_meta[[4]]) %>%
       Indice, levels = c("RT", "ACC", "d'", "η", "v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)")
     )
   )
+
+rm(close, stranger)
+
 names(plot)[8] <- "Correlation (yi & Trials)"
 ```
 
