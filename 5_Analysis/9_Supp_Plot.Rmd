@@ -1088,27 +1088,47 @@ for (i in seq_along(temp)) {
 
 # 创建一个空的数据框
 plot[[9]] <- result_df %>%
-  tidyr::separate(.,unique_ID, into = c("Target", "Indice"), sep = "_")
+  tidyr::separate(.,unique_ID, into = c("Target", "Indice"), sep = "_") %>%
+  dplyr::mutate(
+    Trial_10 = ( 0.1 - 0.1 * wtm_r) / (wtm_r - 0.1 * wtm_r) * wtm_t,
+    LLCI_10 = ( 0.1 - 0.1 * ULCI) / (ULCI - 0.1 * ULCI) * wtm_t,
+    ULCI_10 = ( 0.1 - 0.1 * LLCI) / (LLCI - 0.1 * LLCI) * wtm_t,
+    
+    Trial_20 = ( 0.2 - 0.2 * wtm_r) / (wtm_r - 0.2 * wtm_r) * wtm_t,
+    LLCI_20 = ( 0.2 - 0.2 * ULCI) / (ULCI - 0.2 * ULCI) * wtm_t,
+    ULCI_20 = ( 0.2 - 0.2 * LLCI) / (LLCI - 0.2 * LLCI) * wtm_t,
 
-################################################################################
+    Trial_30 = ( 0.3 - 0.3 * wtm_r) / (wtm_r - 0.3 * wtm_r) * wtm_t,
+    LLCI_30 = ( 0.3 - 0.3 * ULCI) / (ULCI - 0.3 * ULCI) * wtm_t,
+    ULCI_30 = ( 0.3 - 0.3 * LLCI) / (LLCI - 0.3 * LLCI) * wtm_t,	
 
-# 循环遍历0.01到0.99的值
-for (i in 1:99) {
-  # 计算当前的比例值
-  ratio <- i / 100
-  
-  # 生成列名
-  trial_col <- paste0("Trial_", i)
-  llci_col <- paste0("LLCI_", i)
-  ulci_col <- paste0("ULCI_", i)
-  
-  # 计算并添加列
-  plot[[9]][[trial_col]] <- abs((ratio * wtm_r - ratio) / (ratio * wtm_r - wtm_r) * wtm_t)
-  plot[[9]][[llci_col]] <- abs((ratio * ULCI - ratio) / (ratio * ULCI - ULCI)) * wtm_t
-  plot[[9]][[ulci_col]] <- abs((ratio * LLCI - ratio) / (ratio * LLCI - LLCI) * wtm_t)
-}
+    Trial_40 = ( 0.4 - 0.4 * wtm_r) / (wtm_r - 0.4 * wtm_r) * wtm_t,
+    LLCI_40 = ( 0.4 - 0.4 * ULCI) / (ULCI - 0.4 * ULCI) * wtm_t,
+    ULCI_40 = ( 0.4 - 0.4 * LLCI) / (LLCI - 0.4 * LLCI) * wtm_t,	
 
-rm(temp, result_df, element_name, i, wtm_r, wtm_t, LLCI, ULCI)
+    Trial_50 = ( 0.5 - 0.5 * wtm_r) / (wtm_r - 0.5 * wtm_r) * wtm_t,
+    LLCI_50 = ( 0.5 - 0.5 * ULCI) / (ULCI - 0.5 * ULCI) * wtm_t,
+    ULCI_50 = ( 0.5 - 0.5 * LLCI) / (LLCI - 0.5 * LLCI) * wtm_t,		
+
+    Trial_60 = ( 0.6 - 0.6 * wtm_r) / (wtm_r - 0.6 * wtm_r) * wtm_t,
+    LLCI_60 = ( 0.6 - 0.6 * ULCI) / (ULCI - 0.6 * ULCI) * wtm_t,
+    ULCI_60 = ( 0.6 - 0.6 * LLCI) / (LLCI - 0.6 * LLCI) * wtm_t,		
+    
+    Trial_70 = ( 0.7 - 0.7 * wtm_r) / (wtm_r - 0.7 * wtm_r) * wtm_t,
+    LLCI_70 = ( 0.7 - 0.7 * ULCI) / (ULCI - 0.7 * ULCI) * wtm_t,	
+    ULCI_70 = ( 0.7 - 0.7 * LLCI) / (LLCI - 0.7 * LLCI) * wtm_t,		
+
+    Trial_80 = ( 0.8 - 0.8 * wtm_r) / (wtm_r - 0.8 * wtm_r) * wtm_t,
+    LLCI_80 = ( 0.8 - 0.8 * ULCI) / (ULCI - 0.8 * ULCI) * wtm_t,	
+    ULCI_80 = ( 0.8 - 0.8 * LLCI) / (LLCI - 0.8 * LLCI) * wtm_t,		
+    
+    Trial_90 = ( 0.9 - 0.9 * wtm_r) / (wtm_r - 0.9 * wtm_r) * wtm_t,
+    LLCI_90 = ( 0.9 - 0.9 * ULCI) / (ULCI - 0.9 * ULCI) * wtm_t,	
+    ULCI_90 = ( 0.9 - 0.9 * LLCI) / (LLCI - 0.9 * LLCI) * wtm_t,	
+	
+
+  ) %>%
+  dplyr::select(-wtm_r, -wtm_t, -LLCI, -ULCI)
 
 ################################################################################
 
@@ -1201,29 +1221,31 @@ pic1 <- plot[[9]] %>%
   ggplot2::ggplot(
     data = ., 
     mapping = aes(
-      x = r_Expected, y = Mean, 
+      x = Mean, y = r_Expected, 
       color = Indice, fill = Indice
     )
   ) +
   ggplot2::geom_ribbon(
-    aes(ymin = ULCI, ymax = LLCI, fill = Indice),
+    aes(xmin = ULCI, xmax = LLCI, fill = Indice),
     linetype = "dashed", alpha = 0.3
   ) +
   ggplot2::geom_line() +
-  ggplot2::scale_x_continuous(
+  ggplot2::scale_y_continuous(
     limits = c(0, 1),
+    expand = c(0, 0),
     breaks = c(0, 0.5, 0.7, 0.9),
   ) +
-  ggplot2::scale_y_continuous(
+  ggplot2::scale_x_continuous(
     limits = c(0, 300),
-    breaks = c(0, 50, 100, 150, 200, 250, 300)
+    expand = c(0, 0),
+    breaks = c(0, 60, 120, 180, 240)
   ) +
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
   ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
   ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
   ggplot2::labs(
-    y = "Expected Trial Numbers", 
-    x = "Expected Spli-Half Reliability",
+    x = "Expected Trial Numbers", 
+    y = "Expected Spli-Half Reliability",
   ) +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none")
@@ -1250,29 +1272,31 @@ pic2 <- plot[[9]] %>%
   ggplot2::ggplot(
     data = ., 
     mapping = aes(
-      x = r_Expected, y = Mean, 
+      x = Mean, y = r_Expected, 
       color = Indice, fill = Indice
     )
   ) +
   ggplot2::geom_ribbon(
-    aes(ymin = ULCI, ymax = LLCI, fill = Indice),
+    aes(xmin = ULCI, xmax = LLCI, fill = Indice),
     linetype = "dashed", alpha = 0.3
   ) +
   ggplot2::geom_line() +
-  ggplot2::scale_x_continuous(
+  ggplot2::scale_y_continuous(
     limits = c(0, 1),
+    expand = c(0, 0),
     breaks = c(0, 0.5, 0.7, 0.9),
   ) +
-  ggplot2::scale_y_continuous(
+  ggplot2::scale_x_continuous(
     limits = c(0, 300),
-    breaks = c(0, 50, 100, 150, 200, 250, 300)
+    expand = c(0, 0),
+    breaks = c(0, 60, 120, 180, 240)
   ) +
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
   ggplot2::scale_color_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
   ggplot2::scale_fill_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
   ggplot2::labs(
-    y = "Expected Trial Numbers", 
-    x = "Expected Spli-Half Reliability",
+    x = "Expected Trial Numbers", 
+    y = "Expected Spli-Half Reliability",
   ) +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none")
