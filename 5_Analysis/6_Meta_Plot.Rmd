@@ -24,7 +24,7 @@ plot_forest <- list(
 ```{r}
 out[[1]][[1]] <- res_meta[[1]][[1]] %>%
   base::summary() %>% # 得到yi, vi, sei, zi, ci.lb, ci.ub这些变量
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  #dplyr::left_join(desc[[1]], by = c("Paper_ID", "Author", "Year")) %>%
   dplyr::mutate(
     ############################################################################
     yi_r = round(yi*-1, 2),
@@ -54,7 +54,7 @@ out[[1]][[1]] <- res_meta[[1]][[1]] %>%
       sep = ""
     ),
     ############################################################################
-    Unique_ID = paste0(Author," (",Year,")",", S",Study),
+    Unique_ID = paste0(Author," (",Year,")",", S",Exp),
     ############################################################################
   ) %>%
   dplyr::arrange(yi_r) %>%
@@ -62,7 +62,7 @@ out[[1]][[1]] <- res_meta[[1]][[1]] %>%
     Order = row_number(),
   ) %>%
   dplyr::select(
-    Paper_ID, Author, Year, Study,
+    Paper_ID, Author, Year, Exp,
     Unique_ID, Order,
     yi_r, vi, sei, zi, 
     LLCI, ULCI, CI, pval
@@ -78,27 +78,27 @@ plot_forest[[1]][[1]] <- ggplot2::ggplot(out[[1]][[1]], aes(x = yi_r , y = reord
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
   #ggplot2::geom_point(aes(x = fix_yi, y = 1.5), shape=15, size = 7, color = "grey") + # Fixed Effect Point
   ggplot2::scale_x_continuous(
-    limits = c(-3.5, 2.5), 
+    limits = c(-3.5, 3), 
     breaks = seq(-0.5,2, by = 0.5),
     sec.axis = sec_axis(
       ~., 
-      breaks = c(-2.9, -1.2, 2.3),
+      breaks = c(-3.0, -1.2, 2.7),
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
   ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -3.5, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1.2, y = reorder(Unique_ID, Order), label = CI), size = 7, hjust = 0.5, family='serif',) + # CI
-  ggplot2::geom_text(aes(x = 2.3, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
+  ggplot2::geom_text(aes(x = 2.7, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
   ggplot2::ggtitle("(a) RT for [Self - Close]") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 20, family='serif'),
-                 axis.text.x.bottom = element_text(size = 15, family='serif'),
-                 axis.title.x = element_text(size = 20, hjust = 0.75),
+                 axis.text.x.top = element_text(size = 25, family='serif'),
+                 axis.text.x.bottom = element_text(size = 25, family='serif'),
+                 axis.title.x = element_text(size = 25, hjust = 0.66),
                  plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
@@ -108,14 +108,14 @@ plot_forest[[1]][[1]] <- ggplot2::ggplot(out[[1]][[1]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Close_RT.png", width = 16, height = 9, limitsize = FALSE)
+ggsave(filename = "./FIGURE/Forest_Close_RT.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## ACC
 ```{r}
 out[[1]][[2]] <- res_meta[[1]][[2]] %>%
   base::summary() %>% # 得到yi, vi, sei, zi, ci.lb, ci.ub这些变量
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  #dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::mutate(
     ############################################################################
     yi_r = round(yi, 2),
@@ -145,7 +145,7 @@ out[[1]][[2]] <- res_meta[[1]][[2]] %>%
       sep = ""
     ),
     ############################################################################
-    Unique_ID = paste0(Author," (",Year,")",", S",Study),
+    Unique_ID = paste0(Author," (",Year,")",", S",Exp),
     ############################################################################
   ) %>%
   dplyr::arrange(yi_r) %>%
@@ -153,7 +153,7 @@ out[[1]][[2]] <- res_meta[[1]][[2]] %>%
     Order = row_number(),
   ) %>%
   dplyr::select(
-    Paper_ID, Author, Year, Study,
+    Paper_ID, Author, Year, Exp,
     Unique_ID, Order,
     yi_r, vi, sei, zi, 
     LLCI, ULCI, CI, pval
@@ -169,26 +169,26 @@ plot_forest[[1]][[2]] <- ggplot2::ggplot(out[[1]][[2]], aes(x = yi_r , y = reord
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
   #ggplot2::geom_point(aes(x = fix_yi, y = 1.5), shape=15, size = 7, color = "grey") + # Fixed Effect Point
   ggplot2::scale_x_continuous(
-    limits = c(-3.6, 3.3), 
-    breaks = seq(-0.5,3, by = 0.5),
+    limits = c(-3.7, 6), 
+    breaks = seq(-0.5,5.5, by = 0.5),
     sec.axis = sec_axis(
-      ~., breaks = c(-2.9, -1.1, 3),
+      ~., breaks = c(-3, -1.3, 6),
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
   ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
-  ggplot2::geom_text(aes(x = -3.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
-  ggplot2::geom_text(aes(x = -1.1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
-  ggplot2::geom_text(aes(x = 3, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
+  ggplot2::geom_text(aes(x = -3.7, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
+  ggplot2::geom_text(aes(x = -1.3, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
+  ggplot2::geom_text(aes(x = 6, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
   ggplot2::ggtitle("(b) ACC for [Self - Close]") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 20, family='serif'),
-                 axis.text.x.bottom = element_text(size = 15, family='serif'),
-                 axis.title.x = element_text(size = 20, hjust = 0.75),
+                 axis.text.x.top = element_text(size = 25, family='serif'),
+                 axis.text.x.bottom = element_text(size = 25, family='serif'),
+                 axis.title.x = element_text(size = 25, hjust = 0.66),
                  plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
@@ -198,14 +198,14 @@ plot_forest[[1]][[2]] <- ggplot2::ggplot(out[[1]][[2]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Close_ACC.png", width = 16, height = 9, limitsize = FALSE)
+ggsave(filename = "./FIGURE/Forest_Close_ACC.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## d
 ```{r}
 out[[1]][[3]] <- res_meta[[1]][[3]] %>%
   base::summary() %>% # 得到yi, vi, sei, zi, ci.lb, ci.ub这些变量
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  #dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::mutate(
     ############################################################################
     yi_r = round(yi, 2),
@@ -235,7 +235,7 @@ out[[1]][[3]] <- res_meta[[1]][[3]] %>%
       sep = ""
     ),
     ############################################################################
-    Unique_ID = paste0(Author," (",Year,")",", S",Study),
+    Unique_ID = paste0(Author," (",Year,")",", S",Exp),
     ############################################################################
   ) %>%
   dplyr::arrange(yi_r) %>%
@@ -243,7 +243,7 @@ out[[1]][[3]] <- res_meta[[1]][[3]] %>%
     Order = row_number(),
   ) %>%
   dplyr::select(
-    Paper_ID, Author, Year, Study,
+    Paper_ID, Author, Year, Exp,
     Unique_ID, Order,
     yi_r, vi, sei, zi, 
     LLCI, ULCI, CI, pval
@@ -259,26 +259,26 @@ plot_forest[[1]][[3]] <- ggplot2::ggplot(out[[1]][[3]], aes(x = yi_r , y = reord
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
   #ggplot2::geom_point(aes(x = fix_yi, y = 1.5), shape=15, size = 7, color = "grey") + # Fixed Effect Point
   ggplot2::scale_x_continuous(
-    limits = c(-2.6, 1.6), 
-    breaks = seq(-0.5,3, by = 0.5),
+    limits = c(-2.6, 2.5), 
+    breaks = seq(-0.5,2, by = 0.5),
     sec.axis = sec_axis(
-      ~., breaks = c(-2.17, -1, 1.5),
+      ~., breaks = c(-2.17, -1, 2.5),
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
   ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -2.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
-  ggplot2::geom_text(aes(x = 1.5, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
+  ggplot2::geom_text(aes(x = 2.5, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
   ggplot2::ggtitle("(c) d' for [Self - Close]") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 20, family='serif'),
-                 axis.text.x.bottom = element_text(size = 15, family='serif'),
-                 axis.title.x = element_text(size = 20, hjust = 0.75),
+                 axis.text.x.top = element_text(size = 25, family='serif'),
+                 axis.text.x.bottom = element_text(size = 25, family='serif'),
+                 axis.title.x = element_text(size = 25, hjust = 0.66),
                  plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
@@ -288,14 +288,14 @@ plot_forest[[1]][[3]] <- ggplot2::ggplot(out[[1]][[3]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Close_d.png", width = 16, height = 9, limitsize = FALSE)
+ggsave(filename = "./FIGURE/Forest_Close_d.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## eta
 ```{r}
 out[[1]][[4]] <- res_meta[[1]][[4]] %>%
   base::summary() %>% # 得到yi, vi, sei, zi, ci.lb, ci.ub这些变量
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  #dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::mutate(
     ############################################################################
     yi_r = round(yi*-1, 2),
@@ -325,7 +325,7 @@ out[[1]][[4]] <- res_meta[[1]][[4]] %>%
       sep = ""
     ),
     ############################################################################
-    Unique_ID = paste0(Author," (",Year,")",", S",Study),
+    Unique_ID = paste0(Author," (",Year,")",", S",Exp),
     ############################################################################
   ) %>%
   dplyr::arrange(yi_r) %>%
@@ -333,7 +333,7 @@ out[[1]][[4]] <- res_meta[[1]][[4]] %>%
     Order = row_number(),
   ) %>%
   dplyr::select(
-    Paper_ID, Author, Year, Study,
+    Paper_ID, Author, Year, Exp,
     Unique_ID, Order,
     yi_r, vi, sei, zi, 
     LLCI, ULCI, CI, pval
@@ -349,26 +349,26 @@ plot_forest[[1]][[4]] <- ggplot2::ggplot(out[[1]][[4]], aes(x = yi_r , y = reord
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
   #ggplot2::geom_point(aes(x = fix_yi, y = 1.5), shape=15, size = 7, color = "grey") + # Fixed Effect Point
   ggplot2::scale_x_continuous(
-    limits = c(-4.5, 3.7), 
-    breaks = seq(-0.5,3, by = 0.5),
+    limits = c(-4.5, 4), 
+    breaks = seq(-0.5,3.5, by = 0.5),
     sec.axis = sec_axis(
-      ~., breaks = c(-3.7, -1.3, 3.7),
+      ~., breaks = c(-3.7, -2.0, 4),
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
   ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -4.5, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
-  ggplot2::geom_text(aes(x = -1.3, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
-  ggplot2::geom_text(aes(x = 3.7, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
+  ggplot2::geom_text(aes(x = -2.0, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
+  ggplot2::geom_text(aes(x = 4, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
   ggplot2::ggtitle("(d) η for [Self - Close]") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 20, family='serif'),
-                 axis.text.x.bottom = element_text(size = 15, family='serif'),
-                 axis.title.x = element_text(size = 20, hjust = 0.75),
+                 axis.text.x.top = element_text(size = 25, family='serif'),
+                 axis.text.x.bottom = element_text(size = 25, family='serif'),
+                 axis.title.x = element_text(size = 25, hjust = 0.75),
                  plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
@@ -378,14 +378,14 @@ plot_forest[[1]][[4]] <- ggplot2::ggplot(out[[1]][[4]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Close_eta.png", width = 16, height = 9, limitsize = FALSE)
+ggsave(filename = "./FIGURE/Forest_Close_eta.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## v
 ```{r}
 out[[1]][[5]] <- res_meta[[1]][[5]] %>%
   base::summary() %>% # 得到yi, vi, sei, zi, ci.lb, ci.ub这些变量
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  #dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::mutate(
     ############################################################################
     yi_r = round(yi, 2),
@@ -415,7 +415,7 @@ out[[1]][[5]] <- res_meta[[1]][[5]] %>%
       sep = ""
     ),
     ############################################################################
-    Unique_ID = paste0(Author," (",Year,")",", S",Study),
+    Unique_ID = paste0(Author," (",Year,")",", S",Exp),
     ############################################################################
   ) %>%
   dplyr::arrange(yi_r) %>%
@@ -423,7 +423,7 @@ out[[1]][[5]] <- res_meta[[1]][[5]] %>%
     Order = row_number(),
   ) %>%
   dplyr::select(
-    Paper_ID, Author, Year, Study,
+    Paper_ID, Author, Year, Exp,
     Unique_ID, Order,
     yi_r, vi, sei, zi, 
     LLCI, ULCI, CI, pval
@@ -439,26 +439,26 @@ plot_forest[[1]][[5]] <- ggplot2::ggplot(out[[1]][[5]], aes(x = yi_r , y = reord
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
   #ggplot2::geom_point(aes(x = fix_yi, y = 1.5), shape=15, size = 7, color = "grey") + # Fixed Effect Point
   ggplot2::scale_x_continuous(
-    limits = c(-2.6, 2.1), 
-    breaks = seq(-0.5,3, by = 0.5),
+    limits = c(-2.6, 2.7), 
+    breaks = seq(-0.5,2.5, by = 0.5),
     sec.axis = sec_axis(
-      ~., breaks = c(-2.17, -1, 2),
+      ~., breaks = c(-2.17, -1, 2.6),
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
   ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -2.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
-  ggplot2::geom_text(aes(x = 2, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
+  ggplot2::geom_text(aes(x = 2.6, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
   ggplot2::ggtitle("(e) v for [Self - Close]") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 20, family='serif'),
-                 axis.text.x.bottom = element_text(size = 15, family='serif'),
-                 axis.title.x = element_text(size = 20, hjust = 0.75),
+                 axis.text.x.top = element_text(size = 25, family='serif'),
+                 axis.text.x.bottom = element_text(size = 25, family='serif'),
+                 axis.title.x = element_text(size = 25, hjust = 0.73),
                  plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
@@ -468,14 +468,14 @@ plot_forest[[1]][[5]] <- ggplot2::ggplot(out[[1]][[5]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Close_v.png", width = 16, height = 9, limitsize = FALSE)
+ggsave(filename = "./FIGURE/Forest_Close_v.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## z
 ```{r}
 out[[1]][[6]] <- res_meta[[1]][[6]] %>%
   base::summary() %>% # 得到yi, vi, sei, zi, ci.lb, ci.ub这些变量
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  #dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::mutate(
     ############################################################################
     yi_r = round(yi*-1, 2),
@@ -505,7 +505,7 @@ out[[1]][[6]] <- res_meta[[1]][[6]] %>%
       sep = ""
     ),
     ############################################################################
-    Unique_ID = paste0(Author," (",Year,")",", S",Study),
+    Unique_ID = paste0(Author," (",Year,")",", S",Exp),
     ############################################################################
   ) %>%
   dplyr::arrange(yi_r) %>%
@@ -513,7 +513,7 @@ out[[1]][[6]] <- res_meta[[1]][[6]] %>%
     Order = row_number(),
   ) %>%
   dplyr::select(
-    Paper_ID, Author, Year, Study,
+    Paper_ID, Author, Year, Exp,
     Unique_ID, Order,
     yi_r, vi, sei, zi, 
     LLCI, ULCI, CI, pval
@@ -529,16 +529,16 @@ plot_forest[[1]][[6]] <- ggplot2::ggplot(out[[1]][[6]], aes(x = yi_r , y = reord
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
   #ggplot2::geom_point(aes(x = fix_yi, y = 1.5), shape=15, size = 7, color = "grey") + # Fixed Effect Point
   ggplot2::scale_x_continuous(
-    limits = c(-2.6, 1.3), 
-    breaks = seq(-0.5,3, by = 0.5),
+    limits = c(-3.2, 1.3), 
+    breaks = seq(-1.5,1, by = 0.5),
     sec.axis = sec_axis(
-      ~., breaks = c(-2.2, -1, 1.2),
+      ~., breaks = c(-2.8, -1.9, 1.2),
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
   ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
-  ggplot2::geom_text(aes(x = -2.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
-  ggplot2::geom_text(aes(x = -1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
+  ggplot2::geom_text(aes(x = -3.2, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
+  ggplot2::geom_text(aes(x = -1.9, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
   ggplot2::geom_text(aes(x = 1.2, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
@@ -546,9 +546,9 @@ plot_forest[[1]][[6]] <- ggplot2::ggplot(out[[1]][[6]], aes(x = yi_r , y = reord
   ggplot2::ggtitle("(f) z for [Self - Close]") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 20, family='serif'),
-                 axis.text.x.bottom = element_text(size = 15, family='serif'),
-                 axis.title.x = element_text(size = 20, hjust = 0.75),
+                 axis.text.x.top = element_text(size = 25, family='serif'),
+                 axis.text.x.bottom = element_text(size = 25, family='serif'),
+                 axis.title.x = element_text(size = 25, hjust = 0.73),
                  plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
@@ -558,7 +558,7 @@ plot_forest[[1]][[6]] <- ggplot2::ggplot(out[[1]][[6]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Close_z.png", width = 16, height = 9, limitsize = FALSE)
+ggsave(filename = "./FIGURE/Forest_Close_z.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 # Stranger
@@ -566,7 +566,7 @@ ggsave(filename = "./FIGURE/Forest_Close_z.png", width = 16, height = 9, limitsi
 ```{r}
 out[[2]][[1]] <- res_meta[[2]][[1]] %>%
   base::summary() %>% # 得到yi, vi, sei, zi, ci.lb, ci.ub这些变量
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  #dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::mutate(
     ############################################################################
     yi_r = round(yi*-1, 2),
@@ -596,7 +596,7 @@ out[[2]][[1]] <- res_meta[[2]][[1]] %>%
       sep = ""
     ),
     ############################################################################
-    Unique_ID = paste0(Author," (",Year,")",", S",Study),
+    Unique_ID = paste0(Author," (",Year,")",", S",Exp),
     ############################################################################
   ) %>%
   dplyr::arrange(yi_r) %>%
@@ -604,7 +604,7 @@ out[[2]][[1]] <- res_meta[[2]][[1]] %>%
     Order = row_number(),
   ) %>%
   dplyr::select(
-    Paper_ID, Author, Year, Study,
+    Paper_ID, Author, Year, Exp,
     Unique_ID, Order,
     yi_r, vi, sei, zi, 
     LLCI, ULCI, CI, pval
@@ -620,27 +620,27 @@ plot_forest[[2]][[1]] <- ggplot2::ggplot(out[[2]][[1]], aes(x = yi_r , y = reord
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
   #ggplot2::geom_point(aes(x = fix_yi, y = 1.5), shape=15, size = 7, color = "grey") + # Fixed Effect Point
   ggplot2::scale_x_continuous(
-    limits = c(-3.5, 2.5), 
-    breaks = seq(-0.5,2, by = 0.5),
+    limits = c(-3.5, 3), 
+    breaks = seq(-0.5,2.5, by = 0.5),
     sec.axis = sec_axis(
       ~., 
-      breaks = c(-2.9, -1.2, 2.3),
+      breaks = c(-2.9, -1.2, 3),
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
   ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -3.5, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
   ggplot2::geom_text(aes(x = -1.2, y = reorder(Unique_ID, Order), label = CI), size = 7, hjust = 0.5, family='serif',) + # CI
-  ggplot2::geom_text(aes(x = 2.3, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
+  ggplot2::geom_text(aes(x = 3, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
-  ggplot2::ggtitle("(b) RT for [Self - Stranger]") +
+  ggplot2::ggtitle("(g) RT for [Self - Stranger]") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 20, family='serif'),
-                 axis.text.x.bottom = element_text(size = 15, family='serif'),
-                 axis.title.x = element_text(size = 20, hjust = 0.75),
+                 axis.text.x.top = element_text(size = 25, family='serif'),
+                 axis.text.x.bottom = element_text(size = 25, family='serif'),
+                 axis.title.x = element_text(size = 25, hjust = 0.75),
                  plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
@@ -650,14 +650,14 @@ plot_forest[[2]][[1]] <- ggplot2::ggplot(out[[2]][[1]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Stranger_RT.png", width = 16, height = 9, limitsize = FALSE)
+ggsave(filename = "./FIGURE/Forest_Stranger_RT.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## ACC
 ```{r}
 out[[2]][[2]] <- res_meta[[2]][[2]] %>%
   base::summary() %>% # 得到yi, vi, sei, zi, ci.lb, ci.ub这些变量
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  #dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::mutate(
     ############################################################################
     yi_r = round(yi, 2),
@@ -687,7 +687,7 @@ out[[2]][[2]] <- res_meta[[2]][[2]] %>%
       sep = ""
     ),
     ############################################################################
-    Unique_ID = paste0(Author," (",Year,")",", S",Study),
+    Unique_ID = paste0(Author," (",Year,")",", S",Exp),
     ############################################################################
   ) %>%
   dplyr::arrange(yi_r) %>%
@@ -695,7 +695,7 @@ out[[2]][[2]] <- res_meta[[2]][[2]] %>%
     Order = row_number(),
   ) %>%
   dplyr::select(
-    Paper_ID, Author, Year, Study,
+    Paper_ID, Author, Year, Exp,
     Unique_ID, Order,
     yi_r, vi, sei, zi, 
     LLCI, ULCI, CI, pval
@@ -711,26 +711,26 @@ plot_forest[[2]][[2]] <- ggplot2::ggplot(out[[2]][[2]], aes(x = yi_r , y = reord
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
   #ggplot2::geom_point(aes(x = fix_yi, y = 1.5), shape=15, size = 7, color = "grey") + # Fixed Effect Point
   ggplot2::scale_x_continuous(
-    limits = c(-3.6, 3.3), 
-    breaks = seq(-0.5,3, by = 0.5),
+    limits = c(-3.6, 5.5), 
+    breaks = seq(-0.5,5, by = 0.5),
     sec.axis = sec_axis(
-      ~., breaks = c(-2.9, -1.1, 3.1),
+      ~., breaks = c(-2.9, -1.4, 5.5),
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
   ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -3.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
-  ggplot2::geom_text(aes(x = -1.1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
-  ggplot2::geom_text(aes(x = 3.1, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
+  ggplot2::geom_text(aes(x = -1.4, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
+  ggplot2::geom_text(aes(x = 5.5, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
   ggplot2::ggtitle("(h) ACC for [Self - Stranger]") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 20, family='serif'),
-                 axis.text.x.bottom = element_text(size = 15, family='serif'),
-                 axis.title.x = element_text(size = 20, hjust = 0.75),
+                 axis.text.x.top = element_text(size = 25, family='serif'),
+                 axis.text.x.bottom = element_text(size = 25, family='serif'),
+                 axis.title.x = element_text(size = 25, hjust = 0.75),
                  plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
@@ -740,14 +740,14 @@ plot_forest[[2]][[2]] <- ggplot2::ggplot(out[[2]][[2]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Stranger_ACC.png", width = 16, height = 9, limitsize = FALSE)
+ggsave(filename = "./FIGURE/Forest_Stranger_ACC.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## d
 ```{r}
 out[[2]][[3]] <- res_meta[[2]][[3]] %>%
   base::summary() %>% # 得到yi, vi, sei, zi, ci.lb, ci.ub这些变量
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  #dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::mutate(
     ############################################################################
     yi_r = round(yi, 2),
@@ -777,7 +777,7 @@ out[[2]][[3]] <- res_meta[[2]][[3]] %>%
       sep = ""
     ),
     ############################################################################
-    Unique_ID = paste0(Author," (",Year,")",", S",Study),
+    Unique_ID = paste0(Author," (",Year,")",", S",Exp),
     ############################################################################
   ) %>%
   dplyr::arrange(yi_r) %>%
@@ -785,7 +785,7 @@ out[[2]][[3]] <- res_meta[[2]][[3]] %>%
     Order = row_number(),
   ) %>%
   dplyr::select(
-    Paper_ID, Author, Year, Study,
+    Paper_ID, Author, Year, Exp,
     Unique_ID, Order,
     yi_r, vi, sei, zi, 
     LLCI, ULCI, CI, pval
@@ -801,26 +801,26 @@ plot_forest[[2]][[3]] <- ggplot2::ggplot(out[[2]][[3]], aes(x = yi_r , y = reord
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
   #ggplot2::geom_point(aes(x = fix_yi, y = 1.5), shape=15, size = 7, color = "grey") + # Fixed Effect Point
   ggplot2::scale_x_continuous(
-    limits = c(-2.6, 1.6), 
-    breaks = seq(-0.5,3, by = 0.5),
+    limits = c(-2.6, 3), 
+    breaks = seq(-0.5,2.5, by = 0.5),
     sec.axis = sec_axis(
-      ~., breaks = c(-2.17, -1, 1.5),
+      ~., breaks = c(-2.17, -1.2, 2.7),
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
   ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -2.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
-  ggplot2::geom_text(aes(x = -1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
-  ggplot2::geom_text(aes(x = 1.5, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
+  ggplot2::geom_text(aes(x = -1.2, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
+  ggplot2::geom_text(aes(x = 2.7, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
   ggplot2::ggtitle("(i) d' for [Self - Stranger]") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 20, family='serif'),
-                 axis.text.x.bottom = element_text(size = 15, family='serif'),
-                 axis.title.x = element_text(size = 20, hjust = 0.75),
+                 axis.text.x.top = element_text(size = 25, family='serif'),
+                 axis.text.x.bottom = element_text(size = 25, family='serif'),
+                 axis.title.x = element_text(size = 25, hjust = 0.65),
                  plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
@@ -830,14 +830,14 @@ plot_forest[[2]][[3]] <- ggplot2::ggplot(out[[2]][[3]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Stranger_d.png", width = 16, height = 9, limitsize = FALSE)
+ggsave(filename = "./FIGURE/Forest_Stranger_d.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## eta
 ```{r}
 out[[2]][[4]] <- res_meta[[2]][[4]] %>%
   base::summary() %>% # 得到yi, vi, sei, zi, ci.lb, ci.ub这些变量
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  #dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::mutate(
     ############################################################################
     yi_r = round(yi*-1, 2),
@@ -867,7 +867,7 @@ out[[2]][[4]] <- res_meta[[2]][[4]] %>%
       sep = ""
     ),
     ############################################################################
-    Unique_ID = paste0(Author," (",Year,")",", S",Study),
+    Unique_ID = paste0(Author," (",Year,")",", S",Exp),
     ############################################################################
   ) %>%
   dplyr::arrange(yi_r) %>%
@@ -875,7 +875,7 @@ out[[2]][[4]] <- res_meta[[2]][[4]] %>%
     Order = row_number(),
   ) %>%
   dplyr::select(
-    Paper_ID, Author, Year, Study,
+    Paper_ID, Author, Year, Exp,
     Unique_ID, Order,
     yi_r, vi, sei, zi, 
     LLCI, ULCI, CI, pval
@@ -908,9 +908,9 @@ plot_forest[[2]][[4]] <- ggplot2::ggplot(out[[2]][[4]], aes(x = yi_r , y = reord
   ggplot2::ggtitle("(j) η for [Self - Stranger]") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 20, family='serif'),
-                 axis.text.x.bottom = element_text(size = 15, family='serif'),
-                 axis.title.x = element_text(size = 20, hjust = 0.75),
+                 axis.text.x.top = element_text(size = 25, family='serif'),
+                 axis.text.x.bottom = element_text(size = 25, family='serif'),
+                 axis.title.x = element_text(size = 25, hjust = 0.75),
                  plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
@@ -920,14 +920,14 @@ plot_forest[[2]][[4]] <- ggplot2::ggplot(out[[2]][[4]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Stranger_eta.png", width = 16, height = 9, limitsize = FALSE)
+ggsave(filename = "./FIGURE/Forest_Stranger_eta.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## v
 ```{r}
 out[[2]][[5]] <- res_meta[[2]][[5]] %>%
   base::summary() %>% # 得到yi, vi, sei, zi, ci.lb, ci.ub这些变量
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  #dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::mutate(
     ############################################################################
     yi_r = round(yi, 2),
@@ -957,7 +957,7 @@ out[[2]][[5]] <- res_meta[[2]][[5]] %>%
       sep = ""
     ),
     ############################################################################
-    Unique_ID = paste0(Author," (",Year,")",", S",Study),
+    Unique_ID = paste0(Author," (",Year,")",", S",Exp),
     ############################################################################
   ) %>%
   dplyr::arrange(yi_r) %>%
@@ -965,7 +965,7 @@ out[[2]][[5]] <- res_meta[[2]][[5]] %>%
     Order = row_number(),
   ) %>%
   dplyr::select(
-    Paper_ID, Author, Year, Study,
+    Paper_ID, Author, Year, Exp,
     Unique_ID, Order,
     yi_r, vi, sei, zi, 
     LLCI, ULCI, CI, pval
@@ -981,26 +981,26 @@ plot_forest[[2]][[5]] <- ggplot2::ggplot(out[[2]][[5]], aes(x = yi_r , y = reord
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
   #ggplot2::geom_point(aes(x = fix_yi, y = 1.5), shape=15, size = 7, color = "grey") + # Fixed Effect Point
   ggplot2::scale_x_continuous(
-    limits = c(-2.6, 1.6), 
+    limits = c(-2.6, 3.5), 
     breaks = seq(-0.5,3, by = 0.5),
     sec.axis = sec_axis(
-      ~., breaks = c(-2.17, -1, 1.5),
+      ~., breaks = c(-2.17, -1.2, 3.3),
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
   ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -2.6, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
-  ggplot2::geom_text(aes(x = -1, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
-  ggplot2::geom_text(aes(x = 1.5, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
+  ggplot2::geom_text(aes(x = -1.2, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
+  ggplot2::geom_text(aes(x = 3.3, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
   ggplot2::ggtitle("(k) v for [Self - Stranger]") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 20, family='serif'),
-                 axis.text.x.bottom = element_text(size = 15, family='serif'),
-                 axis.title.x = element_text(size = 20, hjust = 0.75),
+                 axis.text.x.top = element_text(size = 25, family='serif'),
+                 axis.text.x.bottom = element_text(size = 25, family='serif'),
+                 axis.title.x = element_text(size = 25, hjust = 0.65),
                  plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
@@ -1010,14 +1010,14 @@ plot_forest[[2]][[5]] <- ggplot2::ggplot(out[[2]][[5]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Stranger_v.png", width = 16, height = 9, limitsize = FALSE)
+ggsave(filename = "./FIGURE/Forest_Stranger_v.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## z
 ```{r}
 out[[2]][[6]] <- res_meta[[2]][[6]] %>%
   base::summary() %>% # 得到yi, vi, sei, zi, ci.lb, ci.ub这些变量
-  dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
+  #dplyr::left_join(desc[[1]], by = "Paper_ID") %>%
   dplyr::mutate(
     ############################################################################
     yi_r = round(yi, 2),
@@ -1047,7 +1047,7 @@ out[[2]][[6]] <- res_meta[[2]][[6]] %>%
       sep = ""
     ),
     ############################################################################
-    Unique_ID = paste0(Author," (",Year,")",", S",Study),
+    Unique_ID = paste0(Author," (",Year,")",", S",Exp),
     ############################################################################
   ) %>%
   dplyr::arrange(yi_r) %>%
@@ -1055,7 +1055,7 @@ out[[2]][[6]] <- res_meta[[2]][[6]] %>%
     Order = row_number(),
   ) %>%
   dplyr::select(
-    Paper_ID, Author, Year, Study,
+    Paper_ID, Author, Year, Exp,
     Unique_ID, Order,
     yi_r, vi, sei, zi, 
     LLCI, ULCI, CI, pval
@@ -1071,26 +1071,26 @@ plot_forest[[2]][[6]] <- ggplot2::ggplot(out[[2]][[6]], aes(x = yi_r , y = reord
   #ggplot2::geom_linerange(aes(xmin = fix_ci.lb, xmax = fix_ci.ub, y = 1.5), linewidth = 3, color = "grey") + # Fixed Effect CI
   #ggplot2::geom_point(aes(x = fix_yi, y = 1.5), shape=15, size = 7, color = "grey") + # Fixed Effect Point
   ggplot2::scale_x_continuous(
-    limits = c(-2.8, 1.1), 
-    breaks = seq(-0.5,3, by = 0.5),
+    limits = c(-2.8, 1.8), 
+    breaks = seq(-0.5,1.5, by = 0.5),
     sec.axis = sec_axis(
-      ~., breaks = c(-2.4, -1.2, 1),
+      ~., breaks = c(-2.4, -1.3, 1.7),
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
   ggplot2::geom_vline(xintercept = 0, linetype = "dotted", color = "black", linewidth = 3, alpha = 0.5) +
   ggplot2::geom_text(aes(x = -2.8, y = reorder(Unique_ID, Order), label = reorder(Unique_ID, Order)), size = 7, hjust = 0, family='serif',) + # Author_Year_Study
-  ggplot2::geom_text(aes(x = -1.2, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
-  ggplot2::geom_text(aes(x = 1, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
+  ggplot2::geom_text(aes(x = -1.3, y = reorder(Unique_ID, Order), label = CI),hjust = 0.5, size = 7, family='serif',) + # CI
+  ggplot2::geom_text(aes(x = 1.7, y = reorder(Unique_ID, Order), label = pval), size = 7, hjust = 0.5, family='serif',) + # Right: P-value
   #ggplot2::annotate("text", x = -3.5, y = 1 ,label = "Q (161) = 1426.33, p <.0001, I2 = 90.90%", size = 16, family='serif', color = "black") +
   #ggplot2::annotate("text", x = -3, y = 2 ,label = "Random Effect = -0.88, SE = 0.05, p <.01, 95% CI [-.97, -.79]", size = 16, family='serif', color = "black") +
   ggplot2::labs(x = expression("Hedges' " * italic(g))) +
   ggplot2::ggtitle("(l) z for [Self - Stranger]") +
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x.top = element_text(size = 20, family='serif'),
-                 axis.text.x.bottom = element_text(size = 15, family='serif'),
-                 axis.title.x = element_text(size = 20, hjust = 0.75),
+                 axis.text.x.top = element_text(size = 25, family='serif'),
+                 axis.text.x.bottom = element_text(size = 25, family='serif'),
+                 axis.title.x = element_text(size = 25, hjust = 0.65),
                  plot.title = element_text(size = 30, family = 'serif', hjust = 0),
                  legend.title = element_blank(),
                  axis.line.y = element_blank(),
@@ -1100,7 +1100,7 @@ plot_forest[[2]][[6]] <- ggplot2::ggplot(out[[2]][[6]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Stranger_z.png", width = 16, height = 9, limitsize = FALSE)
+ggsave(filename = "./FIGURE/Forest_Stranger_z.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 # Combine
@@ -1111,7 +1111,7 @@ temp_p <- plot_forest[[1]][[1]] + plot_forest[[2]][[1]] +
 ggsave(
   plot = last_plot(),
   filename = "./FIGURE/Forest_RT.png",
-  width = 16, height = 18, 
+  width = 24, height = 36, 
   limitsize = FALSE
 )
 
@@ -1136,7 +1136,7 @@ temp_p <- plot_forest[[1]][[1]] +
 ggsave(
   plot = last_plot(),
   filename = "./FIGURE/Forest_Supp.png",
-  width = 48, height = 36, 
+  width = 72, height = 72, 
   limitsize = FALSE
 )
 

@@ -5,41 +5,16 @@ date: "2023-08-24"
 output: html_document
 ---
 # Meta Analysis
-```{r List for Paper ID}
-p <- list()
-p[[1]] <- "P0E1"
-p[[2]] <- "P6E1"
-p[[3]] <- "P46E2"
-p[[4]] <- "P51E1"
-p[[5]] <- "P51E2"
-p[[6]] <- "P54E1"
-p[[7]] <- "P54E3"
-p[[8]] <- "Pn4E1"
-p[[9]] <- "Pn13E1"
-p[[10]] <- "Pn13E3"
-p[[11]] <- "Pn13E4"
-p[[12]] <- "Pn16E1"
-p[[13]] <- "Pn16E2"
-p[[14]] <- "Pn16E3"
-p[[15]] <- "Pn23E1"
-p[[16]] <- "P95E1"
-p[[17]] <- "P95E2"
-p[[18]] <- "Ps1E1"
-p[[19]] <- "Ps2E1"
-p[[20]] <- "Ps3E1"
-p[[21]] <- "Ps4E1"
-p[[22]] <- "Ps4E2"
-```
 
 ```{r}
 raw_meta <- list()
-for (i in 1:18) {
+for (i in 1:44) {
   raw_meta[[i]] <- list()
 }
 ```
 
 ```{r, message=FALSE}
-for (i in 1:18) {
+for (i in 1:44) {
   raw_meta[[i]][[1]] <-yukiBP::df(df = df[[i]], i = i, Indice = "rt")
   raw_meta[[i]][[2]] <-yukiBP::df(df = df[[i]], i = i, Indice = "acc")
   raw_meta[[i]][[3]] <-yukiBP::df(df = df[[i]], i = i, Indice = "dp")
@@ -62,10 +37,10 @@ df_meta <- list()
 df_meta[[1]] <- raw_meta %>%
   dplyr::filter(
     # 被认为是在原范式上有较大修改(4 session 4 mood)
-    !(Paper_ID %in% c("P51E1")) 
+    !(Paper_ID %in% c("P51E1", "P44E1", "Ps2E1")) 
   ) 
 
-rm(raw_meta)
+#rm(raw_meta)
 names(df_meta)[1] <- "Raw Meta Data"
 ```
 
@@ -81,7 +56,7 @@ df_meta[[2]] <- df_meta[[1]] %>%
       Identity == "Acquaintance" ~ "Stranger",
       Identity == "Stranger" ~ "Stranger",
       Identity == "Celebrity" ~ "Celebrity",
-      Identity == "none" ~ "NonPerson",
+      Identity == "None" ~ "NonPerson",
     )
   ) %>%
   dplyr::rename(

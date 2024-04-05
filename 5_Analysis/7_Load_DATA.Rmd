@@ -72,7 +72,7 @@ plot[[1]] <- list.files(
   ) %>%
   dplyr::filter(
     # 被认为是在原范式上有较大修改(4 session 4 mood)
-    !(Paper_ID %in% c("P51E1")) 
+    !(Paper_ID %in% c("P51E1", "P44E1")) 
     #!(Paper_ID %in% c("P51E1", "P95E1", "P95E2", "Ps1E1")) 
   ) 
 names(plot)[1] <- "Permuted SHR"
@@ -132,8 +132,7 @@ plot[[2]] <- list.files(
       ) 
     )
   ) %>%
-  # not suitable paper "P51E1"
-  dplyr::filter(!(Paper_ID %in% c("P51E1"))) 
+  dplyr::filter(!(Paper_ID %in% c("P51E1", "P44E1"))) 
 
 names(plot)[2] <- "Normal SHR"
 ```
