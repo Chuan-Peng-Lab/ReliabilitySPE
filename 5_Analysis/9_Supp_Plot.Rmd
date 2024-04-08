@@ -743,13 +743,15 @@ p1 <- plot[[6]] %>%
   ggplot2::ggplot(data = ., aes(x = Trials, y = r, color = Indice, fill = Indice)) +
   ggplot2::geom_point() +  # 添加散点
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
-  ggpubr::stat_cor(label.x = 3, label.y = 1.1, r.accuracy = .01, p.accuracy = .01) +
+  ggpubr::stat_cor(label.x = 3, label.y = 0.9, r.accuracy = .01, p.accuracy = .01) +
   ggplot2::scale_x_continuous(
     limits = c(0, 140),
+    expand = c(0, 0),
     breaks = c(0, 30, 60, 100, 130),
   ) +
   ggplot2::scale_y_continuous(
     limits = c(-0.1, 1.1),
+    expand = c(0, 0),
     breaks = c(0, 0.5, 0.8, 1),
   ) +
   #ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
@@ -770,13 +772,15 @@ p2 <- plot[[6]] %>%
   ggplot2::ggplot(data = ., aes(x = Trials, y = r, color = Indice, fill = Indice)) +
   ggplot2::geom_point() +  # 添加散点
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
-  ggpubr::stat_cor(label.x = 3, label.y = 1.1, r.accuracy = .01, p.accuracy = .01) +
+  ggpubr::stat_cor(label.x = 3, label.y = 0.9, r.accuracy = .01, p.accuracy = .01) +
   ggplot2::scale_x_continuous(
     limits = c(0, 140),
+    expand = c(0, 0),
     breaks = c(0, 30, 60, 100, 130),
   ) +
   ggplot2::scale_y_continuous(
     limits = c(-0.1, 1.1),
+    expand = c(0, 0),
     breaks = c(0, 0.5, 0.8, 1),
   ) +
   #ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
@@ -890,8 +894,14 @@ p1 <- plot[[7]] %>%
   ggplot2::geom_point() +  # 添加散点
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
   ggpubr::stat_cor(label.x = 0, label.y = 0.9, r.accuracy = .01, p.accuracy = .01) +
-  ggplot2::scale_x_continuous(limits = c(-0.5, 2)) +
-   ggplot2::scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.5, 0.7, 1),) +
+  ggplot2::scale_x_continuous(
+    limits = c(-0.5, 2), 
+  ) +
+   ggplot2::scale_y_continuous(
+    limits = c(0, 1),
+    expand = c(0, 0),
+    breaks = c(0, 0.5, 0.7, 1),
+  ) +
   #ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
   ggplot2::labs(y = "Permutated Split-Half Reliability", x = expression("Hedges' " * italic(g))) +
@@ -907,8 +917,14 @@ p2 <- plot[[7]] %>%
   ggplot2::geom_point() +  # 添加散点
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
   ggpubr::stat_cor(label.x = 0, label.y = 0.9, r.accuracy = .01, p.accuracy = .01) +
-  ggplot2::scale_x_continuous(limits = c(-0.5, 2)) +
-   ggplot2::scale_y_continuous(limits = c(0, 1), breaks = c(0, 0.5, 0.7, 1),) +
+  ggplot2::scale_x_continuous(
+    limits = c(-0.5, 2), 
+  ) +
+   ggplot2::scale_y_continuous(
+    limits = c(0, 1),
+    expand = c(0, 0),
+    breaks = c(0, 0.5, 0.7, 1),
+  ) +
   #ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
   ggplot2::labs(y = "", x = expression("Hedges' " * italic(g))) +
@@ -977,11 +993,12 @@ pic1 <- plot[[8]] %>%
   ggpubr::stat_cor(label.x = 3, label.y = 2, r.accuracy = .01, p.accuracy = .01) +
   ggplot2::scale_x_continuous(
     limits = c(0, 140),
+    expand = c(0, 0),
     breaks = c(0, 30, 60, 100, 130),
   ) +
   ggplot2::scale_y_continuous(
     limits = c(-0.5, 2),
-    breaks = c(0, 0.5, 1, 1.5, 2)
+    breaks = c(-0.5, 0, 0.5, 1, 1.5, 2)
   ) +
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
   ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
@@ -998,11 +1015,12 @@ pic2 <- plot[[8]] %>%
   ggpubr::stat_cor(label.x = 3, label.y = 2, r.accuracy = .01, p.accuracy = .01) +
   ggplot2::scale_x_continuous(
     limits = c(0, 140),
+    expand = c(0, 0),
     breaks = c(0, 30, 60, 100, 130),
   ) +
   ggplot2::scale_y_continuous(
     limits = c(-0.5, 2),
-    breaks = c(0, 0.5, 1, 1.5, 2)
+    breaks = c(-0.5, 0, 0.5, 1, 1.5, 2)
   ) +
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
   ggplot2::scale_color_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
@@ -1241,6 +1259,7 @@ pic1 <- plot[[9]] %>%
     breaks = c(0, 60, 120, 180, 240)
   ) +
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
   ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
   ggplot2::labs(
@@ -1292,6 +1311,7 @@ pic2 <- plot[[9]] %>%
     breaks = c(0, 60, 120, 180, 240)
   ) +
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::scale_color_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
   ggplot2::scale_fill_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
   ggplot2::labs(

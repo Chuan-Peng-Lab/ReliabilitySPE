@@ -182,10 +182,17 @@ names(res_meta[[1]])[1] <- "Meta for RT"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[1]][[1]])
 )
-df_meta[[5]][[1]][[1]] <- data.frame(Indice = "RT",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
 
-metafor::rma(yi, vi, data = res_meta[[1]][[1]])
+smr <- metafor::rma(yi, vi, data = res_meta[[1]][[1]])
+
+df_meta[[5]][[1]][[1]] <- data.frame(
+  Indice = "RT",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -209,10 +216,16 @@ names(res_meta[[1]])[2] <- "Meta for ACC"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[1]][[2]])
 )
-df_meta[[5]][[1]][[2]] <- data.frame(Indice = "ACC",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[1]][[2]])
 
-metafor::rma(yi, vi, data = res_meta[[1]][[2]])
+df_meta[[5]][[1]][[2]] <- data.frame(
+  Indice = "ACC",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -236,10 +249,16 @@ names(res_meta[[1]])[3] <- "Meta for d"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[1]][[3]])
 )
-df_meta[[5]][[1]][[3]] <- data.frame(Indice = "d",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[1]][[3]])
 
-metafor::rma(yi, vi, data = res_meta[[1]][[3]])
+df_meta[[5]][[1]][[3]] <- data.frame(
+  Indice = "d",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -263,10 +282,16 @@ names(res_meta[[1]])[4] <- "Meta for eta"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[1]][[4]])
 )
-df_meta[[5]][[1]][[4]] <- data.frame(Indice = "eta",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[1]][[4]])
 
-metafor::rma(yi, vi, data = res_meta[[1]][[4]])
+df_meta[[5]][[1]][[4]] <- data.frame(
+  Indice = "eta",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -290,10 +315,16 @@ names(res_meta[[1]])[5] <- "Meta for ezDDM v"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[1]][[5]])
 )
-df_meta[[5]][[1]][[5]] <- data.frame(Indice = "ezDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[1]][[5]])
 
-metafor::rma(yi, vi, data = res_meta[[1]][[5]])
+df_meta[[5]][[1]][[5]] <- data.frame(
+  Indice = "ezDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -317,10 +348,16 @@ names(res_meta[[1]])[6] <- "Meta for ezDDM z"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[1]][[6]])
 )
-df_meta[[5]][[1]][[6]] <- data.frame(Indice = "ezDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[1]][[6]])
 
-metafor::rma(yi, vi, data = res_meta[[1]][[6]])
+df_meta[[5]][[1]][[6]] <- data.frame(
+  Indice = "ezDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -344,10 +381,16 @@ names(res_meta[[1]])[7] <- "Meta for rwDDM v"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[1]][[7]])
 )
-df_meta[[5]][[1]][[7]] <- data.frame(Indice = "rwDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[1]][[7]])
 
-metafor::rma(yi, vi, data = res_meta[[1]][[7]])
+df_meta[[5]][[1]][[7]] <- data.frame(
+  Indice = "rwDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -371,10 +414,16 @@ names(res_meta[[1]])[8] <- "Meta for rwDDM z"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[1]][[8]])
 )
-df_meta[[5]][[1]][[8]] <- data.frame(Indice = "rwDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[1]][[8]])
 
-metafor::rma(yi, vi, data = res_meta[[1]][[8]])
+df_meta[[5]][[1]][[8]] <- data.frame(
+  Indice = "rwDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ## Stranger
@@ -399,10 +448,16 @@ names(res_meta[[2]])[1] <- "Meta for RT"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[2]][[1]])
 )
-df_meta[[5]][[2]][[1]] <- data.frame(Indice = "RT",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[2]][[1]])
 
-metafor::rma(yi, vi, data = res_meta[[2]][[1]])
+df_meta[[5]][[2]][[1]] <- data.frame(
+  Indice = "RT",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -426,10 +481,16 @@ names(res_meta[[2]])[2] <- "Meta for ACC"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[2]][[2]])
 )
-df_meta[[5]][[2]][[2]] <- data.frame(Indice = "ACC",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[2]][[2]])
 
-metafor::rma(yi, vi, data = res_meta[[2]][[2]])
+df_meta[[5]][[2]][[2]] <- data.frame(
+  Indice = "ACC",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -453,10 +514,16 @@ names(res_meta[[2]])[3] <- "Meta for d"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[2]][[3]])
 )
-df_meta[[5]][[2]][[3]] <- data.frame(Indice = "d",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[2]][[3]])
 
-metafor::rma(yi, vi, data = res_meta[[2]][[3]])
+df_meta[[5]][[2]][[3]] <- data.frame(
+  Indice = "d",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -480,10 +547,16 @@ names(res_meta[[2]])[4] <- "Meta for eta"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[2]][[4]])
 )
-df_meta[[5]][[2]][[4]] <- data.frame(Indice = "eta",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[2]][[4]])
 
-metafor::rma(yi, vi, data = res_meta[[2]][[4]])
+df_meta[[5]][[2]][[4]] <- data.frame(
+  Indice = "eta",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -507,10 +580,16 @@ names(res_meta[[2]])[5] <- "Meta for ezDDM v"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[2]][[5]])
 )
-df_meta[[5]][[2]][[5]] <- data.frame(Indice = "ezDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[2]][[5]])
 
-metafor::rma(yi, vi, data = res_meta[[2]][[5]])
+df_meta[[5]][[2]][[5]] <- data.frame(
+  Indice = "eaDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -534,10 +613,16 @@ names(res_meta[[2]])[6] <- "Meta for z"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[2]][[6]])
 )
-df_meta[[5]][[2]][[6]] <- data.frame(Indice = "z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[2]][[6]])
 
-metafor::rma(yi, vi, data = res_meta[[2]][[6]])
+df_meta[[5]][[2]][[6]] <- data.frame(
+  Indice = "eaDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -561,10 +646,16 @@ names(res_meta[[2]])[7] <- "Meta for ezDDM v"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[2]][[7]])
 )
-df_meta[[5]][[2]][[7]] <- data.frame(Indice = "ezDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[2]][[7]])
 
-metafor::rma(yi, vi, data = res_meta[[2]][[7]])
+df_meta[[5]][[2]][[7]] <- data.frame(
+  Indice = "rwDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
@@ -588,10 +679,16 @@ names(res_meta[[2]])[8] <- "Meta for rwDDM z"
 prd <- metafor::predict.rma(
   metafor::rma(yi, vi, data = res_meta[[2]][[8]])
 )
-df_meta[[5]][[2]][[8]] <- data.frame(Indice = "rwDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub)
-rm(prd)
+smr <- metafor::rma(yi, vi, data = res_meta[[2]][[8]])
 
-metafor::rma(yi, vi, data = res_meta[[2]][[8]])
+df_meta[[5]][[2]][[8]] <- data.frame(
+  Indice = "rwDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 
@@ -601,14 +698,22 @@ metafor::rma(yi, vi, data = res_meta[[2]][[8]])
 
 ## Celebrity & NonPerson
 ```{r}
-res_meta[[1]] <- list()
-res_meta[[2]] <- list()
-names(res_meta)[1] <- "Celebrity"
-names(res_meta)[2] <- "NonPerson"
+res_meta[[3]] <- list()
+res_meta[[4]] <- list()
+names(res_meta)[3] <- "Celebrity"
+names(res_meta)[4] <- "NonPerson"
 ```
 
 ```{r}
-df_meta[[3]] <- df_meta[[2]] %>%
+df_meta[[9]] <- list(
+  list(),
+  list()
+)
+```
+
+
+```{r}
+df_meta[[7]] <- df_meta[[2]] %>%
   dplyr::filter(
     Identity %in% c("Self", "Celebrity")
   ) %>%
@@ -634,11 +739,11 @@ df_meta[[3]] <- df_meta[[2]] %>%
     desc[[1]], by = "Paper_ID"
   )
 
-names(df_meta)[3] <- "Self - Celebrity"
+names(df_meta)[7] <- "Self - Celebrity"
 ```
 
 ```{r}
-df_meta[[4]] <- df_meta[[2]] %>%
+df_meta[[8]] <- df_meta[[2]] %>%
   dplyr::filter(
     Identity %in% c("Self", "NonPerson")
   ) %>%
@@ -662,14 +767,17 @@ df_meta[[4]] <- df_meta[[2]] %>%
   ) %>%
   dplyr::left_join(
     desc[[1]], by = "Paper_ID"
+  ) %>%
+  dplyr::mutate(
+    ri = 0.7
   )
 
-names(df_meta)[4] <- "Self - NonPerson"
+names(df_meta)[8] <- "Self - NonPerson"
 ```
 
 ## Celebrity
 ```{r}
-res_meta[[1]][[1]]  <- metafor::escalc(
+res_meta[[3]][[1]] <- metafor::escalc(
   measure = "SMD", 
   m1i = RT_mean_Self,
   m2i = RT_mean_Celebrity,
@@ -677,22 +785,33 @@ res_meta[[1]][[1]]  <- metafor::escalc(
   sd2i = RT_sd_Celebrity,
   n1i = Sample_Size,
   n2i = Sample_Size,
-  data = df_meta[[3]]
+  data = df_meta[[7]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "RT"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "RT",
+    Target = "Celebrity"
   )
+
+names(res_meta[[3]])[1] <- "Meta for RT"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[3]][[1]])
+)
+
+smr <- metafor::rma(yi, vi, data = res_meta[[3]][[1]])
+
+df_meta[[9]][[1]][[1]] <- data.frame(
+  Indice = "RT",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[1]][[2]]  <- metafor::escalc(
+res_meta[[3]][[2]] <- metafor::escalc(
   measure = "SMD", 
   m1i = ACC_mean_Self,
   m2i = ACC_mean_Celebrity,
@@ -700,22 +819,33 @@ res_meta[[1]][[2]]  <- metafor::escalc(
   sd2i = ACC_sd_Celebrity,
   n1i = Sample_Size,
   n2i = Sample_Size,
-  data = df_meta[[3]]
+  data = df_meta[[7]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "ACC"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "ACC",
+    Target = "Celebrity"
   )
+
+names(res_meta[[3]])[2] <- "Meta for ACC"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[3]][[2]])
+)
+
+smr <- metafor::rma(yi, vi, data = res_meta[[3]][[2]])
+
+df_meta[[9]][[1]][[2]] <- data.frame(
+  Indice = "ACC",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[1]][[3]]  <- metafor::escalc(
+res_meta[[3]][[3]] <- metafor::escalc(
   measure = "SMD", 
   m1i = d_mean_Self,
   m2i = d_mean_Celebrity,
@@ -723,22 +853,33 @@ res_meta[[1]][[3]]  <- metafor::escalc(
   sd2i = d_sd_Celebrity,
   n1i = Sample_Size,
   n2i = Sample_Size,
-  data = df_meta[[3]]
+  data = df_meta[[7]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "d'"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "d",
+    Target = "Celebrity"
   )
+
+names(res_meta[[3]])[3] <- "Meta for d"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[3]][[3]])
+)
+
+smr <- metafor::rma(yi, vi, data = res_meta[[3]][[3]])
+
+df_meta[[9]][[1]][[3]] <- data.frame(
+  Indice = "d",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[1]][[4]]  <- metafor::escalc(
+res_meta[[3]][[4]] <- metafor::escalc(
   measure = "SMD", 
   m1i = eta_mean_Self,
   m2i = eta_mean_Celebrity,
@@ -746,22 +887,33 @@ res_meta[[1]][[4]]  <- metafor::escalc(
   sd2i = eta_sd_Celebrity,
   n1i = Sample_Size,
   n2i = Sample_Size,
-  data = df_meta[[3]]
+  data = df_meta[[7]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "η"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "eta",
+    Target = "Celebrity"
   )
+
+names(res_meta[[3]])[4] <- "Meta for eta"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[3]][[4]])
+)
+
+smr <- metafor::rma(yi, vi, data = res_meta[[3]][[4]])
+
+df_meta[[9]][[1]][[4]] <- data.frame(
+  Indice = "eta",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[1]][[5]]  <- metafor::escalc(
+res_meta[[3]][[5]] <- metafor::escalc(
   measure = "SMD", 
   m1i = ez_v_mean_Self,
   m2i = ez_v_mean_Celebrity,
@@ -769,22 +921,33 @@ res_meta[[1]][[5]]  <- metafor::escalc(
   sd2i = ez_v_sd_Celebrity,
   n1i = Sample_Size,
   n2i = Sample_Size,
-  data = df_meta[[3]]
+  data = df_meta[[7]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "ezDDM v"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "ezDDM v",
+    Target = "Celebrity"
   )
+
+names(res_meta[[3]])[5] <- "Meta for ezDDM v"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[3]][[5]])
+)
+
+smr <- metafor::rma(yi, vi, data = res_meta[[3]][[5]])
+
+df_meta[[9]][[1]][[5]] <- data.frame(
+  Indice = "ezDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[1]][[6]]  <- metafor::escalc(
+res_meta[[3]][[6]] <- metafor::escalc(
   measure = "SMD", 
   m1i = ez_z_mean_Self,
   m2i = ez_z_mean_Celebrity,
@@ -792,22 +955,33 @@ res_meta[[1]][[6]]  <- metafor::escalc(
   sd2i = ez_z_sd_Celebrity,
   n1i = Sample_Size,
   n2i = Sample_Size,
-  data = df_meta[[3]]
+  data = df_meta[[7]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "ezDDM z"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "ezDDM z",
+    Target = "Celebrity"
   )
+
+names(res_meta[[3]])[6] <- "Meta for ezDDM z"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[3]][[6]])
+)
+
+smr <- metafor::rma(yi, vi, data = res_meta[[3]][[6]])
+
+df_meta[[9]][[1]][[6]] <- data.frame(
+  Indice = "ezDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[1]][[7]]  <- metafor::escalc(
+res_meta[[3]][[7]] <- metafor::escalc(
   measure = "SMD", 
   m1i = rw_v_mean_Self,
   m2i = rw_v_mean_Celebrity,
@@ -815,22 +989,33 @@ res_meta[[1]][[7]]  <- metafor::escalc(
   sd2i = rw_v_sd_Celebrity,
   n1i = Sample_Size,
   n2i = Sample_Size,
-  data = df_meta[[3]]
+  data = df_meta[[7]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "rwDDM v"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "rwDDM v",
+    Target = "Celebrity"
   )
+
+names(res_meta[[3]])[7] <- "Meta for rwDDM v"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[3]][[7]])
+)
+
+smr <- metafor::rma(yi, vi, data = res_meta[[3]][[7]])
+
+df_meta[[9]][[1]][[7]] <- data.frame(
+  Indice = "rwDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[1]][[8]]  <- metafor::escalc(
+res_meta[[3]][[8]] <- metafor::escalc(
   measure = "SMD", 
   m1i = rw_z_mean_Self,
   m2i = rw_z_mean_Celebrity,
@@ -838,204 +1023,295 @@ res_meta[[1]][[8]]  <- metafor::escalc(
   sd2i = rw_z_sd_Celebrity,
   n1i = Sample_Size,
   n2i = Sample_Size,
-  data = df_meta[[3]]
+  data = df_meta[[7]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "rwDDM z"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "rwDDM z",
+    Target = "Celebrity"
   )
+
+names(res_meta[[3]])[8] <- "Meta for rwDDM z"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[3]][[8]])
+)
+
+smr <- metafor::rma(yi, vi, data = res_meta[[3]][[8]])
+
+df_meta[[9]][[1]][[8]] <- data.frame(
+  Indice = "rwDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 
 ## NonPerson
 ```{r}
-res_meta[[2]][[1]]  <- metafor::escalc(
-  measure = "SMD", 
+res_meta[[4]][[1]] <- metafor::escalc(
+  measure = "SMCRH",
   m1i = RT_mean_Self,
   m2i = RT_mean_NonPerson,
   sd1i = RT_sd_Self,
   sd2i = RT_sd_NonPerson,
-  n1i = Sample_Size,
-  n2i = Sample_Size,
-  data = df_meta[[4]]
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[8]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "RT"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "RT",
+    Target = "NonPerson"
   )
+
+names(res_meta[[4]])[1] <- "Meta for RT"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[4]][[1]])
+)
+smr <- metafor::rma(yi, vi, data = res_meta[[4]][[1]])
+
+df_meta[[9]][[2]][[1]] <- data.frame(
+  Indice = "RT",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[2]][[2]]  <- metafor::escalc(
-  measure = "SMD", 
+res_meta[[4]][[2]] <- metafor::escalc(
+  measure = "SMCRH",
   m1i = ACC_mean_Self,
   m2i = ACC_mean_NonPerson,
   sd1i = ACC_sd_Self,
   sd2i = ACC_sd_NonPerson,
-  n1i = Sample_Size,
-  n2i = Sample_Size,
-  data = df_meta[[4]]
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[8]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "ACC"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "ACC",
+    Target = "NonPerson"
   )
+
+names(res_meta[[4]])[2] <- "Meta for ACC"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[4]][[2]])
+)
+smr <- metafor::rma(yi, vi, data = res_meta[[4]][[2]])
+
+df_meta[[9]][[2]][[2]] <- data.frame(
+  Indice = "ACC",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[2]][[3]]  <- metafor::escalc(
-  measure = "SMD", 
+res_meta[[4]][[3]] <- metafor::escalc(
+  measure = "SMCRH",
   m1i = d_mean_Self,
   m2i = d_mean_NonPerson,
   sd1i = d_sd_Self,
   sd2i = d_sd_NonPerson,
-  n1i = Sample_Size,
-  n2i = Sample_Size,
-  data = df_meta[[4]]
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[8]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "d'"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "d",
+    Target = "NonPerson"
   )
+
+names(res_meta[[4]])[3] <- "Meta for d"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[4]][[3]])
+)
+smr <- metafor::rma(yi, vi, data = res_meta[[4]][[3]])
+
+df_meta[[9]][[2]][[3]] <- data.frame(
+  Indice = "d",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[2]][[4]]  <- metafor::escalc(
-  measure = "SMD", 
+res_meta[[4]][[4]] <- metafor::escalc(
+  measure = "SMCRH",
   m1i = eta_mean_Self,
   m2i = eta_mean_NonPerson,
   sd1i = eta_sd_Self,
   sd2i = eta_sd_NonPerson,
-  n1i = Sample_Size,
-  n2i = Sample_Size,
-  data = df_meta[[4]]
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[8]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "η"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "eta",
+    Target = "NonPerson"
   )
+
+names(res_meta[[4]])[4] <- "Meta for eta"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[4]][[4]])
+)
+smr <- metafor::rma(yi, vi, data = res_meta[[4]][[4]])
+
+df_meta[[9]][[2]][[4]] <- data.frame(
+  Indice = "eta",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[2]][[5]]  <- metafor::escalc(
-  measure = "SMD", 
+res_meta[[4]][[5]] <- metafor::escalc(
+  measure = "SMCRH",
   m1i = ez_v_mean_Self,
   m2i = ez_v_mean_NonPerson,
   sd1i = ez_v_sd_Self,
   sd2i = ez_v_sd_NonPerson,
-  n1i = Sample_Size,
-  n2i = Sample_Size,
-  data = df_meta[[4]]
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[8]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "ezDDM v"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "ezDDM v",
+    Target = "NonPerson"
   )
+
+names(res_meta[[4]])[5] <- "Meta for ezDDM v"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[4]][[5]])
+)
+smr <- metafor::rma(yi, vi, data = res_meta[[4]][[5]])
+
+df_meta[[9]][[2]][[5]] <- data.frame(
+  Indice = "ezDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[2]][[6]]  <- metafor::escalc(
-  measure = "SMD", 
+res_meta[[4]][[6]] <- metafor::escalc(
+  measure = "SMCRH",
   m1i = ez_z_mean_Self,
   m2i = ez_z_mean_NonPerson,
   sd1i = ez_z_sd_Self,
   sd2i = ez_z_sd_NonPerson,
-  n1i = Sample_Size,
-  n2i = Sample_Size,
-  data = df_meta[[4]]
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[8]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "ezDDM z"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "ezDDM z",
+    Target = "NonPerson"
   )
+
+names(res_meta[[4]])[6] <- "Meta for ezDDM z"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[4]][[6]])
+)
+smr <- metafor::rma(yi, vi, data = res_meta[[4]][[6]])
+
+df_meta[[9]][[2]][[6]] <- data.frame(
+  Indice = "ezDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[2]][[7]]  <- metafor::escalc(
-  measure = "SMD", 
+res_meta[[4]][[7]] <- metafor::escalc(
+  measure = "SMCRH",
   m1i = rw_v_mean_Self,
   m2i = rw_v_mean_NonPerson,
   sd1i = rw_v_sd_Self,
   sd2i = rw_v_sd_NonPerson,
-  n1i = Sample_Size,
-  n2i = Sample_Size,
-  data = df_meta[[4]]
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[8]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "rwDDM v"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "rwDDM v",
+    Target = "NonPerson"
   )
+
+names(res_meta[[4]])[7] <- "Meta for rwDDM v"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[4]][[7]])
+)
+smr <- metafor::rma(yi, vi, data = res_meta[[4]][[7]])
+
+df_meta[[9]][[2]][[7]] <- data.frame(
+  Indice = "rwDDM v",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 ```{r}
-res_meta[[2]][[8]]  <- metafor::escalc(
-  measure = "SMD", 
+res_meta[[4]][[8]] <- metafor::escalc(
+  measure = "SMCRH",
   m1i = rw_z_mean_Self,
   m2i = rw_z_mean_NonPerson,
   sd1i = rw_z_sd_Self,
   sd2i = rw_z_sd_NonPerson,
-  n1i = Sample_Size,
-  n2i = Sample_Size,
-  data = df_meta[[4]]
+  ni = Trials,
+  ri = ri,
+  data = df_meta[[8]]
 ) %>%
-  base::summary() %>%
   dplyr::mutate(
-    Indice = "rwDDM z"
-  ) %>%
-  dplyr::select(
-    Indice,
-    yi, vi, sei,
-    zi, pval,
-    ci.lb, ci.ub
+    Indice = "rwDDM z",
+    Target = "NonPerson"
   )
+
+names(res_meta[[4]])[8] <- "Meta for rwDDM z"
+
+prd <- metafor::predict.rma(
+  metafor::rma(yi, vi, data = res_meta[[4]][[8]])
+)
+smr <- metafor::rma(yi, vi, data = res_meta[[4]][[8]])
+
+df_meta[[9]][[2]][[8]] <- data.frame(
+  Indice = "rwDDM z",g = prd$pred, SE = prd$se, LLCI = prd$ci.lb, ULCI = prd$ci.ub,
+  Q = smr$QE, p = smr$pval, I2 = smr$I2
+)
+
+smr
+
+rm(prd, smr)
 ```
 
 
@@ -1105,21 +1381,26 @@ write.csv(
 
 
 ## for Celebrity & NonPerson
+# Result
 ```{r}
-res_meta[[3]] <- dplyr::bind_rows(
-  res_meta[[1]]
-) 
+df_meta[[10]] <- list(list(), list())
 
-res_meta[[4]] <- dplyr::bind_rows(
-  res_meta[[2]]
-) 
+df_meta[[10]][[1]] <- dplyr::bind_rows(
+  df_meta[[9]][[1]]
+)
 
-write.csv(
-  x = res_meta[[3]],
-  file = "./OUTPUT/meta/meta_celebrity_FEP.csv"
+df_meta[[10]][[2]] <- dplyr::bind_rows(
+  df_meta[[9]][[2]]
 )
-write.csv(
-  x = res_meta[[4]],
-  file = "./OUTPUT/meta/meta_nonperson_FEP.csv"
-)
+
+
+names(df_meta)[9] <- "Process of Meta Analysis"
+names(df_meta)[10] <- "Result of Meta Analysis"
+
+names(df_meta[[10]])[1] <- "Self - Celebrity"
+names(df_meta[[10]])[2] <- "Self - NonPerson"
+
+write.csv(x = df_meta[[10]][[1]], file = "./OUTPUT/meta/meta_celebrity.csv")
+write.csv(x = df_meta[[10]][[2]], file = "./OUTPUT/meta/meta_nonperson.csv")
 ```
+
