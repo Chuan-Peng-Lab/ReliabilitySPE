@@ -117,6 +117,46 @@ rm(temp, result_df, element_name, i, wtmr)
 ```
 
 ```{r Plot}
+#####################################[bar]######################################
+
+p0 <- aggr[[1]] %>%
+  dplyr::arrange(wtmr) %>%
+  dplyr::mutate(
+    Order = row_number(),
+    Target_Indice = paste(Target, Indice, sep="_")
+  ) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
+  ggplot2::geom_bar(stat = "identity", color = "black", fill = "grey") +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(
+    limits = c(-0.6, 1),
+    breaks = c(-1, 0, 0.5, 0.7, 1),
+    sec.axis = sec_axis(
+      ~., breaks = c(0, 0.5, 0.7, 1),
+      labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+  ) +
+  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  ggplot2::geom_text(aes(y = -0.6, x = reorder(Target_Indice, Order), label = Target_Indice),
+                     hjust = 0, size = 4, family='serif',) + # 
+  #ggplot2::facet_wrap(~Method, ncol = 1) +
+  ggplot2::ggtitle("(a) Permutated Split-half") +
+  ggplot2::labs(y = "", x = "") +
+  #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none",
+                 plot.title = element_text(size = 20, family = 'serif', hjust = 0),
+                 axis.text.x.top = element_text(size = 12, family='serif'),
+                 axis.text.x.bottom = element_text(size = 12, family='serif'),
+                 axis.text.y.left = element_blank(),
+                 axis.line.y.left = element_blank(),
+                 axis.ticks.y.left = element_blank(),
+                 axis.title.x = element_text(size = 12, family='serif'))
+
 ###################################[errorbar]###################################
 
 p0 <- aggr[[1]] %>%
@@ -164,45 +204,7 @@ ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
                  axis.ticks.y.left = element_blank(),
                  axis.title.x = element_text(size = 12, family='serif'))
 
-#####################################[bar]######################################
-
-p0 <- aggr[[1]] %>%
-  dplyr::arrange(wtmr) %>%
-  dplyr::mutate(
-    Order = row_number(),
-    Target_Indice = paste(Target, Indice, sep="_")
-  ) %>%
-  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
-  ggplot2::geom_bar(stat = "identity", color = "black", fill = "grey") +
-  ggplot2::coord_flip() + #flips the x and y axes of a plot
-  ggplot2::scale_x_discrete() +
-  ggplot2::scale_y_continuous(
-    limits = c(-0.6, 1),
-    breaks = c(-1, 0, 0.5, 0.7, 1),
-    sec.axis = sec_axis(
-      ~., breaks = c(0, 0.5, 0.7, 1),
-      labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
-  ) +
-  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
-  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
-  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
-  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
-  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
-  ggplot2::geom_text(aes(y = -0.6, x = reorder(Target_Indice, Order), label = Target_Indice),
-                     hjust = 0, size = 4, family='serif',) + # 
-  #ggplot2::facet_wrap(~Method, ncol = 1) +
-  ggplot2::ggtitle("(a) Permutated Split-half") +
-  ggplot2::labs(y = "", x = "") +
-  #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
-  papaja::theme_apa() +
-  ggplot2::theme(legend.position = "none",
-                 plot.title = element_text(size = 20, family = 'serif', hjust = 0),
-                 axis.text.x.top = element_text(size = 12, family='serif'),
-                 axis.text.x.bottom = element_text(size = 12, family='serif'),
-                 axis.text.y.left = element_blank(),
-                 axis.line.y.left = element_blank(),
-                 axis.ticks.y.left = element_blank(),
-                 axis.title.x = element_text(size = 12, family='serif'))
+#####################################[other]####################################
 
 p1 <- aggr[[2]] %>%
   dplyr::filter(Method == "First-Second") %>%
@@ -1276,7 +1278,7 @@ pic2 <- plot[[9]] %>%
   ) %>%
   dplyr::mutate(
     Mean = case_when(
-      Mean >= 300 ~ 300,
+      Mean >= 300 ~ NA,
       TRUE ~ Mean,
     ),
     LLCI = case_when(
