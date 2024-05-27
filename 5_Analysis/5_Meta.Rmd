@@ -8,13 +8,13 @@ output: html_document
 
 ```{r}
 raw_meta <- list()
-for (i in 1:44) {
+for (i in 1:45) {
   raw_meta[[i]] <- list()
 }
 ```
 
 ```{r, message=FALSE}
-for (i in 1:44) {
+for (i in 1:45) {
   raw_meta[[i]][[1]] <-yukiBP::df(df = df[[i]], i = i, Indice = "rt")
   raw_meta[[i]][[2]] <-yukiBP::df(df = df[[i]], i = i, Indice = "acc")
   raw_meta[[i]][[3]] <-yukiBP::df(df = df[[i]], i = i, Indice = "dp")

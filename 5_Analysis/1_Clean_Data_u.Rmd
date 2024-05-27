@@ -804,6 +804,15 @@ temp <- read.csv("../4_Data_Extraction/4_2_Open_Data/Paper_t7/Pt7_Exp1_raw.csv")
     Subject, Matching, Identity, Session
   )
 
+df[[45]] <- temp
+
+names(df)[45] <- "Paper t7 Exp 1"
+summary(df[[45]])
+
+rm(temp)
+```
+
+```{r}
 df[[45]] <- temp %>%
   dplyr::filter(Subject <= 65)
 
@@ -836,4 +845,5 @@ summary(df[[48]])
 names(df)[49] <- "Paper t7 Exp 1e"
 summary(df[[49]])
 ```
+
 

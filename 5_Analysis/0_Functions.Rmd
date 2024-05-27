@@ -40,8 +40,8 @@ library(AATtools)
 # devtools::install_github("yuki-961004/yukiSH") # nolint
 library(yukiSH)
 
-# install.packages("./PACKAGES/yukiBP_0.1.5.tar.gz") # nolint
-# devtools::install_github("yuki-961004/yukiBP") # nolint
+# install.packages("./PACKAGES/yukiBP_0.1.6.tar.gz") # nolint
+#devtools::install_github("yuki-961004/yukiBP") # nolint
 library(yukiBP)
 ```
 
