@@ -4,6 +4,7 @@
 .RData
 
 # Sensitive Files
+0_Post/
 1_Protocol/1_1_Pre-Registration/1_1_1_Old Version/
 1_Protocol/1_1_Pre-Registration/1_1_2_C-P_Revised/
 1_Protocol/1_1_Pre-Registration/1_1_3_Helen_Revised/
@@ -15,7 +16,9 @@
 5_Analysis/DRAFT/4_Old Version/
 5_Analysis/DRAFT/6_Letter/
 5_Analysis/DRAFT/5_PDF/Old Version/
-6_Reports/Post/
+6_Manuscript/1_Word_version/0_Old_Version/
+6_Manuscript/1_Word_version/1_Rev/
+6_Manuscript/3_Others/
 
 # Office temp Files
 ~$*
