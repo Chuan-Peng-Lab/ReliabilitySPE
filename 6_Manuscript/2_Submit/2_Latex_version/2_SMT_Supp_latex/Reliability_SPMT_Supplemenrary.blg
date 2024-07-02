@@ -1,0 +1,22 @@
+[0] Config.pm:307> INFO - This is Biber 2.19
+[0] Config.pm:310> INFO - Logfile is 'Reliability_SPMT_Supplemenrary.blg'
+[92] biber-darwin:340> INFO - === Tue Oct 24, 2023, 16:15:32
+[114] Biber.pm:419> INFO - Reading 'Reliability_SPMT_Supplemenrary.bcf'
+[248] Biber.pm:979> INFO - Found 9 citekeys in bib section 0
+[272] Biber.pm:4419> INFO - Processing section 0
+[285] Biber.pm:4610> INFO - Looking for bibtex file 'sn-bibliography.bib' for section 0
+[290] bibtex.pm:1713> INFO - LaTeX decoding ...
+[458] bibtex.pm:1519> INFO - Found BibTeX data source 'sn-bibliography.bib'
+[590] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[590] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[590] Biber.pm:4239> INFO - Sorting list 'apa/apasortcite//global/global' of type 'entry' with template 'apa' and locale 'en-US'
+[590] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
+[622] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[622] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[622] Biber.pm:4239> INFO - Sorting list 'apa/global//global/global' of type 'entry' with template 'apa' and locale 'en-US'
+[622] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
+[636] bbl.pm:660> INFO - Writing 'Reliability_SPMT_Supplemenrary.bbl' with encoding 'UTF-8'
+[654] bbl.pm:763> INFO - Output to Reliability_SPMT_Supplemenrary.bbl
+[654] Biber.pm:131> WARN - Duplicate entry key: 'parsons2019psychological' in file 'sn-bibliography.bib', skipping ...
+[654] Biber.pm:131> WARN - BibTeX subsystem: /var/folders/l9/rr175r5n40n4_00mlm5s3kmr0000gn/T/biber_tmp_dG_7/55161de773bd42c7058a0a932ee130f9_68795.utf8, line 398, warning: 1 characters of junk seen at toplevel
+[654] Biber.pm:133> INFO - WARNINGS: 2
