@@ -1,25 +1,21 @@
-[0] Config.pm:307> INFO - This is Biber 2.19
+[0] Config.pm:307> INFO - This is Biber 2.17
 [0] Config.pm:310> INFO - Logfile is 'Reliability_SPMT_Main.blg'
-[87] biber-darwin:340> INFO - === Wed Nov 15, 2023, 17:16:46
-[105] Biber.pm:419> INFO - Reading 'Reliability_SPMT_Main.bcf'
-[265] Biber.pm:979> INFO - Found 78 citekeys in bib section 0
-[289] Biber.pm:4419> INFO - Processing section 0
-[301] Biber.pm:4610> INFO - Looking for bibtex file 'sn-bibliography.bib' for section 0
-[307] bibtex.pm:1713> INFO - LaTeX decoding ...
-[453] bibtex.pm:1519> INFO - Found BibTeX data source 'sn-bibliography.bib'
-[1313] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[1313] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[1313] Biber.pm:4239> INFO - Sorting list 'apa/apasortcite//global/global' of type 'entry' with template 'apa' and locale 'en-US'
-[1313] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
-[1561] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[1561] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[1561] Biber.pm:4239> INFO - Sorting list 'apa/global//global/global' of type 'entry' with template 'apa' and locale 'en-US'
-[1561] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
-[1676] bbl.pm:660> INFO - Writing 'Reliability_SPMT_Main.bbl' with encoding 'UTF-8'
-[1837] bbl.pm:763> INFO - Output to Reliability_SPMT_Main.bbl
-[1837] Biber.pm:131> WARN - Duplicate entry key: 'parsons2019psychological' in file 'sn-bibliography.bib', skipping ...
-[1837] Biber.pm:131> WARN - BibTeX subsystem: /var/folders/l9/rr175r5n40n4_00mlm5s3kmr0000gn/T/biber_tmp_GtF2/55161de773bd42c7058a0a932ee130f9_1147.utf8, line 398, warning: 1 characters of junk seen at toplevel
-[1837] Biber.pm:131> WARN - BibTeX subsystem: warning: comma(s) at end of name (removing)
-[1837] Biber.pm:131> WARN - BibTeX subsystem: warning: comma(s) at end of name (removing)
-[1838] Biber.pm:131> WARN - BibTeX subsystem: warning: comma(s) at end of name (removing)
-[1838] Biber.pm:133> INFO - WARNINGS: 5
+[57] biber-darwin:340> INFO - === Tue Jul  2, 2024, 22:39:38
+[70] Biber.pm:418> INFO - Reading 'Reliability_SPMT_Main.bcf'
+[187] Biber.pm:972> INFO - Found 88 citekeys in bib section 0
+[200] Biber.pm:4383> INFO - Processing section 0
+[208] Biber.pm:4574> INFO - Looking for bibtex file 'sn-bibliography.bib' for section 0
+[212] bibtex.pm:1713> INFO - LaTeX decoding ...
+[314] bibtex.pm:1518> INFO - Found BibTeX data source 'sn-bibliography.bib'
+[811] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[811] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[812] Biber.pm:4203> INFO - Sorting list 'apa/global//global/global' of type 'entry' with template 'apa' and locale 'en-US'
+[812] Biber.pm:4209> INFO - No sort tailoring available for locale 'en-US'
+[903] bbl.pm:654> INFO - Writing 'Reliability_SPMT_Main.bbl' with encoding 'UTF-8'
+[969] bbl.pm:757> INFO - Output to Reliability_SPMT_Main.bbl
+[969] Biber.pm:130> WARN - Duplicate entry key: 'parsons2019psychological' in file 'sn-bibliography.bib', skipping ...
+[969] Biber.pm:130> WARN - BibTeX subsystem: /var/folders/19/3wtxc79x6nl02bfh11l6w5mr0000gn/T/biber_tmp_qxKb/55161de773bd42c7058a0a932ee130f9_36725.utf8, line 398, warning: 1 characters of junk seen at toplevel
+[969] Biber.pm:130> WARN - BibTeX subsystem: warning: comma(s) at end of name (removing)
+[969] Biber.pm:130> WARN - BibTeX subsystem: warning: comma(s) at end of name (removing)
+[969] Biber.pm:130> WARN - BibTeX subsystem: warning: comma(s) at end of name (removing)
+[969] Biber.pm:132> INFO - WARNINGS: 5
