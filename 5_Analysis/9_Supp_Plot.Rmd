@@ -68,6 +68,11 @@ aggr[[1]] <- result_df %>%
   tidyr::separate(.,unique_ID, into = c("Target", "Indice"), sep = "_")
 
 rm(temp, result_df, element_name, i, wtmr, LLCI, ULCI)
+
+write.csv(
+  x = aggr[[1]],
+  file = "./temp.csv"
+)
 ```
 
 ```{r Aggregate Plot2}
