@@ -600,6 +600,9 @@
       \field{year}{2016}
       \field{pages}{133\bibrangedash 155}
       \range{pages}{23}
+      \verb{doi}
+      \verb 10.1177/1745691615596990
+      \endverb
     \endentry
     \entry{eckstein2022interpretation}{article}{}
       \name{author}{6}{}{%
@@ -662,6 +665,9 @@
       \field{year}{2022}
       \field{pages}{e75474}
       \range{pages}{-1}
+      \verb{doi}
+      \verb 10.7554/eLife.75474
+      \endverb
     \endentry
     \entry{eisenberg2019uncovering}{article}{}
       \name{author}{7}{}{%
@@ -923,6 +929,9 @@
       \field{year}{2016}
       \field{pages}{1215\bibrangedash 1227}
       \range{pages}{13}
+      \verb{doi}
+      \verb 10.3758/s13421-016-0633-8
+      \endverb
     \endentry
     \entry{friehs2020effective}{article}{}
       \name{author}{5}{}{%
@@ -1677,6 +1686,9 @@
       \field{year}{2014}
       \field{pages}{702\bibrangedash 721}
       \range{pages}{20}
+      \verb{doi}
+      \verb 10.3758/s13428-013-0411-5
+      \endverb
     \endentry
     \entry{hughes2013i}{article}{}
       \name{author}{2}{}{%
@@ -2641,6 +2653,9 @@
       \field{year}{2022}
       \field{pages}{3246\bibrangedash 3259}
       \range{pages}{14}
+      \verb{doi}
+      \verb 10.1007/s10803-021-05251-x
+      \endverb
     \endentry
     \entry{navon2021are}{article}{}
       \name{author}{2}{}{%
@@ -2725,6 +2740,9 @@
       \field{year}{2020}
       \field{pages}{104186}
       \range{pages}{1}
+      \verb{doi}
+      \verb 10.1016/j.cognition.2020.104186
+      \endverb
     \endentry
     \entry{olkin1958unbiased}{article}{}
       \name{author}{2}{}{%
@@ -3049,6 +3067,9 @@
       \field{year}{2023}
       \field{pages}{1641\bibrangedash 1652}
       \range{pages}{12}
+      \verb{doi}
+      \verb 10.3758/s13428-022-01885-6
+      \endverb
     \endentry
     \entry{pronk2022methods}{article}{}
       \name{author}{4}{}{%
@@ -3484,6 +3505,9 @@
       \field{year}{2022}
       \field{pages}{1001}
       \range{pages}{1}
+      \verb{doi}
+      \verb 10.1037/xhp0001017
+      \endverb
     \endentry
     \entry{scheller2022social}{article}{}
       \name{author}{2}{}{%
@@ -3525,6 +3549,9 @@
       \field{year}{2022}
       \field{pages}{1022}
       \range{pages}{1}
+      \verb{doi}
+      \verb 10.1037/xhp0001013
+      \endverb
     \endentry
     \entry{shieh2010estimation}{article}{}
       \name{author}{1}{}{%
@@ -3558,6 +3585,9 @@
       \field{year}{2010}
       \field{pages}{906\bibrangedash 917}
       \range{pages}{12}
+      \verb{doi}
+      \verb 10.3758/BRM.42.4.906
+      \endverb
     \endentry
     \entry{smithson2024measuring}{article}{}
       \name{author}{4}{}{%
@@ -3607,6 +3637,9 @@
       \field{year}{2024}
       \field{pages}{1\bibrangedash 15}
       \range{pages}{15}
+      \verb{doi}
+      \verb 10.3758/s13428-024-02372-w
+      \endverb
     \endentry
     \entry{stoeber2008perfectionism}{article}{}
       \name{author}{2}{}{%
@@ -3913,6 +3946,9 @@
       \field{year}{2012}
       \field{pages}{e31595}
       \range{pages}{-1}
+      \verb{doi}
+      \verb 10.1371/journal.pone.0031595
+      \endverb
     \endentry
     \entry{wabersich2014rwiener}{article}{}
       \name{author}{2}{}{%
@@ -4250,6 +4286,9 @@
       \field{year}{2023}
       \field{pages}{942\bibrangedash 960}
       \range{pages}{19}
+      \verb{doi}
+      \verb 10.1177/174702182211028
+      \endverb
     \endentry
     \entry{yue2023weird}{article}{}
       \name{author}{3}{}{%
