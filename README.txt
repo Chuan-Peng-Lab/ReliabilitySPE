@@ -57,6 +57,11 @@
 |----------3_Reliability.Rmd
 |----------4_IntraClass Correlation.Rmd
 |----------5_Plot.Rmd
+|----------6_Description
+|----------7_Weighted Plot
+|----------8_Meta
+|----------9_Meta_Plot
+|----------10_AATtools
 |---6_Reports
 |----------6_1_Phase_1
 |----------6_2_Phase_2

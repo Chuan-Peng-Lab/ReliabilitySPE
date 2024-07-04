@@ -1,3 +1,51 @@
+---
+title: "Package and Function"
+author: "yuki"
+date: "2023-03-25"
+output: html_document
+---
+
+# Package
+```{r Package, warning = FALSE,message = FALSE}
+# clean data
+library(tidyr)
+library(dplyr)
+library(stringr)
+library(R.matlab) # Paper s4 is from MATLAB
+library(data.table) # some functions need it
+# for ICC
+library(psych)
+#devtools::install_github("TingsterX/ReX")
+library(ReX)
+# for DDM
+library(hausekeep) # ez ddm
+library(RWiener) # RW ddm
+# Plot
+library(ggplot2)
+library(see)
+library(patchwork)
+# Parallel Computing
+library(foreach)
+library(parallel)
+library(iterators)
+library(doParallel)
+# Meta Analysis
+#library(metafor) 
+library(AATtools)
+
+# My packages: yukiSH & yukiBP
+# You can install them with ".tar.gz" or  from GitHub
+
+# install.packages("./PACKAGES/yukiSH_0.0.3.tar.gz") # nolint
+# devtools::install_github("yuki-961004/yukiSH") # nolint
+library(yukiSH)
+
+# install.packages("./PACKAGES/yukiBP_0.1.6.tar.gz") # nolint
+#devtools::install_github("yuki-961004/yukiBP") # nolint
+library(yukiBP)
+```
+
+
 # Read MATLAB .mat
 ```{r function read.mat}
 read.mat <- function(list) {
@@ -77,52 +125,5 @@ read.mat <- function(list) {
 
   return(df)
 
-}
-```
-
-# Get ICC Output DataFrame
-```{r icc_output}
-icc_output <- function(list, Target) {
-
-  # run psych::ICC
-  output <- lapply(list, function(x) {
-    psych::ICC(x, lmer = FALSE)
-    })
-
-  # 提取其中的结果表格
-  result <- list()
-    for (i in 1:length(output)){
-      result[[i]] <- output[[i]][[1]]
-    }
-
-  #
-  final <- rbindlist(result)
-  final$ICC_type <- rep(
-    c("RT", "ACC",
-    "d Prime", "Efficiency",
-    "ezDDM v", "ezDDM z",
-    "rwDDM v", "rwDDM z"),
-    each = nrow(final) / 8
-  )
-  colnames(final)[7] <- "LLCI"
-  colnames(final)[8] <- "ULCI"
-
-  final <- final %>%
-    dplyr::mutate(.,
-    ICC_type = factor(
-      ICC_type, levels = c(
-        "RT", "ACC",
-        "d Prime", "Efficiency",
-        "ezDDM v","ezDDM z",
-        "rwDDM v", "rwDDM z"
-        )
-      )
-    ) %>%
-    dplyr::arrange(., type) %>%
-    dplyr::mutate(Target = "Target") %>%
-    dplyr::select(type, ICC_type, ICC, LLCI, ULCI)
-  final$Target <- Target
-
-  return(final)
 }
 ```

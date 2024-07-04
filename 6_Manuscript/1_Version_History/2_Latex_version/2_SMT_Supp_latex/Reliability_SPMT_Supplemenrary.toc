@@ -1,0 +1,13 @@
+\contentsline {section}{\numberline {1}Supplementary Methods}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Methodological details of the dataset from \blx@tocontentsinit {0}\textcite {hu2023data}}{2}{subsection.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1}Ethics Information}{2}{subsubsection.1.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.2}Participants}{2}{subsubsection.1.1.2}%
+\contentsline {subsubsection}{\numberline {1.1.3}Experimental Design}{2}{subsubsection.1.1.3}%
+\contentsline {subsubsection}{\numberline {1.1.4}Procedure}{2}{subsubsection.1.1.4}%
+\contentsline {subsubsection}{\numberline {1.1.5}Paper Selection Procedure}{3}{subsubsection.1.1.5}%
+\contentsline {subsection}{\numberline {1.2}Parameter Recovery Results for Package Comparison }{4}{subsection.1.2}%
+\contentsline {section}{\numberline {2}Supplementary Results}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Group Level SPE for Other Measures}{5}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Split-Half Reliability Using Three Splitting Approaches}{7}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}ICCs for SPE Measures Using Another Dataset}{9}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Exploratory Analyses}{10}{subsection.2.4}%

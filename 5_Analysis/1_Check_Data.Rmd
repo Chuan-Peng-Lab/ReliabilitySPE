@@ -1,0 +1,108 @@
+---
+title: "Untitled"
+author: "yuki"
+date: "2024-03-14"
+output: html_document
+---
+Step 0: initial number of subjects
+
+Step 1: filter subjects (mean_ACC < 0.5)
+Step 2: drop subjects (mean_ACC < 0.5), write.csv
+Step 3: read.csv
+
+Step 1: double check the mean_ACC of subjects
+
+```{r Step 0}
+# 创建一个空列表来存储结果
+subject_counts <- list()
+
+# 循环遍历列表中的每个数据框
+for (i in seq_along(df)) {
+  # 计算当前数据框中不同的 Subject 的数量，并存储到结果列表中
+  subject_counts[[i]] <- length(unique(df[[i]]$Subject))
+}
+```
+
+
+# Check ACC
+```{r Step 1, message=FALSE, warning=FALSE}
+min_ACC_list <- list()
+
+for (i in 1:length(df)) {
+  min_ACC <- df[[i]] %>%
+    dplyr::filter(Matching == "Matching") %>%
+    dplyr::group_by(Subject) %>%
+    #dplyr::group_by(Subject) %>%
+    dplyr::summarise(mean_ACC = mean(ACC)) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(mean_ACC < 0.5) %>%
+    dplyr::arrange(mean_ACC) %>%
+    dplyr::distinct(Subject, .keep_all = TRUE)
+  
+  min_ACC_list[[i]] <- min_ACC
+  cat(
+    "For df[[", i, "]], the min ACC is:",
+    min(min_ACC$mean_ACC),
+    "\n"
+  )
+}
+
+rm(min_ACC, i)
+```
+
+```{r Step 2}
+for (i in 1:length(df)) {
+  filtered_df <- df[[i]] %>%
+    dplyr::anti_join(min_ACC_list[[i]], by = "Subject") 
+  
+  df[[i]] <- filtered_df
+  
+  write.csv(
+    x = filtered_df,
+    file = paste0("./DATA/df_", i, ".csv"),
+    row.names = FALSE
+  )
+}
+
+rm(filtered_df, i)
+```
+
+
+```{r Step 3}
+df[[1]] <- read.csv("./DATA/df_1.csv")
+df[[2]] <- read.csv("./DATA/df_2.csv")
+df[[3]] <- read.csv("./DATA/df_3.csv")
+df[[4]] <- read.csv("./DATA/df_4.csv")
+df[[5]] <- read.csv("./DATA/df_5.csv")
+df[[6]] <- read.csv("./DATA/df_6.csv")
+df[[7]] <- read.csv("./DATA/df_7.csv")
+df[[8]] <- read.csv("./DATA/df_8.csv")
+df[[9]] <- read.csv("./DATA/df_9.csv")
+df[[10]] <- read.csv("./DATA/df_10.csv")
+df[[11]] <- read.csv("./DATA/df_11.csv")
+df[[12]] <- read.csv("./DATA/df_12.csv")
+df[[13]] <- read.csv("./DATA/df_13.csv")
+df[[14]] <- read.csv("./DATA/df_14.csv")
+df[[15]] <- read.csv("./DATA/df_15.csv")
+
+df[[16]] <- read.csv("./DATA/df_16.csv")
+df[[17]] <- read.csv("./DATA/df_17.csv")
+df[[18]] <- read.csv("./DATA/df_18.csv")
+df[[19]] <- read.csv("./DATA/df_19.csv")
+df[[20]] <- read.csv("./DATA/df_20.csv")
+df[[21]] <- read.csv("./DATA/df_21.csv")
+df[[22]] <- read.csv("./DATA/df_22.csv")
+df[[23]] <- read.csv("./DATA/df_23.csv")
+df[[24]] <- read.csv("./DATA/df_24.csv")
+df[[25]] <- read.csv("./DATA/df_25.csv")
+df[[26]] <- read.csv("./DATA/df_26.csv")
+
+df[[27]] <- read.csv("./DATA/df_27.csv")
+df[[28]] <- read.csv("./DATA/df_28.csv")
+df[[29]] <- read.csv("./DATA/df_29.csv")
+df[[30]] <- read.csv("./DATA/df_30.csv")
+df[[31]] <- read.csv("./DATA/df_31.csv")
+```
+
+
+
