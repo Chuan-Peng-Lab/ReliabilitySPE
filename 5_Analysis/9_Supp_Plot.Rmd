@@ -711,18 +711,6 @@ plot[[6]] <- plot[[1]] %>%
   dplyr::filter(Target == "Close" | Target == "Stranger") %>%
   dplyr::filter(!(Paper_ID %in% c("P51E1"))) %>%
   dplyr::mutate(
-    r_8 = case_when(
-      Target == "Close" & Indice == "RT" ~ 120,
-      Target == "Stranger" & Indice == "RT" ~ 72,
-      Target == "Close" & Indice == "ACC" ~ 127,
-      Target == "Close" & Indice == "Efficiency" ~ 107,
-      Target == "Stranger" & Indice == "Efficiency" ~ 80,
-      Target == "Close" & Indice == "ezDDM v" ~ 125,
-      Target == "Stranger" & Indice == "ezDDM v" ~ 110,
-      Target == "Close" & Indice == "rwDDM v" ~ 130,
-      TRUE ~ NA),
-  ) %>%
-  dplyr::mutate(
     Indice = case_when(
       Indice == "d Prime" ~ "d'",
       Indice == "Efficiency" ~ "η",
@@ -752,9 +740,9 @@ p1 <- plot[[6]] %>%
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
   ggpubr::stat_cor(label.x = 3, label.y = 0.9, r.accuracy = .01, p.accuracy = .01) +
   ggplot2::scale_x_continuous(
-    limits = c(0, 140),
+    limits = c(0, 165),
     expand = c(0, 0),
-    breaks = c(0, 30, 60, 100, 130),
+    breaks = c(0, 30, 60, 100, 130, 160),
   ) +
   ggplot2::scale_y_continuous(
     limits = c(-0.1, 1.1),
@@ -781,9 +769,9 @@ p2 <- plot[[6]] %>%
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
   ggpubr::stat_cor(label.x = 3, label.y = 0.9, r.accuracy = .01, p.accuracy = .01) +
   ggplot2::scale_x_continuous(
-    limits = c(0, 140),
+    limits = c(0, 165),
     expand = c(0, 0),
-    breaks = c(0, 30, 60, 100, 130),
+    breaks = c(0, 30, 60, 100, 130, 160),
   ) +
   ggplot2::scale_y_continuous(
     limits = c(-0.1, 1.1),
@@ -999,9 +987,9 @@ pic1 <- plot[[8]] %>%
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
   ggpubr::stat_cor(label.x = 3, label.y = 2, r.accuracy = .01, p.accuracy = .01) +
   ggplot2::scale_x_continuous(
-    limits = c(0, 140),
+    limits = c(0, 165),
     expand = c(0, 0),
-    breaks = c(0, 30, 60, 100, 130),
+    breaks = c(0, 30, 60, 100, 130, 160),
   ) +
   ggplot2::scale_y_continuous(
     limits = c(-0.5, 2),
@@ -1021,9 +1009,9 @@ pic2 <- plot[[8]] %>%
   ggplot2::geom_smooth(method = "lm", se = TRUE, fullrange = TRUE) +  # 添加拟合曲线
   ggpubr::stat_cor(label.x = 3, label.y = 2, r.accuracy = .01, p.accuracy = .01) +
   ggplot2::scale_x_continuous(
-    limits = c(0, 140),
+    limits = c(0, 165),
     expand = c(0, 0),
-    breaks = c(0, 30, 60, 100, 130),
+    breaks = c(0, 30, 60, 100, 130, 160),
   ) +
   ggplot2::scale_y_continuous(
     limits = c(-0.5, 2),
