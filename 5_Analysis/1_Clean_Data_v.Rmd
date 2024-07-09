@@ -1,0 +1,89 @@
+---
+title: "1_Clean_Data_v"
+author: "YuKi"
+date: "2024-07-09"
+output: html_document
+---
+
+# Paper u1
+## Experiment 1 (Identtiy = 3)
+"Self", "Friend", "Stranger"
+```{r Paper u1 Experiment 1}
+# 获取文件夹内所有满足条件的文件名
+file_list <- list.files(
+  path = "../4_Data_Extraction/4_2_Open_Data/Paper_u1/Source/",
+  pattern = "*\\.mat$",
+  full.names = TRUE
+)
+
+# 创建一个空的列表来存储读取的.mat文件
+list_mat_e1 <- list()
+
+# 循环读取文件并存储到列表中
+for (file in file_list) {
+  mat_data <- R.matlab::readMat(file)
+  list_mat_e1[[basename(file)]] <- mat_data[[2]]
+}
+
+combined_df <- bind_rows(lapply(seq_along(list_mat_e1), function(i) {
+  as.data.frame(list_mat_e1[[i]]) %>% mutate(Subject = i)
+}))
+
+# 移除不再需要的对象
+rm(file, file_list, list_mat_e1)
+
+df[[46]] <- combined_df %>%
+  dplyr::rename(
+    Trial = V1, 
+    Shape = V2, 
+    Label = V3,
+    Choose = V4,
+    RT_ms = V5, 
+    ACC = V6,
+  ) %>%
+  dplyr::mutate(
+    Matching = case_when(
+      Shape == Label ~ "Matching",
+      Shape != Label ~ "Nonmatching"),
+    Identity = case_when(
+      Shape == 1 ~ "Self",
+      Shape == 2 ~ "Friend",
+      Shape == 3 ~ "Stranger"
+    ),
+    RT_sec = RT_ms / 1000,
+    ) %>%
+  dplyr::mutate(
+    Session = 1,
+    Subject = as.numeric(Subject),
+    Matching = factor(
+      Matching, levels = c("Matching", "Nonmatching")
+    ),
+    Identity = factor(
+      Identity, levels = c("Self", "Friend","Stranger")
+    ),
+    Session = as.factor(Session),
+    RT_ms = as.numeric(RT_ms),
+    RT_sec = as.numeric(RT_sec),
+    ACC = as.numeric(ACC),
+  ) %>%
+  dplyr::select(
+    Subject, Matching, Identity, Session, RT_ms, RT_sec, ACC
+  ) %>%
+  dplyr::mutate(
+    RT_sec = round(RT_sec, 3),
+    RT_ms = round(RT_ms, 0)
+  ) %>%
+  dplyr::filter(
+    RT_sec >= 0.2 & RT_sec <= 1.5,
+    ACC == 1 | ACC == 0
+  ) %>%
+  dplyr::arrange(
+    Subject, Matching, Identity, Session
+  )
+
+rm(list_mat_e1, mat_data, combined_df)
+
+names(df)[46] <- "Paper u1 Exp 1"
+summary(df[[46]])
+```
+
