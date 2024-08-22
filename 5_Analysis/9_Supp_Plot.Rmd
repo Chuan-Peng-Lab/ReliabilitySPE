@@ -339,7 +339,7 @@ ggsave(plot = p,
        )
 ggsave(plot = p0,
        filename = "./FIGURE/Fig1_meta_per(bar).png",
-       width = 12,
+       width = 10,
        height = 8,
        )
 ggsave(plot = p1,
