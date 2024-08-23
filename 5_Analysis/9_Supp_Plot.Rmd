@@ -97,7 +97,17 @@ aggr[[2]] <- plot[[2]] %>%
     Method = factor(Method),
     Target = factor(Target),
     Indice = factor(Indice),
-    unique_ID = paste(Target, Indice, Method, sep="_")
+    unique_ID = paste(Target, Indice, Method, sep="_"),
+    LLCI = mapply(function(r, n) psych::r.con(
+      rho = r, n = n, p = 0.95)[1], 
+      r = r, 
+      n = Sample_Size
+    ),
+    ULCI = mapply(function(r, n) psych::r.con(
+      rho = r, n = n, p = 0.95)[2], 
+      r = r, 
+      n = Sample_Size
+    ),
   ) 
 
 temp <- base::split(x = aggr[[2]], f = list(aggr[[2]]$unique_ID))
@@ -107,18 +117,28 @@ result_df <- data.frame(unique_ID = character(0), wtmr = numeric(0))
 for (i in seq_along(temp)) {
   # 计算AATtools::cormean
   wtmr <- AATtools::cormean(r = temp[[i]]$r, n = temp[[i]]$Sample_Size, wts = "df")
+  LLCI <- AATtools::cormean(r = temp[[i]]$LLCI, n = temp[[i]]$Sample_Size, wts = "df")
+  ULCI <- AATtools::cormean(r = temp[[i]]$ULCI, n = temp[[i]]$Sample_Size, wts = "df")
   
   # 获取子集的元素名
   element_name <- names(temp)[i]
   
   # 将结果添加到数据框中
-  result_df <- rbind(result_df, data.frame(unique_ID = element_name, wtmr = wtmr))
+  result_df <- rbind(
+    result_df, 
+    data.frame(
+      unique_ID = element_name, 
+      wtmr = wtmr,
+      LLCI = LLCI,
+      ULCI = ULCI
+    )
+  )
 }
 
 aggr[[2]] <- result_df %>%
   tidyr::separate(.,unique_ID, into = c("Target", "Indice", "Method"), sep = "_")
 
-rm(temp, result_df, element_name, i, wtmr)
+rm(temp, result_df, element_name, i, wtmr, LLCI, ULCI)
 ```
 
 ```{r Plot}
@@ -215,26 +235,33 @@ p1 <- aggr[[2]] %>%
   dplyr::filter(Method == "First-Second") %>%
   dplyr::arrange(wtmr) %>%
   dplyr::mutate(
-    Order = row_number(),
-    Target_Indice = paste(Target, Indice, sep="_")
+    Target_Indice = paste(Target, Indice, sep="_"),
+    Outliar = case_when(
+      LLCI <= 0 ~ TRUE, 
+      ULCI > 0 ~FALSE
+    ),
+    Order = row_number()
   ) %>%
-  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
-  ggplot2::geom_bar(stat = "identity", color = "black", fill = "grey") +
+ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
+  ggplot2::geom_errorbar(aes(ymin = LLCI, ymax = ULCI, linetype = Outliar),
+                         width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
+  #ggplot2::geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), linewidth = 1, color = "black", linetype = Outliar) +
+  ggplot2::geom_point(shape = 15, size = 3, color = "black") +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
   ggplot2::scale_y_continuous(
-    limits = c(-0.6, 1),
-    breaks = c(-1, 0, 0.5, 0.7, 1),
+    limits = c(-1, 1),
+    breaks = c(0, 0.5, 0.7, 1),
     sec.axis = sec_axis(
       ~., breaks = c(0, 0.5, 0.7, 1),
       labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
   ) +
-  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  #ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
-  ggplot2::geom_text(aes(y = -0.6, x = reorder(Target_Indice, Order), label = Target_Indice),
+  ggplot2::geom_text(aes(y = -1, x = reorder(Target_Indice, Order), label = Target_Indice),
                      hjust = 0, size = 4, family='serif',) + # 
   #ggplot2::facet_wrap(~Method, ncol = 1) +
   ggplot2::ggtitle("(b) First-Second Split-half") +
@@ -254,26 +281,33 @@ p2 <- aggr[[2]] %>%
   dplyr::filter(Method == "Odd-Even") %>%
   dplyr::arrange(wtmr) %>%
   dplyr::mutate(
-    Order = row_number(),
-    Target_Indice = paste(Target, Indice, sep="_")
+    Target_Indice = paste(Target, Indice, sep="_"),
+    Outliar = case_when(
+      LLCI <= 0 ~ TRUE, 
+      ULCI > 0 ~FALSE
+    ),
+    Order = row_number()
   ) %>%
-  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
-  ggplot2::geom_bar(stat = "identity", color = "black", fill = "grey") +
+ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
+  ggplot2::geom_errorbar(aes(ymin = LLCI, ymax = ULCI, linetype = Outliar),
+                         width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
+  #ggplot2::geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), linewidth = 1, color = "black", linetype = Outliar) +
+  ggplot2::geom_point(shape = 15, size = 3, color = "black") +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
   ggplot2::scale_y_continuous(
-    limits = c(-0.6, 1),
-    breaks = c(-1, 0, 0.5, 0.7, 1),
+    limits = c(-1, 1),
+    breaks = c(0, 0.5, 0.7, 1),
     sec.axis = sec_axis(
       ~., breaks = c(0, 0.5, 0.7, 1),
       labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
   ) +
-  ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  #ggplot2::geom_hline(yintercept = -1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
-  ggplot2::geom_text(aes(y = -0.6, x = reorder(Target_Indice, Order), label = Target_Indice),
+  ggplot2::geom_text(aes(y = -1, x = reorder(Target_Indice, Order), label = Target_Indice),
                      hjust = 0, size = 4, family='serif',) + # 
   #ggplot2::facet_wrap(~Method, ncol = 1) +
   ggplot2::ggtitle("(c) Odd-Even Split-half") +
@@ -305,7 +339,7 @@ ggsave(plot = p,
        )
 ggsave(plot = p0,
        filename = "./FIGURE/Fig1_meta_per(bar).png",
-       width = 12,
+       width = 10,
        height = 8,
        )
 ggsave(plot = p1,
@@ -1096,50 +1130,41 @@ for (i in seq_along(temp)) {
     LLCI = LLCI,
     ULCI = ULCI
     )
-  )
+  ) %>%
+    dplyr::mutate(
+      LLCI = case_when(
+        LLCI < 0 ~ 0,
+        TRUE ~ LLCI,
+      ),
+    )
 }
 
 # 创建一个空的数据框
+generate_columns <- function(step, wtm_r, wtm_t, LLCI, ULCI) {
+  tibble(
+    !!paste0("Trial_", step) := (step - step * wtm_r) / (wtm_r - step * wtm_r) * wtm_t,
+    !!paste0("LLCI_", step) := (step - step * ULCI) / (ULCI - step * ULCI) * wtm_t,
+    !!paste0("ULCI_", step) := (step - step * LLCI) / (LLCI - step * LLCI) * wtm_t
+  )
+}
+
+# 使用 map_dfc 对多个 step 应用生成列的函数
+steps <- seq(0, 0.99, by = 0.01)
+
 plot[[9]] <- result_df %>%
-  tidyr::separate(.,unique_ID, into = c("Target", "Indice"), sep = "_") %>%
+  tidyr::separate(unique_ID, into = c("Target", "Indice"), sep = "_") %>%
   dplyr::mutate(
-    Trial_10 = ( 0.1 - 0.1 * wtm_r) / (wtm_r - 0.1 * wtm_r) * wtm_t,
-    LLCI_10 = ( 0.1 - 0.1 * ULCI) / (ULCI - 0.1 * ULCI) * wtm_t,
-    ULCI_10 = ( 0.1 - 0.1 * LLCI) / (LLCI - 0.1 * LLCI) * wtm_t,
-    
-    Trial_20 = ( 0.2 - 0.2 * wtm_r) / (wtm_r - 0.2 * wtm_r) * wtm_t,
-    LLCI_20 = ( 0.2 - 0.2 * ULCI) / (ULCI - 0.2 * ULCI) * wtm_t,
-    ULCI_20 = ( 0.2 - 0.2 * LLCI) / (LLCI - 0.2 * LLCI) * wtm_t,
-
-    Trial_30 = ( 0.3 - 0.3 * wtm_r) / (wtm_r - 0.3 * wtm_r) * wtm_t,
-    LLCI_30 = ( 0.3 - 0.3 * ULCI) / (ULCI - 0.3 * ULCI) * wtm_t,
-    ULCI_30 = ( 0.3 - 0.3 * LLCI) / (LLCI - 0.3 * LLCI) * wtm_t,	
-
-    Trial_40 = ( 0.4 - 0.4 * wtm_r) / (wtm_r - 0.4 * wtm_r) * wtm_t,
-    LLCI_40 = ( 0.4 - 0.4 * ULCI) / (ULCI - 0.4 * ULCI) * wtm_t,
-    ULCI_40 = ( 0.4 - 0.4 * LLCI) / (LLCI - 0.4 * LLCI) * wtm_t,	
-
-    Trial_50 = ( 0.5 - 0.5 * wtm_r) / (wtm_r - 0.5 * wtm_r) * wtm_t,
-    LLCI_50 = ( 0.5 - 0.5 * ULCI) / (ULCI - 0.5 * ULCI) * wtm_t,
-    ULCI_50 = ( 0.5 - 0.5 * LLCI) / (LLCI - 0.5 * LLCI) * wtm_t,		
-
-    Trial_60 = ( 0.6 - 0.6 * wtm_r) / (wtm_r - 0.6 * wtm_r) * wtm_t,
-    LLCI_60 = ( 0.6 - 0.6 * ULCI) / (ULCI - 0.6 * ULCI) * wtm_t,
-    ULCI_60 = ( 0.6 - 0.6 * LLCI) / (LLCI - 0.6 * LLCI) * wtm_t,		
-    
-    Trial_70 = ( 0.7 - 0.7 * wtm_r) / (wtm_r - 0.7 * wtm_r) * wtm_t,
-    LLCI_70 = ( 0.7 - 0.7 * ULCI) / (ULCI - 0.7 * ULCI) * wtm_t,	
-    ULCI_70 = ( 0.7 - 0.7 * LLCI) / (LLCI - 0.7 * LLCI) * wtm_t,		
-
-    Trial_80 = ( 0.8 - 0.8 * wtm_r) / (wtm_r - 0.8 * wtm_r) * wtm_t,
-    LLCI_80 = ( 0.8 - 0.8 * ULCI) / (ULCI - 0.8 * ULCI) * wtm_t,	
-    ULCI_80 = ( 0.8 - 0.8 * LLCI) / (LLCI - 0.8 * LLCI) * wtm_t,		
-    
-    Trial_90 = ( 0.9 - 0.9 * wtm_r) / (wtm_r - 0.9 * wtm_r) * wtm_t,
-    LLCI_90 = ( 0.9 - 0.9 * ULCI) / (ULCI - 0.9 * ULCI) * wtm_t,	
-    ULCI_90 = ( 0.9 - 0.9 * LLCI) / (LLCI - 0.9 * LLCI) * wtm_t,	
-	
-
+    Trial_0 = 0, LLCI_0 = 0, ULCI_0 = 0,
+  ) %>%
+  dplyr::bind_cols(
+    purrr::map_dfc(
+      .x = steps[-1], 
+      .f = generate_columns, 
+      wtm_r = .$wtm_r, 
+      wtm_t = .$wtm_t, 
+      LLCI = .$LLCI, 
+      ULCI = .$ULCI
+    )
   ) %>%
   dplyr::select(-wtm_r, -wtm_t, -LLCI, -ULCI)
 
@@ -1156,7 +1181,7 @@ Mean <- plot[[9]] %>%
   ) %>%
   dplyr::mutate(
     r_Expected = str_remove(r_Expected, "Trial_"),
-    r_Expected = as.numeric(r_Expected) / 100
+    r_Expected = as.numeric(r_Expected)
   )
 
 LLCI <- plot[[9]] %>%
@@ -1170,7 +1195,7 @@ LLCI <- plot[[9]] %>%
   ) %>%
   dplyr::mutate(
     r_Expected = str_remove(r_Expected, "LLCI_"),
-    r_Expected = as.numeric(r_Expected) / 100
+    r_Expected = as.numeric(r_Expected)
   )
 
 ULCI <- plot[[9]] %>%
@@ -1184,7 +1209,7 @@ ULCI <- plot[[9]] %>%
   ) %>%
   dplyr::mutate(
     r_Expected = str_remove(r_Expected, "ULCI_"),
-    r_Expected = as.numeric(r_Expected) / 100
+    r_Expected = as.numeric(r_Expected)
   )
 
 temp <- merge(Mean, LLCI, by = c("Target", "Indice", "r_Expected"), all.x = TRUE)
@@ -1193,6 +1218,7 @@ temp <- merge(temp, ULCI, by = c("Target", "Indice", "r_Expected"), all.x = TRUE
 rm(Mean, LLCI, ULCI)
 
 plot[[9]] <- temp %>%
+  dplyr::filter(Target %in% c("Close", "Stranger")) %>%
   dplyr::mutate(
     Target = factor(
       Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")
@@ -1203,16 +1229,19 @@ plot[[9]] <- temp %>%
         "RT", "ACC", "d'", "η", "v(RWiener)", 
         "z(RWiener)", "v(hausekeep)", "z(hausekeep)"
       )
-    )
+    ),
   )
 
-rm(temp)
+rm(
+  temp, wtm_r, wtm_t, trial_col, steps, result_df,
+  generate_columns, i, element_name
+)
 
 names(plot)[9] <- "Spearman-Brown"
 ```
 
 ```{r}
-pic1 <- plot[[9]] %>%
+temp <- plot[[9]] %>%
   dplyr::filter(
     Target %in% c("Close", "Stranger"),
     (Indice %in% c("RT", "ACC", "d'", "η")),
@@ -1229,8 +1258,23 @@ pic1 <- plot[[9]] %>%
     ULCI = case_when(
       ULCI >= 300 ~ 300,
       TRUE ~ ULCI,
-    )
+    ),
   ) %>%
+  dplyr::filter(LLCI < 300) 
+
+temp1 <- temp %>%
+  dplyr::filter(Mean < 300)
+
+temp2 <- temp %>%
+  dplyr::filter(Mean >= 300) %>%
+  dplyr::group_by(Target, Indice) %>%
+  dplyr::mutate(r_Expected = min(r_Expected)) %>%
+  dplyr::ungroup()
+
+temp_bind <- dplyr::bind_rows(temp1, temp2)
+
+pic1 <- temp %>%
+  
   ggplot2::ggplot(
     data = ., 
     mapping = aes(
@@ -1242,7 +1286,7 @@ pic1 <- plot[[9]] %>%
     aes(xmin = ULCI, xmax = LLCI, fill = Indice),
     linetype = "dashed", alpha = 0.3
   ) +
-  ggplot2::geom_line() +
+  ggplot2::geom_line(data = temp_bind) +
   ggplot2::scale_y_continuous(
     limits = c(0, 1),
     expand = c(0, 0),
@@ -1264,14 +1308,14 @@ pic1 <- plot[[9]] %>%
   papaja::theme_apa() +
   ggplot2::theme(legend.position = "none")
 
-pic2 <- plot[[9]] %>%
+temp <- plot[[9]] %>%
   dplyr::filter(
     Target %in% c("Close", "Stranger"),
     Indice %in% c("v(RWiener)", "z(RWiener)", "v(hausekeep)", "z(hausekeep)")
   ) %>%
   dplyr::mutate(
     Mean = case_when(
-      Mean >= 300 ~ NA,
+      Mean >= 300 ~ 300,
       TRUE ~ Mean,
     ),
     LLCI = case_when(
@@ -1281,8 +1325,23 @@ pic2 <- plot[[9]] %>%
     ULCI = case_when(
       ULCI >= 300 ~ 300,
       TRUE ~ ULCI,
-    )
+    ),
   ) %>%
+  dplyr::filter(LLCI < 300) 
+
+temp1 <- temp %>%
+  dplyr::filter(Mean < 300)
+
+temp2 <- temp %>%
+  dplyr::filter(Mean >= 300) %>%
+  dplyr::group_by(Target, Indice) %>%
+  dplyr::mutate(r_Expected = min(r_Expected)) %>%
+  dplyr::ungroup()
+
+temp_bind <- dplyr::bind_rows(temp1, temp2)
+
+
+pic2 <- temp %>%
   ggplot2::ggplot(
     data = ., 
     mapping = aes(
@@ -1294,7 +1353,7 @@ pic2 <- plot[[9]] %>%
     aes(xmin = ULCI, xmax = LLCI, fill = Indice),
     linetype = "dashed", alpha = 0.3
   ) +
-  ggplot2::geom_line() +
+  ggplot2::geom_line(data = temp_bind) +
   ggplot2::scale_y_continuous(
     limits = c(0, 1),
     expand = c(0, 0),
@@ -1324,6 +1383,6 @@ ggsave(
   height = 8,
 )
 
-rm(pic1, pic2, pic)
+rm(pic1, pic2, pic, temp1, temp2, temp, temp_bind)
 ```
 

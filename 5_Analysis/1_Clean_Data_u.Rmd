@@ -748,7 +748,7 @@ write.csv(
   row.names = FALSE
 )
 
-rm(folder_path, csv_list, csv_data, combined_data)
+rm(file_names, folder_path, csv_list, csv_data, combined_data)
 ```
 
 
