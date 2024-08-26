@@ -148,7 +148,7 @@ p_meta_bind <- p1 + p2 + plot_layout(nrow = 1, guides = 'collect')
 
 ggsave(
   plot = p_meta_bind,
-  filename = "./FIGURE/meta_bind.png",
+  filename = "./FIGURE/meta/meta_bind.png",
   width = 15,
   height = 6,
 )
@@ -247,7 +247,7 @@ plot_forest[[1]][[1]] <- ggplot2::ggplot(out[[1]][[1]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Close_RT.png", width = 24, height = 18, limitsize = FALSE)
+ggsave(filename = "./FIGURE/meta/Forest_Close_RT.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## ACC
@@ -337,7 +337,7 @@ plot_forest[[1]][[2]] <- ggplot2::ggplot(out[[1]][[2]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Close_ACC.png", width = 24, height = 18, limitsize = FALSE)
+ggsave(filename = "./FIGURE/meta/Forest_Close_ACC.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## d
@@ -427,7 +427,7 @@ plot_forest[[1]][[3]] <- ggplot2::ggplot(out[[1]][[3]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Close_d.png", width = 24, height = 18, limitsize = FALSE)
+ggsave(filename = "./FIGURE/meta/Forest_Close_d.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## eta
@@ -517,7 +517,7 @@ plot_forest[[1]][[4]] <- ggplot2::ggplot(out[[1]][[4]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Close_eta.png", width = 24, height = 18, limitsize = FALSE)
+ggsave(filename = "./FIGURE/meta/Forest_Close_eta.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## v
@@ -607,7 +607,7 @@ plot_forest[[1]][[5]] <- ggplot2::ggplot(out[[1]][[5]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Close_v.png", width = 24, height = 18, limitsize = FALSE)
+ggsave(filename = "./FIGURE/meta/Forest_Close_v.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## z
@@ -697,7 +697,7 @@ plot_forest[[1]][[6]] <- ggplot2::ggplot(out[[1]][[6]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Close_z.png", width = 24, height = 18, limitsize = FALSE)
+ggsave(filename = "./FIGURE/meta/Forest_Close_z.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 # Stranger
@@ -789,7 +789,7 @@ plot_forest[[2]][[1]] <- ggplot2::ggplot(out[[2]][[1]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Stranger_RT.png", width = 24, height = 18, limitsize = FALSE)
+ggsave(filename = "./FIGURE/meta/Forest_Stranger_RT.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## ACC
@@ -879,7 +879,7 @@ plot_forest[[2]][[2]] <- ggplot2::ggplot(out[[2]][[2]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Stranger_ACC.png", width = 24, height = 18, limitsize = FALSE)
+ggsave(filename = "./FIGURE/meta/Forest_Stranger_ACC.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## d
@@ -969,7 +969,7 @@ plot_forest[[2]][[3]] <- ggplot2::ggplot(out[[2]][[3]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Stranger_d.png", width = 24, height = 18, limitsize = FALSE)
+ggsave(filename = "./FIGURE/meta/Forest_Stranger_d.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## eta
@@ -1059,7 +1059,7 @@ plot_forest[[2]][[4]] <- ggplot2::ggplot(out[[2]][[4]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Stranger_eta.png", width = 24, height = 18, limitsize = FALSE)
+ggsave(filename = "./FIGURE/meta/Forest_Stranger_eta.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## v
@@ -1149,7 +1149,7 @@ plot_forest[[2]][[5]] <- ggplot2::ggplot(out[[2]][[5]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Stranger_v.png", width = 24, height = 18, limitsize = FALSE)
+ggsave(filename = "./FIGURE/meta/Forest_Stranger_v.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 ## z
@@ -1239,7 +1239,7 @@ plot_forest[[2]][[6]] <- ggplot2::ggplot(out[[2]][[6]], aes(x = yi_r , y = reord
                  axis.title.y= element_blank(),
                  ) 
 
-ggsave(filename = "./FIGURE/Forest_Stranger_z.png", width = 24, height = 18, limitsize = FALSE)
+ggsave(filename = "./FIGURE/meta/Forest_Stranger_z.png", width = 24, height = 18, limitsize = FALSE)
 ```
 
 # Combine
@@ -1249,7 +1249,7 @@ temp_p <- plot_forest[[1]][[1]] + plot_forest[[2]][[1]] +
 
 ggsave(
   plot = last_plot(),
-  filename = "./FIGURE/Forest_RT.png",
+  filename = "./FIGURE/meta/Forest_RT.png",
   width = 24, height = 36, 
   limitsize = FALSE
 )
@@ -1274,7 +1274,7 @@ temp_p <- plot_forest[[1]][[1]] +
 
 ggsave(
   plot = last_plot(),
-  filename = "./FIGURE/Forest_Supp.png",
+  filename = "./FIGURE/meta/Forest_Supp.png",
   width = 72, height = 72, 
   limitsize = FALSE
 )
