@@ -15,10 +15,12 @@ library(R.matlab) # Paper s4 is from MATLAB
 library(data.table) # some functions need it
 # for ICC
 library(psych)
-#devtools::install_github("TingsterX/ReX")
-library(ReX)
+# devtools::install_github("TingsterX/ReX")
+# library(ReX)
 # for DDM
+# devtools::install_github("hauselin/hausekeep")
 library(hausekeep) # ez ddm
+# install.packages("RWiener")
 library(RWiener) # RW ddm
 # Plot
 library(ggplot2)
@@ -30,7 +32,7 @@ library(parallel)
 library(iterators)
 library(doParallel)
 # Meta Analysis
-#library(metafor) 
+library(metafor) 
 library(AATtools)
 
 # My packages: yukiSH & yukiBP
@@ -41,7 +43,7 @@ library(AATtools)
 library(yukiSH)
 
 # install.packages("./PACKAGES/yukiBP_0.1.6.tar.gz") # nolint
-#devtools::install_github("yuki-961004/yukiBP") # nolint
+# devtools::install_github("yuki-961004/yukiBP") # nolint
 library(yukiBP)
 ```
 

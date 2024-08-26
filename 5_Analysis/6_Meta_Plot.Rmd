@@ -20,10 +20,10 @@ plot_forest <- list(
 ```
 
 ```{r}
-df_close <- read.csv("./OUTPUT/meta/meta_close.csv") %>%
+df_close <- utils::read.csv("./OUTPUT/meta/meta_close.csv") %>%
   dplyr::mutate(Target = "Close") 
 
-df_stranger <- read.csv("./OUTPUT/meta/meta_stranger.csv") %>%
+df_stranger <- utils::read.csv("./OUTPUT/meta/meta_stranger.csv") %>%
   dplyr::mutate(Target = "Stranger") 
 
 df_meta_bind <- dplyr::bind_rows(df_close, df_stranger) %>%
@@ -74,7 +74,7 @@ df_stranger <- df_meta_bind %>% dplyr::filter(Target == "Stranger") %>%
 ```{r}
 p1 <- ggplot2::ggplot(df_close, aes(x = Order, y = g)) +
   ggplot2::geom_errorbar(aes(ymin = LLCI, ymax = ULCI, linetype = Outliar),
-                         width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
+                         width = 0.1, linewidth = 1, position = position_dodge(width = 1)) + # nolint
   #ggplot2::geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), linewidth = 1, color = "black", linetype = Outliar) +
   ggplot2::geom_point(shape = 15, size = 3, color = "black") +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
@@ -110,7 +110,7 @@ p1 <- ggplot2::ggplot(df_close, aes(x = Order, y = g)) +
 
 p2 <- ggplot2::ggplot(df_stranger, aes(x = Order, y = g)) +
   ggplot2::geom_errorbar(aes(ymin = LLCI, ymax = ULCI, linetype = Outliar),
-                         width = 0.1, size = 1, position = position_dodge(width = 1)) + # nolint
+                         width = 0.1, linewidth = 1, position = position_dodge(width = 1)) + # nolint
   #ggplot2::geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), linewidth = 1, color = "black", linetype = Outliar) +
   ggplot2::geom_point(shape = 15, size = 3, color = "black") +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
@@ -152,6 +152,8 @@ ggsave(
   width = 15,
   height = 6,
 )
+
+p_meta_bind
 
 #rm(df_close, df_stranger, p_meta_bind, p1, p2)
 ```
