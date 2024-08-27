@@ -6,277 +6,51 @@ output: html_document
 ---
 # Create NULL list
 ```{r ICC List}
-# You can use iccl caculate ICC with psycho::ICC
-iccl <- list(list(), list(), list())
+iccl <- list(list(), list())
 names(iccl)[1] <- "Self - Friend"
 names(iccl)[2] <- "Self - Stranger"
-names(iccl)[3] <- "Supplementary"
-
-# You can use iccl_ReX caculate ICC with ReX::lme_ICC_2wayR
-iccl_ReX <- list(list(), list(), list())
-names(iccl_ReX)[1] <- "Self - Friend"
-names(iccl_ReX)[2] <- "Self - Stranger"
-names(iccl_ReX)[3] <- "Supplementary"
 
 res[[3]] <- list()
 names(res)[3] <- "ICC"
 ```
 
-# Sub_Infor
-```{r}
-df_Sub_Infor <- read.csv(
-  file = "./DATA/Sub_Info.csv"
-) %>%
-  dplyr::mutate(BDI = as.numeric(BDI)) %>%
-  dplyr::select(Subject, BDI)
-```
-
-##################################[Paper: 0]####################################
-
-################################################################################
---------------------------------------------------------------------------------
-################################################################################
-
 # ICC: Self - Friend
-## df
+## df[[1]]: P0E1, df[[4]]: P51E1, df[[19]]Ps2E1
 ```{r Self - Friend}
-df_rt <- yukiBP::icc(df = df[[1]], Indice = "rt", Target = "Friend")
-df_acc <- yukiBP::icc(df = df[[1]], Indice = "acc", Target = "Friend")
-df_dp <- yukiBP::icc(df = df[[1]], Indice = "dp", Target = "Friend")
-df_eff <- yukiBP::icc(df = df[[1]], Indice = "eff", Target = "Friend")
-df_ezddm <- yukiBP::icc(df = df[[1]], Indice = "ezddm", Target = "Friend")
+df_rt <- yukiBP::icc(df = df[[4]], Indice = "rt", Target = "Celebrity")
+df_acc <- yukiBP::icc(df = df[[4]], Indice = "acc", Target = "Celebrity")
+df_dp <- yukiBP::icc(df = df[[4]], Indice = "dp", Target = "Celebrity")
+df_eff <- yukiBP::icc(df = df[[4]], Indice = "eff", Target = "Celebrity")
+df_ezddm <- yukiBP::icc(df = df[[4]], Indice = "ezddm", Target = "Celebrity")
 df_ezddmv <- df_ezddm[[1]]
 df_ezddmz <- df_ezddm[[2]]
-df_rwddm <- yukiBP::icc(df = df[[1]], Indice = "rwddm", Target = "Friend")
+df_rwddm <- yukiBP::icc(df = df[[4]], Indice = "rwddm", Target = "Celebrity")
 df_rwddmv <- df_rwddm[[1]]
 df_rwddmz <- df_rwddm[[2]]
 ```
 
 ```{r DF for Plot ICC}
-iccl[[1]] <- list(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz) # nolint
-
-names(iccl[[1]])[1] <- "RT"
-names(iccl[[1]])[2] <- "ACC"
-names(iccl[[1]])[3] <- "d"
-names(iccl[[1]])[4] <- "η"
-names(iccl[[1]])[5] <- "v(hausekeep)"
-names(iccl[[1]])[6] <- "z(hausekeep)"
-names(iccl[[1]])[7] <- "v(RWiener)"
-names(iccl[[1]])[8] <- "z(RWiener)"
-
-rm(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz, df_ezddm, df_rwddm)
-```
-
-## ReX_ICC
-```{r}
-################################### DF #########################################
-for (i in 1:length(iccl[[1]])) {
-  iccl_ReX[[1]][[i]] <- iccl[[1]][[i]] %>%
-    dplyr::mutate(
-      Subject = c(
-        6001, 6002, 6003, 6004, 6005, 6006, 6007,
-        6009, 6010, 6011, 6012, 6013, 6014, 6016,
-        6017, 6018, 6019, 6020, 6021, 6022, 6023,
-        6024, 6025, 6026, 6027, 6028, 6029, 6030,
-        6032, 6033, 6034, 6035, 6036
-      )
-    ) %>%
-    dplyr::rename(
-      Session_1 = 1,
-      Session_2 = 2,
-      Session_3 = 3,
-      Session_4 = 4,
-      Session_5 = 5,
-      Session_6 = 6,
-    ) %>%
-    tidyr::pivot_longer(
-      cols = starts_with("Session_"),
-      names_to = "Session",
-      values_to = "SPE"
-    ) %>%
-    dplyr::rename(
-     !!names(iccl[[1]])[i] := SPE
-    ) %>%
-    dplyr::left_join(df_Sub_Infor, by = "Subject")
-}
-################################### DF #########################################
-
-################################CORE CODES######################################
-temp <- base::do.call(data.frame, iccl_ReX[[1]]) %>%
-  dplyr::select(
-    Subject, Session, BDI,
-    RT, ACC, 
-    d, η, 
-    v.hausekeep., z.hausekeep.,
-    v.RWiener., z.RWiener.
-  ) 
-
-res[[3]][[1]] <- data.frame(
-  ReX::lme_ICC_2wayR(
-    data = temp[,4:11],
-    subID = temp[,"Subject"],
-    session = temp[,"Session"],
-    cov = temp[,"BDI"],
-  )
-) %>%
-  tibble::rownames_to_column(var = "Indice") %>%
-  dplyr::select(
-    Indice,
-    ICC.a,
-    ICC.c
-  ) %>%
-  dplyr::mutate(
-    Target = "Friend",
-    Paper_ID = "P0E1"
-  )
-
-names(res[[3]])[1] <- "ReX_ICC: Self - Close"
-################################CORE CODES######################################
-
-
-################################   SAVE   ######################################
-write.csv(
-  x = temp,
-  file = "./OUTPUT/df_icc_Friend.csv",
-  row.names = FALSE
-)
-
-
-write.csv(
-  x = res[[3]][[1]],
-  "./OUTPUT/icc_ReX_P0E1_Friend.csv",
-  row.names = FALSE
-)
-################################   SAVE   ######################################
-
-rm(temp)
-```
-
-
-################################################################################
---------------------------------------------------------------------------------
-################################################################################
-
-
-# ICC: Self - Stranger
-```{r Self - Stranger}
-df_rt <- yukiBP::icc(df = df[[1]], Indice = "rt", Target = "Stranger")
-df_acc <- yukiBP::icc(df = df[[1]], Indice = "acc", Target = "Stranger")
-df_dp <- yukiBP::icc(df = df[[1]], Indice = "dp", Target = "Stranger")
-df_eff <- yukiBP::icc(df = df[[1]], Indice = "eff", Target = "Stranger")
-df_ezddm <- yukiBP::icc(df = df[[1]], Indice = "ezddm", Target = "Stranger")
-df_ezddmv <- df_ezddm[[1]]
-df_ezddmz <- df_ezddm[[2]]
-df_rwddm <- yukiBP::icc(df = df[[1]], Indice = "rwddm", Target = "Stranger")
-df_rwddmv <- df_rwddm[[1]]
-df_rwddmz <- df_rwddm[[2]]
-```
-
-## df
-```{r DF for Plot ICC}
-iccl[[2]] <- list(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz) # nolint
-
-names(iccl[[2]])[1] <- "RT"
-names(iccl[[2]])[2] <- "ACC"
-names(iccl[[2]])[3] <- "d"
-names(iccl[[2]])[4] <- "η"
-names(iccl[[2]])[5] <- "v(hausekeep)"
-names(iccl[[2]])[6] <- "z(hausekeep)"
-names(iccl[[2]])[7] <- "v(RWiener)"
-names(iccl[[2]])[8] <- "z(RWiener)"
+iccl[[1]] <- list(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
 
 rm(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
 ```
 
-## ReX_ICC
-```{r}
-################################### DF #########################################
-for (i in 1:length(iccl[[2]])) {
-  iccl_ReX[[2]][[i]] <- iccl[[2]][[i]] %>%
-    dplyr::mutate(
-      Subject = c(
-        6001, 6002, 6003, 6004, 6005, 6006, 6007,
-        6009, 6010, 6011, 6012, 6013, 6014, 6016,
-        6017, 6018, 6019, 6020, 6021, 6022, 6023,
-        6024, 6025, 6026, 6027, 6028, 6029, 6030,
-        6032, 6033, 6034, 6035, 6036
-      )
-    ) %>%
-    dplyr::rename(
-      Session_1 = 1,
-      Session_2 = 2,
-      Session_3 = 3,
-      Session_4 = 4,
-      Session_5 = 5,
-      Session_6 = 6,
-    ) %>%
-    tidyr::pivot_longer(
-      cols = starts_with("Session_"),
-      names_to = "Session",
-      values_to = "SPE"
-    ) %>%
-    dplyr::rename(
-     !!names(iccl[[2]])[i] := SPE
-    ) %>%
-    dplyr::left_join(df_Sub_Infor, by = "Subject")
-}
-################################### DF #########################################
+```{r DF for Plot ICC}
+res[[3]][[1]] <- icc_output(list = iccl[[1]], Target = "Celebrity") %>%
+  dplyr::filter(type == "ICC2" | type == "ICC2k")
+names(res[[3]])[1] <- "Self - Celebrity"
+```
 
-################################CORE CODES######################################
-temp <- base::do.call(data.frame, iccl_ReX[[2]]) %>%
-  dplyr::select(
-    Subject, Session, BDI,
-    RT, ACC, 
-    d, η, 
-    v.hausekeep., z.hausekeep.,
-    v.RWiener., z.RWiener.
-  ) 
-
-res[[3]][[2]] <- data.frame(
-  ReX::lme_ICC_2wayR(
-    data = temp[,4:11],
-    subID = temp[,"Subject"],
-    session = temp[,"Session"],
-    cov = temp[,"BDI"],
-  )
-) %>%
-  tibble::rownames_to_column(var = "Indice") %>%
-  dplyr::select(
-    Indice,
-    ICC.a,
-    ICC.c
-  ) %>%
-  dplyr::mutate(
-    Target = "Stranger",
-    Paper_ID = "P0E1"
-  )
-
-names(res[[3]])[2] <- "ReX_ICC: Self - Stranger"
-################################CORE CODES######################################
-
-################################   SAVE   ######################################
-write.csv(
-  x = temp,
-  file = "./OUTPUT/df_icc_Stranger.csv",
-  row.names = FALSE
-)
-
-write.csv(
-  x = res[[3]][[2]],
-  "./OUTPUT/icc_ReX_P0E1_Stranger.csv",
-  row.names = FALSE
-)
-################################   SAVE   ######################################
-
-rm(temp)
+```{r Save icc_friend}
+write.csv(x = res[[3]][[1]],
+          file = "./OUTPUT/icc_P51E1_celebrity.csv",
+          row.names = FALSE,
+          )
 ```
 
 
-################################################################################
 --------------------------------------------------------------------------------
-################################################################################
 
-##################################[Paper: s2]###################################
 # ICC: Self - Stranger
 ```{r Self - Stranger}
 df_rt <- yukiBP::icc(df = df[[19]], Indice = "rt", Target = "Stranger")
@@ -291,89 +65,21 @@ df_rwddmv <- df_rwddm[[1]]
 df_rwddmz <- df_rwddm[[2]]
 ```
 
-## df
 ```{r DF for Plot ICC}
-iccl[[3]] <- list(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz) # nolint
-
-names(iccl[[3]])[1] <- "RT"
-names(iccl[[3]])[2] <- "ACC"
-names(iccl[[3]])[3] <- "d"
-names(iccl[[3]])[4] <- "η"
-names(iccl[[3]])[5] <- "v(hausekeep)"
-names(iccl[[3]])[6] <- "z(hausekeep)"
-names(iccl[[3]])[7] <- "v(RWiener)"
-names(iccl[[3]])[8] <- "z(RWiener)"
+iccl[[2]] <- list(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
 
 rm(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
 ```
 
-## ReX_ICC
-```{r}
-################################### DF #########################################
-for (i in 1:length(iccl[[3]])) {
-  iccl_ReX[[3]][[i]] <- iccl[[3]][[i]] %>%
-    dplyr::mutate(
-      Subject = c(
-        6201, 6202, 6203, 6204, 6206, 6207, 6208,
-        6210, 6211, 6212, 6213, 6214, 6215, 6216,
-        6217, 6218, 6219, 6220, 6221, 6222
-      )
-    ) %>%
-    dplyr::rename(
-      Session_1 = 1,
-      Session_2 = 2
-    ) %>%
-    tidyr::pivot_longer(
-      cols = starts_with("Session_"),
-      names_to = "Session",
-      values_to = "SPE"
-    ) %>%
-    dplyr::rename(
-     !!names(iccl[[3]])[i] := SPE
-    ) 
-}
-################################### DF #########################################
+```{r DF for Plot ICC}
+res[[3]][[2]] <- icc_output(list = iccl[[2]], Target = "Stranger") %>%
+  dplyr::filter(type == "ICC2" | type == "ICC2k")
+names(res[[3]])[2] <- "Self - Stranger"
+```
 
-################################CORE CODES######################################
-temp <- base::do.call(data.frame, iccl_ReX[[3]]) %>%
-  dplyr::select(
-    Subject, Session,
-    RT, ACC, 
-    d, η, 
-    v.hausekeep., z.hausekeep.,
-    v.RWiener., z.RWiener.
-  ) 
-
-res[[3]][[3]] <- data.frame(
-  ReX::lme_ICC_2wayR(
-    data = temp[,3:10],
-    subID = temp[,"Subject"],
-    session = temp[,"Session"],
-    #cov = temp[,"BDI"],
-  )
-) %>%
-  tibble::rownames_to_column(var = "Indice") %>%
-  dplyr::select(
-    Indice,
-    ICC.a,
-    ICC.c
-  ) %>%
-  dplyr::mutate(
-    Target = "Stranger",
-    Paper_ID = "Ps2E1"
-  )
-
-names(res[[3]])[3] <- "ReX_ICC: Self - Stranger"
-################################CORE CODES######################################
-
-################################   SAVE   ######################################
-
-write.csv(
-  x = res[[3]][[3]],
-  "./OUTPUT/icc_ReX_Ps2E1_Stranger.csv",
-  row.names = FALSE
-)
-################################   SAVE   ######################################
-
-rm(temp)
+```{r Save icc_stranger}
+write.csv(x = res[[3]][[2]],
+          file = "./OUTPUT/icc_Ps2E1_stranger.csv",
+          row.names = FALSE,
+          )
 ```

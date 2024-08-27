@@ -55,43 +55,32 @@ plot_forest[[i]][[j]] <- ggplot2::ggplot(
 
 ggsave(filename = "./FIGURE/meta/Forest_<Target>_<Indice>.png", width = 24, height = 18, limitsize = FALSE)
 ```
-
-<div style="display: flex; justify-content: space-around;">
-  <img src="./webp/Forest_Close_RT.webp" width="45%" />
-  <img src="./webp/Forest_Stranger_RT.webp" width="45%" />
-</div>
-
+<img src="./webp/Forest_Close_RT.webp" width="100%" />
+<br>
+<img src="./webp/Forest_Stranger_RT.webp" width="100%" />
 <br>
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="./webp/Forest_Close_ACC.webp" width="45%" />
-  <img src="./webp/Forest_Stranger_ACC.webp" width="45%" />
-</div>
-
+<img src="./webp/Forest_Close_ACC.webp" width="100%" />
+<br>
+<img src="./webp/Forest_Stranger_ACC.webp" width="100%" />
 <br>
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="./webp/Forest_Close_d.webp" width="45%" />
-  <img src="./webp/Forest_Stranger_d.webp" width="45%" />
-</div>
-
+<img src="./webp/Forest_Close_d.webp" width="100%" />
+<br>
+<img src="./webp/Forest_Stranger_d.webp" width="100%" />
 <br>
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="./webp/Forest_Close_eta.webp" width="45%" />
-  <img src="./webp/Forest_Stranger_eta.webp" width="45%" />
-</div>
-
+<img src="./webp/Forest_Close_eta.webp" width="100%" />
+<br>
+<img src="./webp/Forest_Stranger_eta.webp" width="100%" />
 <br>
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="./webp/Forest_Close_v.webp" width="45%" />
-  <img src="./webp/Forest_Stranger_v.webp" width="45%" />
-</div>
-
+<img src="./webp/Forest_Close_v.webp" width="100%" />
+<br>
+<img src="./webp/Forest_Stranger_v.webp" width="100%" />
 <br>
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="./webp/Forest_Close_z.webp" width="45%" />
-  <img src="./webp/Forest_Stranger_z.webp" width="45%" />
-</div>
+<img src="./webp/Forest_Close_z.webp" width="100%" />
+<br>
+<img src="./webp/Forest_Stranger_z.webp" width="100%" />
+<br>
