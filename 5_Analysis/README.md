@@ -6,7 +6,7 @@ Since the dataset we used is not all publicly available,
 `[7_Load_DATA.Rmd ~ 10_Supp_Plot.Rmd]`  can run normally.
 
 If you have your own `Self-Matching Task` dataset and need to calculate split-half reliability and ICC,   
-you can use `yukiSH`[https://github.com/yuki-961004/yukiSH] and `yukiBP`[https://github.com/yuki-961004/yukiBP] to preprocess your data.
+you can use `yuki-961004/yukiSH` and `yuki-961004/yukiBP` to preprocess your data.
 
 - `first-second` & `odd-even` Split-Half Reliability: `./OUTPUT/nmshr/...` 
 - `permuted` Split-Half Reliability: `./OUTPUT/pershr_5k/...`  
