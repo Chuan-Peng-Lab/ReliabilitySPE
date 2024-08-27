@@ -20,7 +20,7 @@ shl[[1]] <- yukiSH::sh_tool(
   method = "fs", 
   sub = "Subject", 
   vars = c("Matching", "Identity", "Session")
-) # nolint 
+) 
 ```
 # Odd-Even
 ```{r Odd-Even SHR}
@@ -29,7 +29,7 @@ shl[[2]] <- yukiSH::sh_tool(
   method = "od", 
   sub = "Subject", 
   vars = c("Matching", "Identity", "Session")
-) # nolint 
+) 
 ```
 # Permuted
 ```{r Permuted SHR}
@@ -39,7 +39,7 @@ shl[[3]] <- yukiSH::sh_tool(
   sub = "Subject", 
   vars = c("Matching", "Identity", "Session"),
   iteration = 10, nc = 16
-) # nolint 
+) 
 ```
 # Monte Carlo
 ```{r Monte Carlo SHR}
@@ -49,5 +49,5 @@ shl[[4]] <- yukiSH::sh_tool(
   sub = "Subject", 
   vars = c("Matching", "Identity", "Session"),
   iteration = 10, nc = 16
-) # nolint 
+) 
 ```

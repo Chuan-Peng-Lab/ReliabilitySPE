@@ -47,7 +47,7 @@ for (i in 1:length(df)) {
   )
 }
 
-rm(min_ACC, i)
+rm(min_ACC, min_ACC_list, i)
 ```
 
 ```{r Step 2}
@@ -69,6 +69,7 @@ rm(filtered_df, i)
 
 
 ```{r Step 3}
+# clean data r
 df[[1]] <- read.csv("./DATA/df_1.csv")
 df[[2]] <- read.csv("./DATA/df_2.csv")
 df[[3]] <- read.csv("./DATA/df_3.csv")
@@ -85,6 +86,7 @@ df[[13]] <- read.csv("./DATA/df_13.csv")
 df[[14]] <- read.csv("./DATA/df_14.csv")
 df[[15]] <- read.csv("./DATA/df_15.csv")
 
+# clean data s
 df[[16]] <- read.csv("./DATA/df_16.csv")
 df[[17]] <- read.csv("./DATA/df_17.csv")
 df[[18]] <- read.csv("./DATA/df_18.csv")
@@ -97,11 +99,28 @@ df[[24]] <- read.csv("./DATA/df_24.csv")
 df[[25]] <- read.csv("./DATA/df_25.csv")
 df[[26]] <- read.csv("./DATA/df_26.csv")
 
+# clean data t
 df[[27]] <- read.csv("./DATA/df_27.csv")
 df[[28]] <- read.csv("./DATA/df_28.csv")
 df[[29]] <- read.csv("./DATA/df_29.csv")
 df[[30]] <- read.csv("./DATA/df_30.csv")
 df[[31]] <- read.csv("./DATA/df_31.csv")
+df[[32]] <- read.csv("./DATA/df_32.csv")
+df[[33]] <- read.csv("./DATA/df_33.csv")
+df[[34]] <- read.csv("./DATA/df_34.csv")
+
+# clean data u
+df[[35]] <- read.csv("./DATA/df_35.csv")
+df[[36]] <- read.csv("./DATA/df_36.csv")
+df[[37]] <- read.csv("./DATA/df_37.csv")
+df[[38]] <- read.csv("./DATA/df_38.csv")
+df[[39]] <- read.csv("./DATA/df_39.csv")
+df[[40]] <- read.csv("./DATA/df_40.csv")
+df[[41]] <- read.csv("./DATA/df_41.csv")
+df[[42]] <- read.csv("./DATA/df_42.csv")
+df[[43]] <- read.csv("./DATA/df_43.csv")
+df[[44]] <- read.csv("./DATA/df_44.csv")
+df[[45]] <- read.csv("./DATA/df_45.csv")
 ```
 
 

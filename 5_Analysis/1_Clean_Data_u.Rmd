@@ -748,7 +748,7 @@ write.csv(
   row.names = FALSE
 )
 
-rm(file_names, folder_path, csv_list, csv_data, combined_data)
+rm(file_names, folder_path, csv_list, csv_data, combined_data, i)
 ```
 
 
@@ -812,38 +812,6 @@ summary(df[[45]])
 rm(temp)
 ```
 
-```{r}
-df[[45]] <- temp %>%
-  dplyr::filter(Subject <= 65)
 
-df[[46]] <- temp %>%
-  dplyr::filter(Subject > 65 & Subject <= 130)
-
-df[[47]] <- temp %>%
-  dplyr::filter(Subject > 130 & Subject <= 195)
-
-df[[48]] <- temp %>%
-  dplyr::filter(Subject > 195 & Subject <= 260)
-
-df[[49]] <- temp %>%
-  dplyr::filter(Subject > 260 & Subject <= 340)
-
-rm(temp)
-
-names(df)[45] <- "Paper t7 Exp 1a"
-summary(df[[45]])
-
-names(df)[46] <- "Paper t7 Exp 1b"
-summary(df[[46]])
-
-names(df)[47] <- "Paper t7 Exp 1c"
-summary(df[[47]])
-
-names(df)[48] <- "Paper t7 Exp 1d"
-summary(df[[48]])
-
-names(df)[49] <- "Paper t7 Exp 1e"
-summary(df[[49]])
-```
 
 

@@ -16,7 +16,7 @@ library(data.table) # some functions need it
 # for ICC
 library(psych)
 # devtools::install_github("TingsterX/ReX")
-# library(ReX)
+ library(ReX)
 # for DDM
 # devtools::install_github("hauselin/hausekeep")
 library(hausekeep) # ez ddm

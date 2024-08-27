@@ -1,0 +1,223 @@
+---
+title: "7_Weighted Plot"
+author: "yuki"
+date: "2023-09-28"
+output: html_document
+---
+# Create NULL List
+```{r Create NULL List}
+aggr <- list()
+```
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+```{r Aggregate Plot1}
+aggr[[1]] <- plot[[1]] %>%
+  dplyr::left_join(
+    desc[[1]], by = "Paper_ID"
+  ) %>%
+  #dplyr::filter(Paper_ID != "Ps1E1") %>%
+  dplyr::filter(
+    !stringr::str_detect(Indice, "ez")
+  ) %>%
+  dplyr::mutate(
+    .,
+    Indice = case_when(
+      Indice == "Efficiency" ~ "η",
+      Indice == "d Prime" ~ "d'",
+      Indice == "rwDDM v" ~ "v",
+      Indice == "rwDDM z" ~ "z",
+      #Indice == "rwDDM v" ~ "v(RWiener)",
+      #Indice == "rwDDM z" ~ "z(RWiener)",
+      #Indice == "ezDDM v" ~ "v(hausekeep)",
+      #Indice == "ezDDM z" ~ "z(hausekeep)",
+      TRUE ~ Indice
+    ),
+    Target = factor(Target),
+    Indice = factor(Indice),
+    unique_ID = paste(Target, Indice, sep="_")
+  ) 
+
+temp <- base::split(x = aggr[[1]], f = list(aggr[[1]]$unique_ID))
+
+result_df <- data.frame(
+  unique_ID = character(0), 
+  wtmr = numeric(0), 
+  LLCI = numeric(0), 
+  ULCI = numeric(0)
+)
+
+for (i in seq_along(temp)) {
+  # 计算AATtools::cormean
+  wtmr <- AATtools::cormean(r = temp[[i]]$r, n = temp[[i]]$Sample_Size, wts = "df")
+  LLCI <- AATtools::cormean(r = temp[[i]]$LLCI, n = temp[[i]]$Sample_Size, wts = "df")
+  ULCI <- AATtools::cormean(r = temp[[i]]$ULCI, n = temp[[i]]$Sample_Size, wts = "df")
+  
+  # 获取子集的元素名
+  element_name <- names(temp)[i]
+  
+  # 将结果添加到数据框中
+  result_df <- rbind(result_df, data.frame(
+    unique_ID = element_name, 
+    wtmr = wtmr,
+    LLCI = LLCI,
+    ULCI = ULCI
+    )
+  )
+}
+
+aggr[[1]] <- result_df %>%
+  tidyr::separate(.,unique_ID, into = c("Target", "Indice"), sep = "_")
+
+rm(temp, result_df, element_name, i, wtmr, LLCI, ULCI)
+```
+
+################################################################################
+--------------------------------------------------------------------------------
+################################################################################
+
+#Plot
+## Main Plot
+### Plot SHR
+```{r errorbar}
+p_shr <- aggr[[1]] %>%
+  dplyr::filter(
+    Target %in% c("Close", "Stranger")
+  ) %>%
+  dplyr::arrange(wtmr) %>%
+  dplyr::mutate(
+    Target_Indice = paste(Target, Indice, sep="_"),
+    Outliar = case_when(
+      LLCI <= 0 ~ TRUE, 
+      ULCI > 0 ~FALSE
+    ),
+    LLCI = ifelse(LLCI < -0.10, -0.10, LLCI), 
+    Order = row_number()
+  ) %>%
+ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
+  ggplot2::geom_errorbar(aes(ymin = LLCI, ymax = ULCI, linetype = Outliar),
+                         width = 0.1, linewidth = 1, position = position_dodge(width = 1)) + # nolint
+  #ggplot2::geom_errorbar(aes(ymin = ci.lb, ymax = ci.ub), linewidth = 1, color = "black", linetype = Outliar) +
+  ggplot2::geom_point(shape = 15, size = 3, color = "black") +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(limits = c(-0.3, 1.1),
+                              breaks = c(0, 0.5, 0.7, 1),
+                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
+                                                  labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
+                              ) +
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  ggplot2::geom_text(aes(y = -0.3, x = reorder(Target_Indice, Order), label = Target_Indice),
+                     hjust = 0, size = 4, family='serif',) + # 
+  #ggplot2::facet_wrap(~Target, ncol = 2) +
+  ggplot2::labs(y = "Split-Half Reliability", x = "") +
+  ggplot2::ggtitle("(a)") +
+  #ggplot2::scale_fill_manual(values = c("#FEBE8C", "#97DBAE"))+ 
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none",
+                 plot.title = element_text(size = 20, family = 'serif', hjust = 0),
+                 axis.text.x.top = element_text(size = 15, family='serif'),
+                 axis.text.x.bottom = element_text(size = 15, family='serif'),
+                 axis.text.y.left = element_blank(),
+                 axis.line.y.left = element_blank(),
+                 axis.ticks.y.left = element_blank(),
+                 axis.title.x = element_text(size = 15, family='serif')
+                 )
+
+ggsave(filename = "./FIGURE/main/Fig4a_meta_shr.png",
+       width = 10,
+       height = 8,
+       )
+```
+
+### Plot ICC
+```{r errorbar}
+p_icc <- plot[[3]] %>%
+  dplyr::filter(
+    !stringr::str_detect(Indice, "ez")
+  ) %>%
+  dplyr::mutate(
+    Indice = case_when(
+      Indice == "Efficiency" ~ "η",
+      Indice == "d Prime" ~ "d'",
+      Indice == "rwDDM v" ~ "v",
+      Indice == "rwDDM z" ~ "z",
+      TRUE ~ Indice
+    ),
+    Target_Indice = paste(
+      Target, Indice, sep = "_"), 
+  ) %>%
+  dplyr::filter(
+    (Paper_ID %in% c("P0E1")),
+    Type == "ICC2"
+  ) %>%
+  dplyr::arrange(ICC) %>%
+  dplyr::mutate(
+    Order = row_number(),
+    Outliar = case_when(LLCI <= 0 ~ TRUE, 
+                        LLCI > 0 ~FALSE),
+    LLCI = ifelse(LLCI < -0.10, -1.1, LLCI), 
+  ) %>%
+  dplyr::mutate(Order = row_number()) %>%
+  ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = ICC, group = Paper_ID, color = Type)) + # nolint
+  ggplot2::geom_errorbar(aes(color = Type, ymin = LLCI, ymax = ULCI, linetype = Outliar),
+                         width = 0.1, linewidth = 1, position = position_dodge(width = 1)) + # nolint
+  ggplot2::geom_point(shape = 15, size = 3, position = position_dodge(width = 1)) +
+  ggplot2::coord_flip() + #flips the x and y axes of a plot
+  ggplot2::scale_x_discrete() +
+  ggplot2::scale_y_continuous(
+    limits = c(-0.30, 1.10),
+    breaks = c(-1, 0, 0.5, 0.75, 0.9, 1),
+    sec.axis = sec_axis(
+      ~., breaks = c(0.25, 0.625, 0.825, 0.95),
+      labels = c("Poor", "Moderate", "Good", "Excellent")),
+  ) +
+  ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_text(aes(y = -0.3, x = reorder(Target_Indice, Order), label = Target_Indice),
+                     hjust = 0, size = 4, family='serif',) + # 
+  #ggplot2::scale_linetype_manual(values = c("dashed", "solid")) +
+  ggplot2::scale_fill_manual(values = c("black", "grey60")) +
+  ggplot2::scale_color_manual(values = c("black", "grey60")) +
+  #ggplot2::facet_wrap(~ type, ncol = 1) +
+  ggplot2::labs(y = "Intraclass Correlation Coefficient 2 (Absolute)", x = "") +
+  ggplot2::ggtitle("(b)") +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none",
+                 #axis.title = element_blank(),
+                 axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
+                 plot.title = element_text(size = 20, family = 'serif', hjust = 0),
+                 axis.text.x.top = element_text(size = 15, family='serif'),
+                 axis.text.x.bottom = element_text(size = 15, family='serif'),
+                 axis.text.y.left = element_blank(),
+                 axis.line.y.left = element_blank(),
+                 axis.ticks.y.left = element_blank(),
+                 axis.title.x = element_text(size = 15, family='serif')
+                 ) 
+ggsave(filename = "./FIGURE/main/Fig4b_meta_icc.png",
+       width = 10,
+       height = 8,
+       )
+```
+
+# Patchwork
+```{r errorbar}
+p_shr_icc <- p_shr + p_icc + plot_layout(ncol = 1, guides = 'collect')
+
+ggsave(plot = p_shr_icc,
+       filename = "./FIGURE/main/Fig4_shr_icc.png",
+       width = 10,
+       height = 16,
+       )
+rm(p_shr_icc, p_shr, p_icc)
+```
+
+

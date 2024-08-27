@@ -83,6 +83,7 @@ temp <- read.csv(
   ) %>%
   dplyr::select(
     Subject = subject,
+    # bug in R 4.1.3, the var name would be ï..subject
     Matching = Matching,
     Identity = Shape,
     RT_ms = mean_rt_mult,
