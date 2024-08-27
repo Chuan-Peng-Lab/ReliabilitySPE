@@ -14,17 +14,23 @@ res[[3]] <- list()
 names(res)[3] <- "ICC"
 ```
 
+# df[[1]]: P0E1, 
+  Friend, Stranger
+# df[[4]]: P51E1, 
+  Celebrity, Stranger
+# df[[19]]Ps2E1
+  Stranger
+
 # ICC: Self - Friend
-## df[[1]]: P0E1, df[[4]]: P51E1, df[[19]]Ps2E1
 ```{r Self - Friend}
-df_rt <- yukiBP::icc(df = df[[4]], Indice = "rt", Target = "Celebrity")
-df_acc <- yukiBP::icc(df = df[[4]], Indice = "acc", Target = "Celebrity")
-df_dp <- yukiBP::icc(df = df[[4]], Indice = "dp", Target = "Celebrity")
-df_eff <- yukiBP::icc(df = df[[4]], Indice = "eff", Target = "Celebrity")
-df_ezddm <- yukiBP::icc(df = df[[4]], Indice = "ezddm", Target = "Celebrity")
+df_rt <- yukiBP::icc(df = df[[1]], Indice = "rt", Target = "Friend")
+df_acc <- yukiBP::icc(df = df[[1]], Indice = "acc", Target = "Friend")
+df_dp <- yukiBP::icc(df = df[[1]], Indice = "dp", Target = "Friend")
+df_eff <- yukiBP::icc(df = df[[1]], Indice = "eff", Target = "Friend")
+df_ezddm <- yukiBP::icc(df = df[[1]], Indice = "ezddm", Target = "Friend")
 df_ezddmv <- df_ezddm[[1]]
 df_ezddmz <- df_ezddm[[2]]
-df_rwddm <- yukiBP::icc(df = df[[4]], Indice = "rwddm", Target = "Celebrity")
+df_rwddm <- yukiBP::icc(df = df[[1]], Indice = "rwddm", Target = "Friend")
 df_rwddmv <- df_rwddm[[1]]
 df_rwddmz <- df_rwddm[[2]]
 ```
@@ -36,16 +42,17 @@ rm(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
 ```
 
 ```{r DF for Plot ICC}
-res[[3]][[1]] <- icc_output(list = iccl[[1]], Target = "Celebrity") %>%
+res[[3]][[1]] <- icc_output(list = iccl[[1]], Target = "Friend") %>%
   dplyr::filter(type == "ICC2" | type == "ICC2k")
-names(res[[3]])[1] <- "Self - Celebrity"
+names(res[[3]])[1] <- "Self - Friend"
 ```
 
 ```{r Save icc_friend}
-write.csv(x = res[[3]][[1]],
-          file = "./OUTPUT/icc_P51E1_celebrity.csv",
-          row.names = FALSE,
-          )
+write.csv(
+  x = res[[3]][[1]],
+  file = "./OUTPUT/icc_P0E1_friend.csv",
+  row.names = FALSE,
+)
 ```
 
 
@@ -53,14 +60,14 @@ write.csv(x = res[[3]][[1]],
 
 # ICC: Self - Stranger
 ```{r Self - Stranger}
-df_rt <- yukiBP::icc(df = df[[19]], Indice = "rt", Target = "Stranger")
-df_acc <- yukiBP::icc(df = df[[19]], Indice = "acc", Target = "Stranger")
-df_dp <- yukiBP::icc(df = df[[19]], Indice = "dp", Target = "Stranger")
-df_eff <- yukiBP::icc(df = df[[19]], Indice = "eff", Target = "Stranger")
-df_ezddm <- yukiBP::icc(df = df[[19]], Indice = "ezddm", Target = "Stranger")
+df_rt <- yukiBP::icc(df = df[[1]], Indice = "rt", Target = "Stranger")
+df_acc <- yukiBP::icc(df = df[[1]], Indice = "acc", Target = "Stranger")
+df_dp <- yukiBP::icc(df = df[[1]], Indice = "dp", Target = "Stranger")
+df_eff <- yukiBP::icc(df = df[[1]], Indice = "eff", Target = "Stranger")
+df_ezddm <- yukiBP::icc(df = df[[1]], Indice = "ezddm", Target = "Stranger")
 df_ezddmv <- df_ezddm[[1]]
 df_ezddmz <- df_ezddm[[2]]
-df_rwddm <- yukiBP::icc(df = df[[19]], Indice = "rwddm", Target = "Stranger")
+df_rwddm <- yukiBP::icc(df = df[[1]], Indice = "rwddm", Target = "Stranger")
 df_rwddmv <- df_rwddm[[1]]
 df_rwddmz <- df_rwddm[[2]]
 ```
@@ -79,7 +86,7 @@ names(res[[3]])[2] <- "Self - Stranger"
 
 ```{r Save icc_stranger}
 write.csv(x = res[[3]][[2]],
-          file = "./OUTPUT/icc_Ps2E1_stranger.csv",
+          file = "./OUTPUT/icc_P0E1_stranger.csv",
           row.names = FALSE,
           )
 ```

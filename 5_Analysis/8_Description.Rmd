@@ -79,7 +79,7 @@ for (i in 1:length(temp)) {
   writeLines(output, path)
 }
 
-rm(temp, i, path)
+rm(temp, i, path, output)
 ```
 
 
@@ -115,7 +115,7 @@ for (i in 1:length(temp)) {
   writeLines(output, path)
 }
 
-rm(temp, i, path)
+rm(temp, i, path, output)
 ```
 
 
