@@ -331,7 +331,7 @@ plot_atvz <- plot_a + plot_t + plot_v + plot_z +
   plot_layout(guides = 'collect', ncol = 2)
 
 plot_atvz
-ggsave(plot = plot_atvz, filename = "./Pack_Com.png", width = 9, height = 6)
+ggsave(plot = plot_atvz, filename = "../FIGURE/supp/Fig_S3_DDM_Pkg_Comp.png", width = 9, height = 6)
 ```
 
 # DESC
