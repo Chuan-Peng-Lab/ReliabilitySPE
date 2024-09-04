@@ -1171,7 +1171,7 @@ plot[[9]] <- temp %>%
   )
 
 rm(
-  temp, wtm_r, wtm_t, trial_col, steps, result_df,
+  temp, wtm_r, wtm_t, steps, result_df,
   generate_columns, i, element_name
 )
 
@@ -1228,7 +1228,7 @@ pic1 <- temp %>%
   ggplot2::scale_y_continuous(
     limits = c(0, 1),
     expand = c(0, 0),
-    breaks = c(0, 0.5, 0.7, 0.9),
+    breaks = c(0, 0.5, 0.7, 0.8),
   ) +
   ggplot2::scale_x_continuous(
     limits = c(0, 300),
@@ -1236,6 +1236,8 @@ pic1 <- temp %>%
     breaks = c(0, 60, 120, 180, 240)
   ) +
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::geom_hline(yintercept = 0.50, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.70, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.80, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
   ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00", "#03BE66")) +
@@ -1295,7 +1297,7 @@ pic2 <- temp %>%
   ggplot2::scale_y_continuous(
     limits = c(0, 1),
     expand = c(0, 0),
-    breaks = c(0, 0.5, 0.7, 0.9),
+    breaks = c(0, 0.5, 0.7, 0.8),
   ) +
   ggplot2::scale_x_continuous(
     limits = c(0, 300),
@@ -1303,6 +1305,8 @@ pic2 <- temp %>%
     breaks = c(0, 60, 120, 180, 240)
   ) +
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::geom_hline(yintercept = 0.50, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.70, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.80, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::scale_color_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +
   ggplot2::scale_fill_manual(values = c("#00BFC4", "#00A8FF", "#C678FF", "#FF60CC")) +

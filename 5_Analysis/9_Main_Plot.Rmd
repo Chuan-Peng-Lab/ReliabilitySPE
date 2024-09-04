@@ -104,14 +104,14 @@ ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
   ggplot2::coord_flip() + #flips the x and y axes of a plot
   ggplot2::scale_x_discrete() +
   ggplot2::scale_y_continuous(limits = c(-0.3, 1.1),
-                              breaks = c(0, 0.5, 0.7, 1),
-                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 1),
+                              breaks = c(0, 0.5, 0.7, 0.8),
+                              sec.axis = sec_axis(~., breaks = c(0, 0.5, 0.7, 0.8),
                                                   labels = c("Unacceptable", "Poor", "Acceptable", "Excellent")),
                               ) +
   ggplot2::geom_hline(yintercept = 0, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.5, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
   ggplot2::geom_hline(yintercept = 0.7, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
-  ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
+  ggplot2::geom_hline(yintercept = 0.8, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + 
   ggplot2::geom_text(aes(y = -0.3, x = reorder(Target_Indice, Order), label = Target_Indice),
                      hjust = 0, size = 4, family='serif',) + # 
   #ggplot2::facet_wrap(~Target, ncol = 2) +
@@ -130,7 +130,7 @@ ggplot2::ggplot(., aes(x = reorder(Target_Indice, Order), y = wtmr)) +
                  )
 
 ggsave(filename = "./FIGURE/main/Fig4a_meta_shr.png",
-       width = 10,
+       width = 15,
        height = 8,
        )
 ```
@@ -203,7 +203,7 @@ p_icc <- plot[[3]] %>%
                  axis.title.x = element_text(size = 15, family='serif')
                  ) 
 ggsave(filename = "./FIGURE/main/Fig4b_meta_icc.png",
-       width = 10,
+       width = 15,
        height = 8,
        )
 ```
@@ -214,10 +214,325 @@ p_shr_icc <- p_shr + p_icc + plot_layout(ncol = 1, guides = 'collect')
 
 ggsave(plot = p_shr_icc,
        filename = "./FIGURE/main/Fig4_shr_icc.png",
-       width = 10,
+       width = 15,
        height = 16,
        )
 rm(p_shr_icc, p_shr, p_icc)
 ```
 
 
+## Figure 5: Needed Trials
+```{r}
+################################################################################
+plot[[9]] <- plot[[1]] %>%
+  dplyr::left_join(
+    desc[[1]], by = "Paper_ID"
+  ) %>%
+  dplyr::filter(
+    !stringr::str_detect(Indice, "ez")
+  ) %>%
+  dplyr::mutate(
+    .,
+    Indice = case_when(
+      Indice == "Efficiency" ~ "η",
+      Indice == "d Prime" ~ "d'",
+      Indice == "rwDDM v" ~ "v",
+      Indice == "rwDDM z" ~ "z",
+      #Indice == "rwDDM v" ~ "v(RWiener)",
+      #Indice == "rwDDM z" ~ "z(RWiener)",
+      #Indice == "ezDDM v" ~ "v(hausekeep)",
+      #Indice == "ezDDM z" ~ "z(hausekeep)",
+      TRUE ~ Indice
+    ),
+    Target = factor(Target),
+    Indice = factor(Indice),
+    unique_ID = paste(Target, Indice, sep="_")
+  ) 
+
+temp <- base::split(x = plot[[9]], f = list(plot[[9]]$unique_ID))
+
+result_df <- data.frame(
+  unique_ID = character(0), 
+  wtm_r = numeric(0), 
+  wtm_t = numeric(0), 
+  LLCI = numeric(0), 
+  ULCI = numeric(0)
+  
+)
+
+for (i in seq_along(temp)) {
+  # 计算AATtools::cormean
+  wtm_r <- AATtools::cormean(r = temp[[i]]$r, n = temp[[i]]$Sample_Size, wts = "df")
+  wtm_t <- stats::weighted.mean(x = temp[[i]]$Trials, w = temp[[i]]$Sample_Size)
+  LLCI <- AATtools::cormean(r = temp[[i]]$LLCI, n = temp[[i]]$Sample_Size, wts = "df")
+  ULCI <- AATtools::cormean(r = temp[[i]]$ULCI, n = temp[[i]]$Sample_Size, wts = "df")
+  
+  # 获取子集的元素名
+  element_name <- names(temp)[i]
+  
+  # 将结果添加到数据框中
+  result_df <- rbind(result_df, data.frame(
+    unique_ID = element_name, 
+    wtm_r = wtm_r,
+    wtm_t = wtm_t,
+    LLCI = LLCI,
+    ULCI = ULCI
+    )
+  ) %>%
+    dplyr::mutate(
+      LLCI = case_when(
+        LLCI < 0 ~ 0,
+        TRUE ~ LLCI,
+      ),
+    )
+}
+
+# 创建一个空的数据框
+generate_columns <- function(step, wtm_r, wtm_t, LLCI, ULCI) {
+  tibble(
+    !!paste0("Trial_", step) := (step - step * wtm_r) / (wtm_r - step * wtm_r) * wtm_t,
+    !!paste0("LLCI_", step) := (step - step * ULCI) / (ULCI - step * ULCI) * wtm_t,
+    !!paste0("ULCI_", step) := (step - step * LLCI) / (LLCI - step * LLCI) * wtm_t
+  )
+}
+
+# 使用 map_dfc 对多个 step 应用生成列的函数
+steps <- seq(0, 0.99, by = 0.01)
+
+plot[[9]] <- result_df %>%
+  tidyr::separate(unique_ID, into = c("Target", "Indice"), sep = "_") %>%
+  dplyr::mutate(
+    Trial_0 = 0, LLCI_0 = 0, ULCI_0 = 0,
+  ) %>%
+  dplyr::bind_cols(
+    purrr::map_dfc(
+      .x = steps[-1], 
+      .f = generate_columns, 
+      wtm_r = .$wtm_r, 
+      wtm_t = .$wtm_t, 
+      LLCI = .$LLCI, 
+      ULCI = .$ULCI
+    )
+  ) %>%
+  dplyr::select(-wtm_r, -wtm_t, -LLCI, -ULCI)
+
+################################################################################
+
+Mean <- plot[[9]] %>%
+  dplyr::select(
+    Target, Indice, contains("Trial_")
+  ) %>%
+  tidyr::pivot_longer(
+    cols = starts_with("Trial_"), 
+    names_to = "r_Expected",
+    values_to = "Mean"
+  ) %>%
+  dplyr::mutate(
+    r_Expected = str_remove(r_Expected, "Trial_"),
+    r_Expected = as.numeric(r_Expected)
+  )
+
+LLCI <- plot[[9]] %>%
+  dplyr::select(
+    Target, Indice, contains("LLCI_")
+  ) %>%
+  tidyr::pivot_longer(
+    cols = starts_with("LLCI_"), 
+    names_to = "r_Expected",
+    values_to = "LLCI"
+  ) %>%
+  dplyr::mutate(
+    r_Expected = str_remove(r_Expected, "LLCI_"),
+    r_Expected = as.numeric(r_Expected)
+  )
+
+ULCI <- plot[[9]] %>%
+  dplyr::select(
+    Target, Indice, contains("ULCI_")
+  ) %>%
+  tidyr::pivot_longer(
+    cols = starts_with("ULCI_"), 
+    names_to = "r_Expected",
+    values_to = "ULCI"
+  ) %>%
+  dplyr::mutate(
+    r_Expected = str_remove(r_Expected, "ULCI_"),
+    r_Expected = as.numeric(r_Expected)
+  )
+
+temp <- merge(Mean, LLCI, by = c("Target", "Indice", "r_Expected"), all.x = TRUE)
+temp <- merge(temp, ULCI, by = c("Target", "Indice", "r_Expected"), all.x = TRUE)
+
+rm(Mean, LLCI, ULCI)
+
+plot[[9]] <- temp %>%
+  dplyr::filter(Target %in% c("Close", "Stranger")) %>%
+  dplyr::mutate(
+    Target = factor(
+      Target,levels = c("Close", "Stranger", "Celebrity", "NonPerson")
+    ),
+    Indice = factor(
+      Indice, 
+      levels = c(
+        "RT", "ACC", "η", "d'", "v", "z"
+      )
+    ),
+  )
+
+rm(
+  temp, wtm_r, wtm_t, trial_col, steps, result_df,
+  generate_columns, i, element_name
+)
+
+names(plot)[9] <- "Spearman-Brown"
+```
+
+```{r}
+temp <- plot[[9]] %>%
+  dplyr::filter(
+    Target %in% c("Close", "Stranger"),
+    (Indice %in% c("RT", "ACC", "η")),
+  ) %>%
+  dplyr::mutate(
+    Mean = case_when(
+      Mean >= 300 ~ 300,
+      TRUE ~ Mean,
+    ),
+    LLCI = case_when(
+      LLCI >= 300 ~ 300,
+      TRUE ~ LLCI,
+    ),
+    ULCI = case_when(
+      ULCI >= 300 ~ 300,
+      TRUE ~ ULCI,
+    ),
+  ) %>%
+  dplyr::filter(LLCI < 300) 
+
+temp1 <- temp %>%
+  dplyr::filter(Mean < 300)
+
+temp2 <- temp %>%
+  dplyr::filter(Mean >= 300) %>%
+  dplyr::group_by(Target, Indice) %>%
+  dplyr::mutate(r_Expected = min(r_Expected)) %>%
+  dplyr::ungroup()
+
+temp_bind <- dplyr::bind_rows(temp1, temp2)
+
+pic1 <- temp %>%
+  
+  ggplot2::ggplot(
+    data = ., 
+    mapping = aes(
+      x = Mean, y = r_Expected, 
+      color = Indice, fill = Indice
+    )
+  ) +
+  ggplot2::geom_ribbon(
+    aes(xmin = ULCI, xmax = LLCI, fill = Indice),
+    linetype = "dashed", alpha = 0.3
+  ) +
+  ggplot2::geom_line(data = temp_bind) +
+  ggplot2::scale_y_continuous(
+    limits = c(0, 1),
+    expand = c(0, 0),
+    breaks = c(0, 0.5, 0.7, 0.8),
+  ) +
+  ggplot2::scale_x_continuous(
+    limits = c(0, 300),
+    expand = c(0, 0),
+    breaks = c(0, 60, 120, 180, 240)
+  ) +
+  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::geom_hline(yintercept = 0.50, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.70, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.80, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00")) +
+  ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00")) +
+  ggplot2::labs(
+    x = "Expected Trial Numbers", 
+    y = "Expected Spli-Half Reliability",
+  ) +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+temp <- plot[[9]] %>%
+  dplyr::filter(
+    Target %in% c("Close", "Stranger"),
+    Indice %in% c("d'", "v", "z")
+  ) %>%
+  dplyr::mutate(
+    Mean = case_when(
+      Mean >= 300 ~ 300,
+      TRUE ~ Mean,
+    ),
+    LLCI = case_when(
+      LLCI >= 300 ~ 300,
+      TRUE ~ LLCI,
+    ),
+    ULCI = case_when(
+      ULCI >= 300 ~ 300,
+      TRUE ~ ULCI,
+    ),
+  ) %>%
+  dplyr::filter(LLCI < 300) 
+
+temp1 <- temp %>%
+  dplyr::filter(Mean < 300)
+
+temp2 <- temp %>%
+  dplyr::filter(Mean >= 300) %>%
+  dplyr::group_by(Target, Indice) %>%
+  dplyr::mutate(r_Expected = min(r_Expected)) %>%
+  dplyr::ungroup()
+
+temp_bind <- dplyr::bind_rows(temp1, temp2)
+
+
+pic2 <- temp %>%
+  ggplot2::ggplot(
+    data = ., 
+    mapping = aes(
+      x = Mean, y = r_Expected, 
+      color = Indice, fill = Indice
+    )
+  ) +
+  ggplot2::geom_ribbon(
+    aes(xmin = ULCI, xmax = LLCI, fill = Indice),
+    linetype = "dashed", alpha = 0.3
+  ) +
+  ggplot2::geom_line(data = temp_bind) +
+  ggplot2::scale_y_continuous(
+    limits = c(0, 1),
+    expand = c(0, 0),
+    breaks = c(0, 0.5, 0.7, 0.8),
+  ) +
+  ggplot2::scale_x_continuous(
+    limits = c(0, 300),
+    expand = c(0, 0),
+    breaks = c(0, 60, 120, 180, 240)
+  ) +
+  ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
+  ggplot2::geom_hline(yintercept = 0.50, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.70, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_hline(yintercept = 0.80, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::scale_color_manual(values = c("#00BFC4", "#00A8FF", "#C678FF")) +
+  ggplot2::scale_fill_manual(values = c("#00BFC4", "#00A8FF", "#C678FF")) +
+  ggplot2::labs(
+    x = "Expected Trial Numbers", 
+    y = "Expected Spli-Half Reliability",
+  ) +
+  papaja::theme_apa() +
+  ggplot2::theme(legend.position = "none")
+
+pic <- pic1 + pic2 + plot_layout(guides = 'collect')
+
+ggsave(
+  filename = "./FIGURE/main/Fig_5_Spear_Brown.png",
+  width = 10,
+  height = 8,
+)
+
+rm(pic1, pic2, pic, temp1, temp2, temp, temp_bind)
+```
