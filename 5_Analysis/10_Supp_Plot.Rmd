@@ -596,7 +596,7 @@ rm(p, p1, p2)
 
 ## Figure S6: ICC with & without COV
 ```{r}
-plot[[5]] <- read.csv("./OUTPUT/icc/icc_cov_cmp.csv") %>%
+plot[[5]] <- read.csv("./OUTPUT/icc/icc_cov_ci.csv") %>%
   dplyr::mutate(
     Target = case_when(
       Target == "Friend" ~ "Close",
@@ -629,13 +629,22 @@ plot[[5]] <- read.csv("./OUTPUT/icc/icc_cov_cmp.csv") %>%
     ICC2
   ) %>%
   dplyr::mutate(
-    Order = row_number()
+    Order = row_number(),
+    Outliar = case_when(
+      LLCI == 0 ~ TRUE, 
+      LLCI > 0 ~ FALSE
+    ),
   ) 
 ```
 
 ```{r}
-ggplot2::ggplot(data = plot[[5]], aes(x = reorder(Target_Indice, Order), y = ICC2, fill = cov)) +
-  ggplot2::geom_bar(stat = "Identity", position = "dodge") +
+p <- ggplot2::ggplot(data = plot[[5]], aes(x = stats::reorder(Target_Indice, Order), color = cov, y = ICC2)) +
+  #ggplot2::geom_bar(stat = "Identity", position = "dodge") +
+  ggplot2::geom_errorbar(
+    aes(ymin = LLCI, ymax = ULCI),
+    width = 0.1, linewidth = 1, position = position_dodge(width = 1)
+  ) + # nolint
+  ggplot2::geom_point(shape = 15, size = 3, position = position_dodge(width = 1)) +
   ggplot2::scale_y_continuous(
     limits = c(-0.4,1.1),
     breaks = c(0, 0.5, 0.75, 0.9, 1),
@@ -649,16 +658,20 @@ ggplot2::ggplot(data = plot[[5]], aes(x = reorder(Target_Indice, Order), y = ICC
   ggplot2::geom_hline(yintercept = 0.75, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 0.9, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::geom_hline(yintercept = 1, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_text(aes(y = -0.4, x = reorder(Target_Indice, Order), label = Target_Indice),
-                     hjust = 0, size = 4, family='serif',) + # 
-  ggplot2::scale_fill_manual(values = c("grey30", "grey70")) +
+  ggplot2::geom_text(
+    aes(y = -0.4, x = stats::reorder(Target_Indice, Order), label = Target_Indice),
+    hjust = 0, size = 4, family='serif', color = "black"
+  ) + # 
+  ggplot2::scale_color_manual(values = c("grey30", "grey70")) +
   ggplot2::guides(fill = guide_legend(reverse = TRUE)) + # 改变图例顺序
-  ggplot2::facet_wrap(facets = ~Type) +
-  ggplot2::labs(fill = "Covariate(BDI-II Scores)", x = "", y = "") +
+  ggplot2::labs(
+    color = "Covariate(BDI-II Scores)", 
+    x = "", 
+    y = "Intraclass Correlation Coefficient 2 (Absolute)"
+  ) +
   ggplot2::coord_flip() +
   papaja::theme_apa() +
   ggplot2::theme(
-    #legend.position = "none",
     axis.title = element_blank(),
     axis.ticks.x = element_line(color = "transparent"), #消除坐标轴上刻度凸起
     plot.title = element_text(size = 20, family = 'serif', hjust = 0),
@@ -670,10 +683,12 @@ ggplot2::ggplot(data = plot[[5]], aes(x = reorder(Target_Indice, Order), y = ICC
     axis.title.x = element_text(size = 15, family='serif')
   ) 
 
-ggsave(filename = "./FIGURE/supp/Fig_S7_Cov.png",
-       width = 12,
-       height = 8,
-       )
+ggsave(
+  plot = p,
+  filename = "./FIGURE/supp/Fig_S7_Cov_CI.png",
+  width = 12,
+  height = 8,
+)
 ```
 
 ## Figure S8: Correlation SHR & Trials 
