@@ -407,7 +407,33 @@ temp <- plot[[9]] %>%
       TRUE ~ ULCI,
     ),
   ) %>%
-  dplyr::filter(LLCI < 300) 
+  dplyr::filter(LLCI < 300) %>%
+  dplyr::group_by(Target, Indice) %>%
+  dplyr::mutate(
+    xend_5 = Mean[r_Expected == 0.5][1],
+    xend_7 = Mean[r_Expected == 0.7][1],
+    xend_8 = Mean[r_Expected == 0.8][1],
+  ) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(
+    xend_5 = case_when(
+      xend_5 >= 300 ~ NA,
+      TRUE ~ xend_5,
+    ),
+    xend_7 = case_when(
+      xend_7 >= 300 ~ NA,
+      TRUE ~ xend_7,
+    ),
+    xend_8 = case_when(
+      xend_8 >= 300 ~ NA,
+      TRUE ~ xend_8,
+    ),
+  )
+
+save <- temp %>%
+  dplyr::select(Target, Indice, xend_5, xend_7, xend_8) %>%
+  dplyr::distinct()
+write.csv(x = save, file = "./OUTPUT/r_Expected_1.csv")
 
 temp1 <- temp %>%
   dplyr::filter(Mean < 300)
@@ -418,10 +444,9 @@ temp2 <- temp %>%
   dplyr::mutate(r_Expected = min(r_Expected)) %>%
   dplyr::ungroup()
 
-temp_bind <- dplyr::bind_rows(temp1, temp2)
+temp_bind <- dplyr::bind_rows(temp1, temp2) 
 
-pic1 <- temp %>%
-  
+pic1 <- temp_bind %>%
   ggplot2::ggplot(
     data = ., 
     mapping = aes(
@@ -434,6 +459,7 @@ pic1 <- temp %>%
     linetype = "dashed", alpha = 0.3
   ) +
   ggplot2::geom_line(data = temp_bind) +
+  ggplot2::coord_cartesian(xlim = c(0, 300)) +
   ggplot2::scale_y_continuous(
     limits = c(0, 1),
     expand = c(0, 0),
@@ -445,9 +471,33 @@ pic1 <- temp %>%
     breaks = c(0, 60, 120, 180, 240)
   ) +
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
-  ggplot2::geom_hline(yintercept = 0.50, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 0.70, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 0.80, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_segment(
+    mapping = aes(x = 0, xend = xend_5, y = 0.50, yend = 0.50),
+    linetype = "dotted", color = "black", linewidth = 0.5, alpha = 0.5
+  ) +
+  ggplot2::geom_segment(
+    mapping = aes(x = 0, xend = xend_7, y = 0.70, yend = 0.70),
+    linetype = "dotted", color = "black", linewidth = 0.5, alpha = 0.5
+  ) +
+  ggplot2::geom_segment(
+    mapping = aes(x = 0, xend = xend_8, y = 0.80, yend = 0.80),
+    linetype = "dotted", color = "black", linewidth = 0.5, alpha = 0.5
+  ) +
+  ggplot2::geom_segment(
+    mapping = aes(x = xend_5, xend = xend_5, y = 0, yend = 0.50),
+    linetype = "dotted", color = "black", linewidth = 0.5, alpha = 0.5
+  ) +
+  ggplot2::geom_segment(
+    mapping = aes(x = xend_7, xend = xend_7, y = 0, yend = 0.70),
+    linetype = "dotted", color = "black", linewidth = 0.5, alpha = 0.5
+  ) +
+  ggplot2::geom_segment(
+    mapping = aes(x = xend_8, xend = xend_8, y = 0, yend = 0.80),
+    linetype = "dotted", color = "black", linewidth = 0.5, alpha = 0.5
+  ) +
+  #ggplot2::geom_hline(yintercept = 0.50, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  #ggplot2::geom_hline(yintercept = 0.70, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  #ggplot2::geom_hline(yintercept = 0.80, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::scale_color_manual(values = c("#F8766D", "#CD9600", "#7AAC00")) +
   ggplot2::scale_fill_manual(values = c("#F8766D", "#CD9600", "#7AAC00")) +
   ggplot2::labs(
@@ -476,7 +526,33 @@ temp <- plot[[9]] %>%
       TRUE ~ ULCI,
     ),
   ) %>%
-  dplyr::filter(LLCI < 300) 
+  dplyr::filter(LLCI < 300) %>%
+  dplyr::group_by(Target, Indice) %>%
+  dplyr::mutate(
+    xend_5 = Mean[r_Expected == 0.5][1],
+    xend_7 = Mean[r_Expected == 0.7][1],
+    xend_8 = Mean[r_Expected == 0.8][1],
+  ) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(
+    xend_5 = case_when(
+      xend_5 >= 300 ~ NA,
+      TRUE ~ xend_5,
+    ),
+    xend_7 = case_when(
+      xend_7 >= 300 ~ NA,
+      TRUE ~ xend_7,
+    ),
+    xend_8 = case_when(
+      xend_8 >= 300 ~ NA,
+      TRUE ~ xend_8,
+    ),
+  )
+
+save <- temp %>%
+  dplyr::select(Target, Indice, xend_5, xend_7, xend_8) %>%
+  dplyr::distinct()
+write.csv(x = save, file = "./OUTPUT/r_Expected_2.csv")
 
 temp1 <- temp %>%
   dplyr::filter(Mean < 300)
@@ -503,6 +579,7 @@ pic2 <- temp %>%
     linetype = "dashed", alpha = 0.3
   ) +
   ggplot2::geom_line(data = temp_bind) +
+  ggplot2::coord_cartesian(xlim = c(0, 300)) +
   ggplot2::scale_y_continuous(
     limits = c(0, 1),
     expand = c(0, 0),
@@ -514,9 +591,33 @@ pic2 <- temp %>%
     breaks = c(0, 60, 120, 180, 240)
   ) +
   ggplot2::facet_grid(cols = vars(Target), rows = vars(Indice)) +
-  ggplot2::geom_hline(yintercept = 0.50, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 0.70, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
-  ggplot2::geom_hline(yintercept = 0.80, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  ggplot2::geom_segment(
+    mapping = aes(x = 0, xend = xend_5, y = 0.50, yend = 0.50),
+    linetype = "dotted", color = "black", linewidth = 0.5, alpha = 0.5
+  ) +
+  ggplot2::geom_segment(
+    mapping = aes(x = 0, xend = xend_7, y = 0.70, yend = 0.70),
+    linetype = "dotted", color = "black", linewidth = 0.5, alpha = 0.5
+  ) +
+  ggplot2::geom_segment(
+    mapping = aes(x = 0, xend = xend_8, y = 0.80, yend = 0.80),
+    linetype = "dotted", color = "black", linewidth = 0.5, alpha = 0.5
+  ) +
+  ggplot2::geom_segment(
+    mapping = aes(x = xend_5, xend = xend_5, y = 0, yend = 0.50),
+    linetype = "dotted", color = "black", linewidth = 0.5, alpha = 0.5
+  ) +
+  ggplot2::geom_segment(
+    mapping = aes(x = xend_7, xend = xend_7, y = 0, yend = 0.70),
+    linetype = "dotted", color = "black", linewidth = 0.5, alpha = 0.5
+  ) +
+  ggplot2::geom_segment(
+    mapping = aes(x = xend_8, xend = xend_8, y = 0, yend = 0.80),
+    linetype = "dotted", color = "black", linewidth = 0.5, alpha = 0.5
+  ) +
+  #ggplot2::geom_hline(yintercept = 0.50, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  #ggplot2::geom_hline(yintercept = 0.70, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
+  #ggplot2::geom_hline(yintercept = 0.80, linetype = "dotted", color = "black", linewidth = 1, alpha = 0.5) + # nolint
   ggplot2::scale_color_manual(values = c("#00BFC4", "#00A8FF", "#C678FF")) +
   ggplot2::scale_fill_manual(values = c("#00BFC4", "#00A8FF", "#C678FF")) +
   ggplot2::labs(

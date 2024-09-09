@@ -143,7 +143,7 @@ icc_output <- function(list, Target) {
     }
 
   #
-  final <- rbindlist(result)
+  final <- data.table::rbindlist(result)
   final$ICC_type <- rep(c("RT", "ACC",
                           "d Prime", "Efficiency",
                           "ezDDM v","ezDDM z",
