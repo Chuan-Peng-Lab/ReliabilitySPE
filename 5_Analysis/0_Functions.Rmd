@@ -143,7 +143,7 @@ icc_output <- function(list, Target) {
     }
 
   #
-  final <- rbindlist(result)
+  final <- data.table::rbindlist(result)
   final$ICC_type <- rep(c("RT", "ACC",
                           "d Prime", "Efficiency",
                           "ezDDM v","ezDDM z",
@@ -169,4 +169,42 @@ icc_output <- function(list, Target) {
 
   return(final)
 }
+```
+
+```{r}
+icc_output <- function(
+  Y, cov = NA, subject, session, data, iterations
+){
+  if (is.na(cov)) {
+    formula <- paste0(Y, "~ 1 + (1|", subject, ") + (1|", session, ")")
+  }
+  else {
+    formula <- paste0(Y, "~ 1 + (1|", subject, ") + (1|", session, ")", "+", cov)
+  }
+  
+  model <- lme4::lmer(formula = formula, data = data) 
+  res <- performance::icc(
+    model = model, 
+    ci = TRUE, ci_method = "boot", iterations = iterations,
+    tolerance = 1e-999
+  )
+  
+  icc_mean <- res[1,1]
+  icc_llci <- res[2,1]
+  icc_ulci <- res[3,1]
+  out <- c(icc_mean, icc_llci, icc_ulci)
+  
+  return(out)
+}
+```
+
+```{r}
+icc_output(
+  Y = "RT",
+  #cov = "BDI",
+  subject = "Subject",
+  session = "Session",
+  data = iccl_Cov[[1]][[1]],
+  iterations = 10
+)
 ```

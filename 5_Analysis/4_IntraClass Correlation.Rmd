@@ -10,15 +10,27 @@ iccl <- list(list(), list())
 names(iccl)[1] <- "Self - Friend"
 names(iccl)[2] <- "Self - Stranger"
 
+iccl_Cov <- list(list(), list())
+names(iccl_Cov)[1] <- "Self - Friend"
+names(iccl_Cov)[2] <- "Self - Stranger"
+
 res[[3]] <- list()
 names(res)[3] <- "ICC"
+```
+
+```{r}
+df_Sub_Infor <- read.csv(
+  file = "./DATA/Sub_Info.csv"
+) %>%
+  dplyr::mutate(BDI = as.numeric(BDI)) %>%
+  dplyr::select(Subject, BDI)
 ```
 
 # df[[1]]: P0E1, 
   Friend, Stranger
 # df[[4]]: P51E1, 
   Celebrity, Stranger
-# df[[19]]Ps2E1
+# df[[19]]: Ps2E1
   Stranger
 
 # ICC: Self - Friend
@@ -36,9 +48,67 @@ df_rwddmz <- df_rwddm[[2]]
 ```
 
 ```{r DF for Plot ICC}
-iccl[[1]] <- list(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
+iccl[[1]] <- list(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz) # nolint
 
-rm(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
+names(iccl[[1]])[1] <- "RT"
+names(iccl[[1]])[2] <- "ACC"
+names(iccl[[2]])[3] <- "d"
+names(iccl[[1]])[4] <- "η"
+names(iccl[[1]])[5] <- "ezDDM_v"
+names(iccl[[1]])[6] <- "ezDDM_z"
+names(iccl[[1]])[7] <- "rwDDM_v"
+names(iccl[[1]])[8] <- "rwDDM_z"
+
+rm(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz, df_ezddm, df_rwddm)
+```
+
+```{r}
+for (i in 1:length(iccl[[1]])) {
+  iccl_Cov[[1]][[i]] <- iccl[[1]][[i]] %>%
+    dplyr::mutate(
+      Subject = c(
+        6001, 6002, 6003, 6004, 6005, 6006, 6007,
+        6009, 6010, 6011, 6012, 6013, 6014, 6016,
+        6017, 6018, 6019, 6020, 6021, 6022, 6023,
+        6024, 6025, 6026, 6027, 6028, 6029, 6030,
+        6032, 6033, 6034, 6035, 6036
+      )
+    ) %>%
+    dplyr::rename(
+      Session_1 = 1,
+      Session_2 = 2,
+      Session_3 = 3,
+      Session_4 = 4,
+      Session_5 = 5,
+      Session_6 = 6,
+    ) %>%
+    tidyr::pivot_longer(
+      cols = starts_with("Session_"),
+      names_to = "Session",
+      values_to = "SPE"
+    ) %>%
+    dplyr::mutate(
+      Session = stringr::str_remove(Session, "Session_")
+    ) %>%
+    dplyr::rename(
+     !!names(iccl[[1]])[i] := SPE
+    ) %>%
+    dplyr::left_join(df_Sub_Infor, by = "Subject")
+}
+temp <- base::do.call(data.frame, iccl_Cov[[1]]) %>%
+  dplyr::select(
+    Subject, Session, BDI,
+    RT, ACC, 
+    d, η, 
+    ezDDM_v, ezDDM_z,
+    rwDDM_v, rwDDM_z
+  ) 
+
+write.csv(
+  x = temp,
+  file = "./OUTPUT/df_icc_Friend.csv",
+  row.names = FALSE
+)
 ```
 
 ```{r DF for Plot ICC}
@@ -75,8 +145,163 @@ df_rwddmz <- df_rwddm[[2]]
 ```{r DF for Plot ICC}
 iccl[[2]] <- list(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
 
+names(iccl[[2]])[1] <- "RT"
+names(iccl[[2]])[2] <- "ACC"
+names(iccl[[2]])[3] <- "d"
+names(iccl[[2]])[4] <- "η"
+names(iccl[[2]])[5] <- "ezDDM_v"
+names(iccl[[2]])[6] <- "ezDDM_z"
+names(iccl[[2]])[7] <- "rwDDM_v"
+names(iccl[[2]])[8] <- "rwDDM_z"
+
 rm(df_rt, df_acc, df_dp, df_eff, df_ezddmv, df_ezddmz, df_rwddmv, df_rwddmz)
 ```
+
+```{r}
+for (i in 1:length(iccl[[2]])) {
+  iccl_Cov[[2]][[i]] <- iccl[[2]][[i]] %>%
+    dplyr::mutate(
+      Subject = c(
+        6001, 6002, 6003, 6004, 6005, 6006, 6007,
+        6009, 6010, 6011, 6012, 6013, 6014, 6016,
+        6017, 6018, 6019, 6020, 6021, 6022, 6023,
+        6024, 6025, 6026, 6027, 6028, 6029, 6030,
+        6032, 6033, 6034, 6035, 6036
+      )
+    ) %>%
+    dplyr::rename(
+      Session_1 = 1,
+      Session_2 = 2,
+      Session_3 = 3,
+      Session_4 = 4,
+      Session_5 = 5,
+      Session_6 = 6,
+    ) %>%
+    tidyr::pivot_longer(
+      cols = starts_with("Session_"),
+      names_to = "Session",
+      values_to = "SPE"
+    ) %>%
+    dplyr::mutate(
+      Session = stringr::str_remove(Session, "Session_")
+    ) %>%
+    dplyr::rename(
+     !!names(iccl[[2]])[i] := SPE
+    ) %>%
+    dplyr::left_join(df_Sub_Infor, by = "Subject")
+}
+temp <- base::do.call(data.frame, iccl_Cov[[2]]) %>%
+  dplyr::select(
+    Subject, Session, BDI,
+    RT, ACC, 
+    d, η, 
+    ezDDM_v, ezDDM_z,
+    rwDDM_v, rwDDM_z
+  ) 
+
+write.csv(
+  x = temp,
+  file = "./OUTPUT/df_icc_Stranger.csv",
+  row.names = FALSE
+)
+```
+
+```{r}
+# 创建一个空的data frame，列名为Indice, ICC, LLCI, ULCI
+icc_friend <- data.frame(
+  Target = character(),  # Target列
+  Indice = character(),
+  ICC = numeric(),
+  LLCI = numeric(),
+  ULCI = numeric(),
+  stringsAsFactors = FALSE
+)
+
+# 定义y的向量
+y <- c(
+  "RT", "ACC", "d", "η", 
+  "ezDDM_v", "ezDDM_z", "rwDDM_v", "rwDDM_z"
+)
+#output <- list()
+# 遍历y中的每个Y值
+for (i in 1 : length(y)) {
+  # 调用icc_output函数，并存储结果
+  output <- icc_output(
+    Y = y[i],
+    #cov = "BDI",
+    subject = "Subject",
+    session = "Session",
+    data = iccl_Cov[[1]][[i]],
+    iterations = 1000
+  )
+  
+  # 将结果添加到数据框中
+  icc_friend <- rbind(icc_friend, data.frame(
+    Target = "Friend",
+    Indice = y[i],
+    ICC = output[1],
+    LLCI = output[2],
+    ULCI = output[3],
+    stringsAsFactors = FALSE
+  ))
+}
+rm(output, i, y)
+
+write.csv(
+  x = icc_friend, 
+  file = "./OUTPUT/icc_wocov_friend.csv",
+  row.names = FALSE
+)
+```
+
+```{r}
+# 创建一个空的data frame，列名为Indice, ICC, LLCI, ULCI
+icc_stranger <- data.frame(
+  Target = character(),  # Target列
+  Indice = character(),
+  ICC = numeric(),
+  LLCI = numeric(),
+  ULCI = numeric(),
+  stringsAsFactors = FALSE
+)
+
+# 定义y的向量
+y <- c(
+  "RT", "ACC", "d", "η", 
+  "ezDDM_v", "ezDDM_z", "rwDDM_v", "rwDDM_z"
+)
+#output <- list()
+# 遍历y中的每个Y值
+for (i in 1 : length(y)) {
+  # 调用icc_output函数，并存储结果
+  output <- icc_output(
+    Y = y[i],
+    #cov = "BDI",
+    subject = "Subject",
+    session = "Session",
+    data = iccl_Cov[[2]][[i]],
+    iterations = 1000
+  )
+  
+  # 将结果添加到数据框中
+  icc_stranger <- rbind(icc_stranger, data.frame(
+    Target = "Stranger",
+    Indice = y[i],
+    ICC = output[1],
+    LLCI = output[2],
+    ULCI = output[3],
+    stringsAsFactors = FALSE
+  ))
+}
+rm(output, i, y)
+
+write.csv(
+  x = icc_stranger, 
+  file = "./OUTPUT/icc_wocov_stranger.csv",
+  row.names = FALSE
+)
+```
+
 
 ```{r DF for Plot ICC}
 res[[3]][[2]] <- icc_output(list = iccl[[2]], Target = "Stranger") %>%

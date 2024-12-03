@@ -82,7 +82,7 @@ plot_forest[[1]][[1]] <- ggplot2::ggplot(out[[1]][[1]], aes(x = yi_r , y = reord
     breaks = seq(-0.5,2.5, by = 0.5),
     sec.axis = sec_axis(
       ~., 
-      breaks = c(-2.9, -1.2, 3),
+      breaks = c(-3.2, -1.2, 3),
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
@@ -624,7 +624,7 @@ plot_forest[[2]][[1]] <- ggplot2::ggplot(out[[2]][[1]], aes(x = yi_r , y = reord
     breaks = seq(-0.5,2.5, by = 0.5),
     sec.axis = sec_axis(
       ~., 
-      breaks = c(-2.9, -1.2, 3),
+      breaks = c(-3.2, -1.2, 3),
       labels = c("Author(s), Year and Study", "SMD (95%-CI)", expression(italic(p) * "-value"))
     ),
   ) +
@@ -1111,7 +1111,7 @@ temp_p <- plot_forest[[1]][[1]] + plot_forest[[2]][[1]] +
 ggsave(
   plot = last_plot(),
   filename = "./FIGURE/main/Fig_3_Forest_RT.png",
-  width = 24, height = 36, 
+  width = 34, height = 36, 
   limitsize = FALSE
 )
 
