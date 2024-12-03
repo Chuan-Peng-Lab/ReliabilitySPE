@@ -1,3 +1,18 @@
+# Notebook for "A Multiverse Assessment of the Reliability of the Perceptual Matching Task as a Measurement of the Self-prioritization Effect"
+Authors: Zheng Liu, Mengzhen Hu, Yuan-Rui Zheng, Jie Sui, Hu Chuan-Peng  
+Corresponding email address: hcp4715@hotmail.com
+
+## Purpose
+This repository is an on-going notebook that analyzes results from a series of experiments on prioritization of good person in perceptual matching task. In total, ten experiments were included (total N = 404).
+
+The scripts were made public to increasing the transparency and reproducibility of this study, all de-identified raw data were uploaded.
+
+## Links:
+Preprint: https://osf.io/preprints/psyarxiv/g6uap  
+
+OSF Project: https://osf.io/6dghm/  
+
+## Data
 This repo only includes our own data`[4_1_Raw_Data]`. The public data we collected `[4_2_Open_Data]` is not included in this repo.  
 
 ```
@@ -191,12 +206,43 @@ This repo only includes our own data`[4_1_Raw_Data]`. The public data we collect
 │  └─2_Pdf_Version
 │      │  Reliability_SMT_v3.pdf
 │      │  Supplementary Material_v4.pdf
-│      │
-│      └─0_Old_Version
-│              Reliability_SMT_v1.pdf
-│              Reliability_SMT_v2.pdf
-│              Supplementary Material_v3.pdf
 │
 └─7_Reports
         Reliability_SPMT_NACP25th_V3.pptx
 ```
+
+<details>
+  <summary>1_Pre-registration Protocol</summary>
+│  │  About.txt  <br>
+│  │  <br>
+│  ├─1_1_Pre-Registration<br>
+│  │  │  About.txt<br>
+│  │  │  Reliability_SPE_pre-reg.docx<br>
+│  │  │<br>
+│  └─1_2_Planned_Analysis<br>
+│  │  │  .RData<br>
+│  │  │  .Rhistory<br>
+│  │  │  1_Clean_Data.Rmd<br>
+│  │  │  2_Split_Half.Rmd<br>
+│  │  │  3_Reliability.Rmd<br>
+│  │  │  4_IntraClass Correlation.Rmd<br>
+│  │  │  5_Plot.Rmd<br>
+│  │  │  Pilot.Rproj<br>
+│  │  │  <br>
+│  │  │  │  1_2_1_DATA<br>
+│  │  │  │  simulated_data.csv<br>
+│  │  │  │  Sim_resampling.Rmd<br>
+│  │  │  │  <br>
+│  │  │  │  1_2_2_OUTPUT<br>
+│  │  │  │  Fig4_SPE_SHR.png<br>
+│  │  │  │  Fig5_SPE_ICC.png<br>
+│  │  │  │  Fig_1_exp_pro.png<br>
+│  │  │  │  Fig_2_simulated_data.png<br>
+│  │  │  │  Fig_3_flow_chart.png<br>
+│  │  │  │  Flow_Chart.pptx<br>
+│  │  │  │  SALT.pptx<br>
+│  │  │  │  Supplementary_Table_1.csv<br>
+│  │  │  │  Supplementary_Table_2.csv<br>
+│  │  │  │  supp_Fig_8.png<br>
+│<br>
+</details>
