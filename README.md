@@ -3,12 +3,12 @@ Authors: Zheng Liu, Mengzhen Hu, Yuan-Rui Zheng, Jie Sui, Hu Chuan-Peng
 Corresponding email address: hcp4715@hotmail.com
 
 ## Purpose
-This preregistered study investigated the reliability of SPE derived from the SMT using a multiverse approach, combining all possible indicators and baselines reported in the literature. We first examined the robustness of 24 SPE measures across 42 datasets (N = 2250) using a metaanalytical approach. We then calculated the Split-Half Reliability (r) and Intraclass Correlation Coefficient (ICC2) for each SPE measure. 
+This preregistered study investigated the reliability of SPE derived from the SMT using a multiverse approach, combining all possible indicators and baselines reported in the literature. We first examined the robustness of 24 SPE measures across 42 datasets (N = 2250) using a meta-analytical approach. We then calculated the Split-Half Reliability (r) and Intraclass Correlation Coefficient (ICC2) for each SPE measure. 
 
 ## Links:
 Preprint: https://osf.io/preprints/psyarxiv/g6uap  
 
-OSF Project: https://osf.io/6dghm/  
+OSF Project Page: https://osf.io/6dghm/  
 
 ## Data
 This repo only includes our own data`[4_1_Raw_Data]`. The public data we collected `[4_2_Open_Data]` is not included in this repo.  
