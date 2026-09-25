@@ -6,7 +6,7 @@ Corresponding email address: hcp4715@hotmail.com
 This preregistered study investigated the reliability of SPE derived from the SMT using a multiverse approach, combining all possible indicators and baselines reported in the literature. We first examined the robustness of 24 SPE measures across 42 datasets (N = 2250) using a meta-analytical approach. We then calculated the Split-Half Reliability (r) and Intraclass Correlation Coefficient (ICC2) for each SPE measure. 
 
 ## Links:
-Preprint: https://osf.io/preprints/psyarxiv/g6uap  
+Paper: Liu, Z., Hu, M., Zheng, Y., Sui, J., & Chuan-Peng, H. (2025). A multiverse assessment of the reliability of the self-matching task as a measurement of the self-prioritization effect. *Behavior Research Methods, 57*(1), 37. https://doi.org/10.3758/s13428-024-02538-6
 
 OSF Project Page: https://osf.io/6dghm/  
 
